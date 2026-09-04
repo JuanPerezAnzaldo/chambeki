@@ -1,0 +1,20 @@
+{
+  "name": "Buscador de Servicios",
+  "short_name": "ServiciosApp",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "rgb(43 127 57)",
+  "icons": [
+    {
+      "src": "/prueba/user/assets/img/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/prueba/user/assets/img/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
