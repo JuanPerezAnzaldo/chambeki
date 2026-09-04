@@ -1,5 +1,5 @@
     <div class="mensajePrueba" style="text-align: center; padding: 20px;">
-        <h2>Soy una app para buscar los mejores servicios</h2>
+        <h2>HOLA CARLOS</h2>
     
         <button id="botonInstalar" style="display: none;background: rgb(43 127 57);color: #ffffff;border-width: medium;border-style: none;border-color: currentcolor;border-image: none;padding: 12px 24px;border-radius: 8px;font-size: 16px;font-weight: bold;cursor: pointer;margin-top: 20px;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;">
              Descargar Aplicación
