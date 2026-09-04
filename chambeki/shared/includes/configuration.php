@@ -1,7 +1,7 @@
 <?php
-    define('SITNAME', 'Prueba');
+    define('SITNAME', 'chambeki');
     
-    define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/prueba/');
+    define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/chambeki/');
     define('ROOTURL', '/');
     
     define('HEADER', DOCROOT . 'user/includes/header.php');

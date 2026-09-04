@@ -1,5 +1,5 @@
 <?php
-    include $_SERVER['DOCUMENT_ROOT'] . '/prueba/shared/includes/configuration.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/chambeki/shared/includes/configuration.php';
     
     //Obtiene la accion que sale en URL
     $accion = isset($_GET['accion']) ? $_GET['accion'] : null;        
