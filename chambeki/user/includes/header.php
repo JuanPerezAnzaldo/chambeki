@@ -8,9 +8,9 @@
                 <link rel="manifest" href="/manifest.json">
                 <meta name="theme-color" content="#ff682e">
 
-                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css">
+                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css?=v2">
                 <?php if (!isset($accion) || $accion === 'inicio'): ?>
-                    <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>home.css">
+                    <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>home.css?=v2">
                 <?php endif; ?>
             </head>
             <body>
