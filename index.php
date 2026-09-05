@@ -1,21 +1,24 @@
 <?php
     include $_SERVER['DOCUMENT_ROOT'] . '/chambeki/shared/includes/configuration.php';
     
-    //Obtiene la accion que sale en URL
-    $accion = isset($_GET['accion']) ? $_GET['accion'] : null;        
+    $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
     
     include(HEADER);
     
-    //Controlador de páginas
-    switch($accion)
+    switch ($accion)
     {
         case 'servicios':
-            include(PAGE . 'servicios.php'); 
+        {
+            include(PAGINAS . 'servicios.php');
             break;
-            
+        }
+    
+        case 'inicio':
         default:
-            include(PAGE . 'servicios.php'); 
+        {
+            include(PAGINAS . 'home.php');
             break;
+        }
     }
     
     include(FOOTER);

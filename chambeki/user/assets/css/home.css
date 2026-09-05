@@ -1,0 +1,303 @@
+/* Sección Hero */
+.seccion-hero
+{
+    background: var(--color-fondo-hero);
+    color: var(--color-texto-encabezado);
+    padding: 3.5rem 1.5rem 4.5rem;
+    text-align: center;
+}
+
+.contenedor-hero
+{
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.titulo-hero
+{
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.subtitulo-hero
+{
+    font-size: 1rem;
+    color: var(--color-texto-suave);
+    margin-bottom: 2rem;
+}
+
+/* Buscador Compacto */
+.contenedor-buscador
+{
+    max-width: 820px;
+    margin: 0 auto 1.8rem;
+}
+
+.caja-busqueda
+{
+    display: flex;
+    background: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    box-shadow: var(--sombra-general);
+    padding: 4px;
+    gap: 4px;
+}
+
+.campo-busqueda
+{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    position: relative;
+}
+
+.campo-busqueda:not(:last-child)
+{
+    border-right: 1px solid var(--color-borde);
+}
+
+.input-busqueda
+{
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+}
+
+.input-busqueda::placeholder
+{
+    color: var(--color-marcador-posicion);
+}
+
+.boton-buscar
+{
+    background: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    border: none;
+    border-radius: var(--radio-pequeno);
+    padding: 0 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.boton-buscar:hover
+{
+    background: var(--color-boton-principal-hover);
+}
+
+.boton-buscar svg
+{
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* Badges / Etiquetas Rápidas */
+.etiquetas-rapidas
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.enlace-etiqueta
+{
+    background: var(--color-etiqueta-fondo);
+    color: var(--color-etiqueta-texto);
+    padding: 6px 14px;
+    border-radius: var(--radio-pequeno);
+    font-size: 0.85rem;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s;
+}
+
+.enlace-etiqueta:hover
+{
+    background: var(--color-etiqueta-hover);
+}
+
+/* Métricas del Sistema */
+.seccion-metricas
+{
+    background: var(--color-fondo-tarjeta);
+    border-bottom: 1px solid var(--color-borde);
+    padding: 2.5rem 1rem;
+}
+
+.contenedor-metricas
+{
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.item-metrica h3
+{
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+
+.item-metrica p
+{
+    font-size: 0.85rem;
+    color: var(--color-marcador-posicion);
+    margin-top: 0.2rem;
+}
+
+/* Contenido Principal */
+.envoltorio-contenido
+{
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+.bloque-seccion
+{
+    margin-bottom: 3.5rem;
+}
+
+.cabecera-seccion
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.cabecera-seccion h2
+{
+    font-size: 1.3rem;
+    color: var(--color-texto-principal);
+    font-weight: 700;
+}
+
+.cabecera-seccion a
+{
+    color: var(--color-boton-principal);
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Rejilla Profesionales */
+.rejilla-especialistas
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.tarjeta-especialista
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.tarjeta-especialista:hover
+{
+    transform: translateY(-2px);
+    border-color: var(--color-boton-principal);
+}
+
+.avatar-miniatura
+{
+    width: 60px;
+    height: 60px;
+    background: var(--color-fondo-principal);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-pequeno);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--color-texto-cuerpo);
+}
+
+.info-especialista h4
+{
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    margin-bottom: 2px;
+}
+
+.info-especialista p
+{
+    font-size: 0.8rem;
+    color: var(--color-marcador-posicion);
+}
+
+/* Lista de Píldoras */
+.rejilla-pildoras
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.item-pildora
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    color: var(--color-texto-cuerpo);
+    padding: 6px 12px;
+    border-radius: var(--radio-pequeno);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.item-pildora:hover
+{
+    background: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    border-color: var(--color-boton-principal);
+}
+
+
+
+@media (max-width: 640px)
+{
+    .caja-busqueda
+    {
+        flex-direction: column;
+    }
+
+    .campo-busqueda:not(:last-child)
+    {
+        border-right: none;
+        border-bottom: 1px solid var(--color-borde);
+    }
+
+    .boton-buscar
+    {
+        padding: 0.75rem;
+    }
+}
