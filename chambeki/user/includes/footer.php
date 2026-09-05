@@ -56,17 +56,17 @@
             </a>
         </nav>
     
-        <script src="<?php echo JS_RUTA; ?>theme.js"></script>
+    <script src="<?php echo JS_RUTA; ?>theme.js"></script>
         <script src="<?php echo JS_RUTA; ?>app.js"></script>
         <script>
             if ('serviceWorker' in navigator)
             {
                 window.addEventListener('load', () =>
                 {
-                    navigator.serviceWorker.register('/chambeki/sw.js')
+                    navigator.serviceWorker.register('<?php echo URL_BASE; ?>sw.js')
                         .then((registro) =>
                         {
-                            console.log('SW registrado correctamente', registro);
+                            console.log('SW registrado en CHAMBEKI', registro);
                         })
                         .catch((error) =>
                         {

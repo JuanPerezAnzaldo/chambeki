@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><?php echo SITENAME; ?> - Soluciones a tu alcance</title>
         
-        <link rel="manifest" href="/chambeki/manifest.json">
+        <link rel="manifest" href="<?php echo URL_BASE; ?>manifest.json">
         <meta name="theme-color" content="#ff682e">
         
         <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css">

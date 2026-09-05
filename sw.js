@@ -1,31 +1,72 @@
-self.addEventListener('install', (e) => {
-    e.waitUntil(
-        caches.open('mi-cache-offline').then((cache) => {
-            return cache.addAll([
-                '/offline.html' 
-            ]);
+const NOMBRE_CACHE = 'chambeki-cache-v1';
+const RECURSOS_PRECACHE = [
+    '/',
+    '/offline.html',
+    '/user/assets/css/global.css',
+    '/user/assets/css/home.css',
+    '/user/assets/js/theme.js'
+];
+
+self.addEventListener('install', (evento) =>
+{
+    evento.waitUntil(
+        caches.open(NOMBRE_CACHE).then((cache) =>
+        {
+            return cache.addAll(RECURSOS_PRECACHE);
         })
     );
     self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-    console.log('Service Worker activado');
+self.addEventListener('activate', (evento) =>
+{
+    evento.waitUntil(
+        caches.keys().then((claves) =>
+        {
+            return Promise.all(
+                claves.map((clave) =>
+                {
+                    if (clave !== NOMBRE_CACHE)
+                    {
+                        return caches.delete(clave);
+                    }
+                })
+            );
+        })
+    );
+    self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-    e.respondWith(
-        fetch(e.request).catch(() => {
-            return caches.match(e.request).then((respuestaCacheadas) => {
-                if (respuestaCacheadas) {
-                    return respuestaCacheadas;
+self.addEventListener('fetch', (evento) =>
+{
+    evento.respondWith(
+        fetch(evento.request)
+            .then((respuestaRed) =>
+            {
+                return respuestaRed;
+            })
+            .catch(async () =>
+            {
+                const respuestaCache = await caches.match(evento.request);
+                if (respuestaCache)
+                {
+                    return respuestaCache;
                 }
-                
-                // Si intenta entrar a la página principal o navegar y no hay red, devolvemos el offline.html
-                if (e.request.mode === 'navigate') {
-                    return caches.match('/offline.html');
+
+                if (evento.request.mode === 'navigate')
+                {
+                    const paginaOffline = await caches.match('/offline.html');
+                    if (paginaOffline)
+                    {
+                        return paginaOffline;
+                    }
                 }
-            });
-        })
+
+                return new Response('Sin conexión a Internet', {
+                    status: 503,
+                    statusText: 'Servicio no disponible',
+                    headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
+                });
+            })
     );
 });

@@ -9,7 +9,7 @@
     define('PAGINAS', DOCROOT . 'user/pages/');
     
     // Rutas relativas para navegador
-    define('URL_BASE', '/chambeki/');
+    define('URL_BASE', '/');
     define('CSS_RUTA', URL_BASE . 'user/assets/css/');
     define('JS_RUTA', URL_BASE . 'user/assets/js/');
     define('IMG_RUTA', URL_BASE . 'user/assets/img/');
