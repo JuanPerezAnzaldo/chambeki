@@ -1,18 +1,18 @@
 {
   "name": "CHAMBEKI - Servicios",
   "short_name": "CHAMBEKI",
-  "start_url": "/",
+  "start_url": "/chambeki/",
   "display": "standalone",
   "background_color": "#FDFBF7",
   "theme_color": "#ff682e",
   "icons": [
     {
-      "src": "/user/assets/img/icono-192.png",
+      "src": "/chambeki/user/assets/img/icono-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/user/assets/img/icono-512.png",
+      "src": "/chambeki/user/assets/img/icono-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

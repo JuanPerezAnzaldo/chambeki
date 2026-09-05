@@ -8,10 +8,10 @@
     define('PAGINAS', DOCROOT . 'user/pages/');
     
     // Rutas web obligatorias con barra inicial
-    define('URL_BASE', '/');
-    define('CSS_RUTA', '/user/assets/css/');
-    define('JS_RUTA', '/user/assets/js/');
-    define('IMG_RUTA', '/user/assets/img/');
+    define('URL_BASE', '/chambeki/');
+    define('CSS_RUTA', '/chambeki/user/assets/css/');
+    define('JS_RUTA', '/chambeki/user/assets/js/');
+    define('IMG_RUTA', '/chambeki/user/assets/img/');
     
     if (file_exists(FUNCIONES))
     {
