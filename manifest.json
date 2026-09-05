@@ -1,7 +1,7 @@
 {
   "name": "CHAMBEKI - Servicios",
   "short_name": "CHAMBEKI",
-  "start_url": "/chambeki/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#FDFBF7",
   "theme_color": "#ff682e",

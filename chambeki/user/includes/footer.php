@@ -63,7 +63,7 @@
             {
                 window.addEventListener('load', () =>
                 {
-                    navigator.serviceWorker.register('<?php echo URL_BASE; ?>sw.js')
+                    navigator.serviceWorker.register('/sw.js')
                         .then((registro) =>
                         {
                             console.log('SW registrado en CHAMBEKI', registro);
