@@ -1,18 +1,17 @@
 <?php
     define('SITENAME', 'CHAMBEKI');
     
-    // Rutas absolutas del servidor
-    define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/chambeki/');
+    define('DOCROOT', dirname(__DIR__, 2) . '/');
     define('HEADER', DOCROOT . 'user/includes/header.php');
     define('FOOTER', DOCROOT . 'user/includes/footer.php');
     define('FUNCIONES', DOCROOT . 'user/includes/functions.php');
     define('PAGINAS', DOCROOT . 'user/pages/');
     
-    // Rutas relativas para navegador
+    // Rutas web obligatorias con barra inicial
     define('URL_BASE', '/');
-    define('CSS_RUTA', URL_BASE . 'user/assets/css/');
-    define('JS_RUTA', URL_BASE . 'user/assets/js/');
-    define('IMG_RUTA', URL_BASE . 'user/assets/img/');
+    define('CSS_RUTA', '/user/assets/css/');
+    define('JS_RUTA', '/user/assets/js/');
+    define('IMG_RUTA', '/user/assets/img/');
     
     if (file_exists(FUNCIONES))
     {
