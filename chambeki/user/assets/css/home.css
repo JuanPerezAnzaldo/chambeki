@@ -1,3 +1,4 @@
+/* Zona Naranja Ampliada y Centrada */
 .seccion-hero
 {
     background: var(--color-fondo-hero);
@@ -160,5 +161,145 @@
     .boton-buscar
     {
         padding: 0.85rem;
+    }
+}
+
+/* Contenido Principal */
+.envoltorio-contenido
+{
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+.bloque-seccion
+{
+    margin-bottom: 3.5rem;
+}
+
+.cabecera-seccion
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.cabecera-seccion h2
+{
+    font-size: 1.3rem;
+    color: var(--color-texto-principal);
+    font-weight: 700;
+}
+
+.cabecera-seccion a
+{
+    color: var(--color-boton-principal);
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Rejilla Profesionales */
+.rejilla-especialistas
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.tarjeta-especialista
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.tarjeta-especialista:hover
+{
+    transform: translateY(-2px);
+    border-color: var(--color-boton-principal);
+}
+
+.avatar-miniatura
+{
+    width: 60px;
+    height: 60px;
+    background: var(--color-fondo-principal);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-pequeno);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--color-texto-cuerpo);
+}
+
+.info-especialista h4
+{
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    margin-bottom: 2px;
+}
+
+.info-especialista p
+{
+    font-size: 0.8rem;
+    color: var(--color-marcador-posicion);
+}
+
+/* Lista de Píldoras */
+.rejilla-pildoras
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.item-pildora
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    color: var(--color-texto-cuerpo);
+    padding: 6px 12px;
+    border-radius: var(--radio-pequeno);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.item-pildora:hover
+{
+    background: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    border-color: var(--color-boton-principal);
+}
+
+
+
+@media (max-width: 640px)
+{
+    .caja-busqueda
+    {
+        flex-direction: column;
+    }
+
+    .campo-busqueda:not(:last-child)
+    {
+        border-right: none;
+        border-bottom: 1px solid var(--color-borde);
+    }
+
+    .boton-buscar
+    {
+        padding: 0.75rem;
     }
 }
