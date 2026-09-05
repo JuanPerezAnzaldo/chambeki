@@ -75,6 +75,7 @@ main
 }
 
 /* header */
+/* Encabezado */
 .encabezado-principal
 {
     background: var(--color-fondo-hero);
@@ -107,47 +108,31 @@ main
     gap: 1.8rem;
 }
 
-.enlace-navegacion
+/* Botón Flotante de Modo Nocturno */
+.boton-tema-flotante
 {
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    opacity: 0.95;
-    transition: opacity 0.2s;
-}
-
-.enlace-navegacion:hover
-{
-    opacity: 1;
-    text-decoration: underline;
-}
-
-.boton-cambio-tema
-{
-    background: transparent;
-    color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 6px 14px;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+    background: var(--color-fondo-tarjeta);
+    color: var(--color-texto-principal);
+    border: 1px solid var(--color-borde);
+    box-shadow: var(--sombra-general);
     border-radius: var(--radio-mediano);
-    cursor: pointer;
+    padding: 10px 14px;
     font-size: 0.85rem;
     font-weight: 600;
-}
-
-.boton-cambio-tema:hover
-{
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.tarjeta-usuario-sesion
-{
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 0.9rem;
+    gap: 8px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.boton-tema-flotante:hover
+{
+    transform: translateY(-2px);
 }
 
 /* Footer de escritorio */
@@ -264,5 +249,32 @@ main
         width: 20px;
         height: 20px;
         fill: currentColor;
+    }
+}
+
+@media (max-width: 768px)
+{
+    .encabezado-principal
+    {
+        padding: 1rem 1.2rem;
+    }
+
+    .logotipo-marca
+    {
+        font-size: 1.5rem;
+    }
+
+    .acciones-navegacion
+    {
+        gap: 1rem;
+    }
+
+    /* En celular se ubica arriba de la barra de navegación inferior */
+    .boton-tema-flotante
+    {
+        bottom: 70px;
+        right: 15px;
+        padding: 8px 12px;
+        font-size: 0.75rem;
     }
 }
