@@ -33,23 +33,6 @@
   </div>
 </section>
 
-<section class="seccion-metricas">
-  <div class="contenedor-metricas">
-      <div class="item-metrica">
-          <h3>+25K</h3>
-          <p>Trabajos completados</p>
-      </div>
-      <div class="item-metrica">
-          <h3>+4.8</h3>
-          <p>Calificación promedio</p>
-      </div>
-      <div class="item-metrica">
-          <h3>100%</h3>
-          <p>Profesionales verificados</p>
-      </div>
-  </div>
-</section>
-
 <div class="envoltorio-contenido">
   <section class="bloque-seccion">
       <div class="cabecera-seccion">

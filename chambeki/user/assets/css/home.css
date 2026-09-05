@@ -129,38 +129,6 @@
     background: var(--color-etiqueta-hover);
 }
 
-/* Métricas del Sistema */
-.seccion-metricas
-{
-    background: var(--color-fondo-tarjeta);
-    border-bottom: 1px solid var(--color-borde);
-    padding: 2.5rem 1rem;
-}
-
-.contenedor-metricas
-{
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-}
-
-.item-metrica h3
-{
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--color-texto-principal);
-}
-
-.item-metrica p
-{
-    font-size: 0.85rem;
-    color: var(--color-marcador-posicion);
-    margin-top: 0.2rem;
-}
 
 /* Contenido Principal */
 .envoltorio-contenido
