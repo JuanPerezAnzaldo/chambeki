@@ -72,12 +72,6 @@ main
     flex: 1;
 }
 
-/* Regla utilitaria global */
-.oculto
-{
-    display: none !important;
-}
-
 /* Encabezado */
 .encabezado-principal
 {
@@ -113,6 +107,7 @@ main
     gap: 1.2rem;
 }
 
+/* Estilos de botones de navegación */
 .enlace-navegacion
 {
     color: #FFFFFF !important;
@@ -253,7 +248,7 @@ main
     display: none;
 }
 
-/* Pantallas Móviles */
+/* Responsive para Teléfonos */
 @media (max-width: 768px)
 {
     .encabezado-principal
@@ -340,4 +335,4 @@ main
         height: 19px;
         fill: currentColor;
     }
-}
+}a
