@@ -1,4 +1,4 @@
-const NOMBRE_CACHE = 'chambeki-cache-v1';
+const NOMBRE_CACHE = 'chambeki-cache-v4';
 const RECURSOS_PRECACHE = [
     '/',
     '/offline.html',
