@@ -19,9 +19,9 @@
                                                 <a href="<?php echo URL_BASE; ?>" class="logotipo-marca"><?php echo SITENAME; ?></a>
 
                                                 <nav class="acciones-navegacion">
-                                                    <!-- Botón Tres Puntos Verticales -->
+                                                    <!-- Botón de Opciones (Tres Puntos) -->
                                                     <div class="contenedor-menu-opciones">
-                                                        <button type="button" id="btnMenuOpciones" class="boton-tres-puntos" aria-label="Más opciones" aria-expanded="false" onclick="alternarMenuOpciones(event)">
+                                                        <button type="button" id="btnMenuOpciones" class="boton-tres-puntos" aria-label="Más opciones" aria-expanded="false">
                                                             <svg viewBox="0 0 24 24">
                                                                 <circle cx="12" cy="5" r="2.2"/>
                                                                 <circle cx="12" cy="12" r="2.2"/>
@@ -29,7 +29,7 @@
                                                             </svg>
                                                         </button>
 
-                                                        <div id="desplegableOpciones" class="menu-desplegable-opciones oculto">
+                                                        <div id="desplegableOpciones" class="menu-desplegable-opciones" style="display: none;">
                                                             <a href="<?php echo URL_BASE; ?>?accion=registro_socio" class="item-menu-opcion">
                                                                 <svg class="icono-menu-opcion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -60,6 +60,34 @@
                                                         <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-nav-sesion">Inicia sesión</a>
                                                     <?php endif; ?>
                                                 </nav>
+
+                                                <script>
+                                                    (function()
+                                                    {
+                                                        const boton = document.getElementById('btnMenuOpciones');
+                                                        const menu = document.getElementById('desplegableOpciones');
+
+                                                        if (boton && menu)
+                                                        {
+                                                            boton.addEventListener('click', function(e)
+                                                            {
+                                                                e.stopPropagation();
+                                                                const visible = menu.style.display === 'flex';
+                                                                menu.style.display = visible ? 'none' : 'flex';
+                                                                boton.setAttribute('aria-expanded', !visible);
+                                                            });
+
+                                                            document.addEventListener('click', function(e)
+                                                            {
+                                                                if (!e.target.closest('.contenedor-menu-opciones'))
+                                                                {
+                                                                    menu.style.display = 'none';
+                                                                    boton.setAttribute('aria-expanded', 'false');
+                                                                }
+                                                            });
+                                                        }
+                                                    })();
+                                                </script>
                                             </div>
                                         </header>
 
