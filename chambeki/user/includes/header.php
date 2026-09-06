@@ -19,7 +19,32 @@
                                         <a href="<?php echo URL_BASE; ?>" class="logotipo-marca"><?php echo SITENAME; ?></a>
 
                                         <nav class="acciones-navegacion">
-                                            <a href="<?php echo URL_BASE; ?>?accion=registro_socio" class="enlace-navegacion">Ofrece tu servicio</a>
+                                            <!-- Botón de Opciones (Tres Puntos) -->
+                                            <div class="contenedor-menu-opciones">
+                                                <button type="button" id="btnMenuOpciones" class="boton-tres-puntos" aria-label="Más opciones" aria-expanded="false">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                                    </svg>
+                                                </button>
+
+                                                <div id="desplegableOpciones" class="menu-desplegable-opciones oculto">
+                                                    <a href="<?php echo URL_BASE; ?>?accion=registro_socio" class="item-menu-opcion">
+                                                        <span class="icono-menu-opcion">
+                                                            <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                                                        </span>
+                                                        <span>Ofrece tu servicio</span>
+                                                    </a>
+
+                                                    <div class="divisor-menu-opciones"></div>
+
+                                                    <a href="<?php echo URL_BASE; ?>?accion=ayuda" class="item-menu-opcion">
+                                                        <span class="icono-menu-opcion">
+                                                            <svg viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+                                                        </span>
+                                                        <span>Obtén ayuda</span>
+                                                    </a>
+                                                </div>
+                                            </div>
 
                                             <?php if (isset($_SESSION['id_usuario'])): ?>
                                                 <div class="tarjeta-usuario-sesion">
