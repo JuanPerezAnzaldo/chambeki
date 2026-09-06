@@ -1,7 +1,6 @@
 let peticionInstalacionPWA = null;
 const botonDescargarPWA = document.getElementById('botonInstalar');
 
-// Lógica de PWA
 window.addEventListener('beforeinstallprompt', (evento) =>
 {
     evento.preventDefault();
@@ -29,37 +28,30 @@ if (botonDescargarPWA)
     });
 }
 
-// Función accesible globalmente para abrir/cerrar el menú
-function alternarMenuOpciones(evento)
+// Inicialización de eventos del menú de opciones
+document.addEventListener('DOMContentLoaded', () =>
 {
-    evento.stopPropagation();
-    const menu = document.getElementById('desplegableOpciones');
-    const boton = document.getElementById('btnMenuOpciones');
+    const botonMenu = document.getElementById('btnMenuOpciones');
+    const menuDesplegable = document.getElementById('desplegableOpciones');
 
-    if (!menu)
+    if (!botonMenu || !menuDesplegable)
     {
         return;
     }
 
-    const estaOculto = menu.classList.toggle('oculto');
-    if (boton)
+    botonMenu.addEventListener('click', (evento) =>
     {
-        boton.setAttribute('aria-expanded', !estaOculto);
-    }
-}
+        evento.stopPropagation();
+        const estaOculto = menuDesplegable.classList.toggle('oculto');
+        botonMenu.setAttribute('aria-expanded', !estaOculto);
+    });
 
-// Cierre al dar clic fuera del menú
-document.addEventListener('click', (evento) =>
-{
-    const menu = document.getElementById('desplegableOpciones');
-    const boton = document.getElementById('btnMenuOpciones');
-
-    if (menu && !evento.target.closest('.contenedor-menu-opciones'))
+    document.addEventListener('click', (evento) =>
     {
-        menu.classList.add('oculto');
-        if (boton)
+        if (!evento.target.closest('.contenedor-menu-opciones'))
         {
-            boton.setAttribute('aria-expanded', 'false');
+            menuDesplegable.classList.add('oculto');
+            botonMenu.setAttribute('aria-expanded', 'false');
         }
-    }
+    });
 });
