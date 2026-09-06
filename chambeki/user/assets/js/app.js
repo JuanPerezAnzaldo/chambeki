@@ -1,6 +1,7 @@
 let peticionInstalacionPWA = null;
 const botonDescargarPWA = document.getElementById('botonInstalar');
 
+// Lógica de PWA
 window.addEventListener('beforeinstallprompt', (evento) =>
 {
     evento.preventDefault();
@@ -28,28 +29,37 @@ if (botonDescargarPWA)
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', () =>
+// Función accesible globalmente para abrir/cerrar el menú
+function alternarMenuOpciones(evento)
 {
-    const btnMenuOpciones = document.getElementById('btnMenuOpciones');
-    const desplegableOpciones = document.getElementById('desplegableOpciones');
+    evento.stopPropagation();
+    const menu = document.getElementById('desplegableOpciones');
+    const boton = document.getElementById('btnMenuOpciones');
 
-    if (btnMenuOpciones && desplegableOpciones)
+    if (!menu)
     {
-        btnMenuOpciones.addEventListener('click', (evento) =>
-        {
-            evento.stopPropagation();
-            const estaOculto = desplegableOpciones.classList.toggle('oculto');
-            btnMenuOpciones.setAttribute('aria-expanded', !estaOculto);
-        });
+        return;
+    }
 
-        document.addEventListener('click', (evento) =>
+    const estaOculto = menu.classList.toggle('oculto');
+    if (boton)
+    {
+        boton.setAttribute('aria-expanded', !estaOculto);
+    }
+}
+
+// Cierre al dar clic fuera del menú
+document.addEventListener('click', (evento) =>
+{
+    const menu = document.getElementById('desplegableOpciones');
+    const boton = document.getElementById('btnMenuOpciones');
+
+    if (menu && !evento.target.closest('.contenedor-menu-opciones'))
+    {
+        menu.classList.add('oculto');
+        if (boton)
         {
-            if (!evento.target.closest('.contenedor-menu-opciones'))
-            {
-                desplegableOpciones.classList.add('oculto');
-                btnMenuOpciones.setAttribute('aria-expanded', 'false');
-            }
-        });
+            boton.setAttribute('aria-expanded', 'false');
+        }
     }
 });

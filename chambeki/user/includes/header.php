@@ -19,11 +19,13 @@
                                         <a href="<?php echo URL_BASE; ?>" class="logotipo-marca"><?php echo SITENAME; ?></a>
 
                                         <nav class="acciones-navegacion">
-                                            <!-- Botón de Opciones (Tres Puntos) -->
+                                            <!-- Botón Tres Puntos Verticales -->
                                             <div class="contenedor-menu-opciones">
-                                                <button type="button" id="btnMenuOpciones" class="boton-tres-puntos" aria-label="Más opciones" aria-expanded="false">
+                                                <button type="button" id="btnMenuOpciones" class="boton-tres-puntos" aria-label="Más opciones" aria-expanded="false" onclick="alternarMenuOpciones(event)">
                                                     <svg viewBox="0 0 24 24">
-                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                                        <circle cx="12" cy="5" r="2"></circle>
+                                                        <circle cx="12" cy="12" r="2"></circle>
+                                                        <circle cx="12" cy="19" r="2"></circle>
                                                     </svg>
                                                 </button>
 
@@ -55,7 +57,6 @@
                                                 <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-nav-sesion">Inicia sesión</a>
                                             <?php endif; ?>
                                         </nav>
-                                    </div>
                                 </header>
 
                                 <main>
