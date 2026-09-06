@@ -62,7 +62,7 @@
     </nav>
 
     <script src="<?php echo JS_RUTA; ?>theme.js"></script>
-    <script src="<?php echo JS_RUTA; ?>app.js"></script>
+    <script src="<?php echo JS_RUTA; ?>app.jsv=2"></script>
     <script src="<?php echo JS_RUTA; ?>ubicacion.js"></script>
     <script>
         if ('serviceWorker' in navigator)
