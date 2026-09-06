@@ -33,7 +33,7 @@
     margin-bottom: 2rem;
 }
 
-/* Buscador en Una Sola Línea */
+/* Buscador en Una Sola Fila */
 .contenedor-buscador
 {
     width: 100%;
@@ -51,21 +51,32 @@
     border-radius: var(--radio-mediano);
     box-shadow: var(--sombra-general);
     padding: 4px;
-    gap: 0;
 }
 
 .campo-busqueda
 {
-    flex: 1;
     display: flex;
     align-items: center;
     padding: 0.6rem 0.8rem;
+    position: relative;
     min-width: 0;
 }
 
-.campo-busqueda:first-child
+.campo-oficio
 {
-    border-right: 1px solid var(--color-borde);
+    flex: 1.4;
+}
+
+.campo-zona
+{
+    flex: 0.9;
+}
+
+.divisor-vertical-campos
+{
+    width: 1px;
+    background: var(--color-borde);
+    margin: 6px 0;
 }
 
 .input-busqueda
@@ -76,11 +87,46 @@
     background: transparent;
     font-size: 0.92rem;
     color: var(--color-texto-principal);
+    padding-right: 22px;
 }
 
 .input-busqueda::placeholder
 {
     color: var(--color-marcador-posicion);
+}
+
+/* Botón 'X' para Borrar Contenido */
+.boton-limpiar-input
+{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #E5E7EB;
+    border: none;
+    color: #4B5563;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.boton-limpiar-input:hover
+{
+    background: #D1D5DB;
+    color: #111827;
+}
+
+.boton-limpiar-input.oculto
+{
+    display: none;
 }
 
 .boton-buscar
@@ -108,6 +154,106 @@
     width: 20px;
     height: 20px;
     fill: currentColor;
+}
+
+/* Menú Desplegable en PC */
+.contenedor-desplegable-ubicacion
+{
+    position: relative;
+}
+
+.menu-desplegable-ubicaciones
+{
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    min-width: 280px;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    text-align: left;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-desplegable-ubicaciones.oculto
+{
+    display: none;
+}
+
+.divisor-opciones
+{
+    height: 1px;
+    background: var(--color-borde);
+    margin: 4px 0;
+}
+
+.lista-opciones-dinamicas
+{
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.item-opcion-ubicacion
+{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--color-texto-principal);
+    transition: background 0.15s ease;
+    text-align: left;
+}
+
+.item-opcion-ubicacion:hover
+{
+    background: rgba(232, 97, 45, 0.08);
+}
+
+.icono-opcion
+{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-boton-principal);
+    flex-shrink: 0;
+}
+
+.icono-opcion svg
+{
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.icono-opcion.pin
+{
+    color: var(--color-marcador-posicion);
+}
+
+.texto-opcion
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subtexto-opcion
+{
+    display: block;
+    font-size: 0.72rem;
+    color: var(--color-marcador-posicion);
 }
 
 /* Badges / Etiquetas Rápidas */
@@ -139,7 +285,87 @@
     background: var(--color-etiqueta-hover);
 }
 
-/* Contenedor Inferior */
+/* Modal Superpuesto en Móvil (Estilo Doctoralia) */
+.modal-ubicacion-movil
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--color-fondo-tarjeta);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-ubicacion-movil.oculto
+{
+    display: none;
+}
+
+.cabecera-modal-ubicacion
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.2rem 0.6rem;
+    background: var(--color-fondo-tarjeta);
+}
+
+.titulo-modal
+{
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.boton-cerrar-modal
+{
+    background: #F3F4F6;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 22px;
+    color: var(--color-texto-principal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cuerpo-modal-ubicacion
+{
+    padding: 1rem 1.2rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.caja-input-modal
+{
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--color-fondo-input);
+    border: 1.5px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.input-modal-texto
+{
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    padding-right: 26px;
+}
+
+/* Contenido Principal Inferior */
 .envoltorio-contenido
 {
     max-width: 1100px;
@@ -175,7 +401,6 @@
     font-weight: 600;
 }
 
-/* Rejilla Especialistas */
 .rejilla-especialistas
 {
     display: grid;
@@ -231,7 +456,6 @@
     color: var(--color-marcador-posicion);
 }
 
-/* Lista de Píldoras */
 .rejilla-pildoras
 {
     display: flex;
@@ -279,15 +503,8 @@
         margin-bottom: 1.2rem;
     }
 
-    .contenedor-buscador
-    {
-        margin-bottom: 1.2rem;
-    }
-
-    /* Garantiza una sola fila en pantallas chicas */
     .caja-busqueda
     {
-        flex-direction: row;
         padding: 3px;
     }
 
@@ -296,9 +513,19 @@
         padding: 0.45rem 0.5rem;
     }
 
+    .campo-oficio
+    {
+        flex: 1.2;
+    }
+
+    .campo-zona
+    {
+        flex: 0.8;
+    }
+
     .input-busqueda
     {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
     }
 
     .boton-buscar
@@ -312,131 +539,9 @@
         height: 17px;
     }
 
-    .enlace-etiqueta
-    {
-        font-size: 0.75rem;
-        padding: 5px 10px;
-    }
-}
-
-/* Posicionamiento del Menú Desplegable */
-.contenedor-desplegable-ubicacion
-{
-    position: relative;
-}
-
-.menu-desplegable-ubicaciones
-{
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    width: 100%;
-    min-width: 290px;
-    background: var(--color-fondo-tarjeta);
-    border: 1px solid var(--color-borde);
-    border-radius: var(--radio-mediano);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    text-align: left;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.menu-desplegable-ubicaciones.oculto
-{
-    display: none;
-}
-
-.divisor-opciones
-{
-    height: 1px;
-    background: var(--color-borde);
-    margin: 4px 0;
-}
-
-.lista-opciones-dinamicas
-{
-    max-height: 220px;
-    overflow-y: auto;
-}
-
-.item-opcion-ubicacion
-{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 0.88rem;
-    color: var(--color-texto-principal);
-    transition: background 0.15s ease;
-    text-align: left;
-}
-
-.item-opcion-ubicacion:hover
-{
-    background: rgba(232, 97, 45, 0.08);
-}
-
-.item-opcion-ubicacion.seleccionado
-{
-    background: rgba(232, 97, 45, 0.15);
-    font-weight: 700;
-}
-
-.icono-opcion
-{
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-boton-principal);
-    flex-shrink: 0;
-}
-
-.icono-opcion svg
-{
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-}
-
-.icono-opcion.pin
-{
-    color: var(--color-marcador-posicion);
-}
-
-.texto-opcion
-{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.subtexto-opcion
-{
-    display: block;
-    font-size: 0.72rem;
-    color: var(--color-marcador-posicion);
-}
-
-/* En dispositivos móviles se adapta al ancho disponible */
-@media (max-width: 640px)
-{
+    /* En móvil se oculta el menú flotante estándar y opera solo el modal superpuesto */
     .menu-desplegable-ubicaciones
     {
-        position: fixed;
-        top: auto;
-        left: 5%;
-        right: 5%;
-        width: 90%;
-        min-width: auto;
-        bottom: 70px;
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+        display: none !important;
     }
 }

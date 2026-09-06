@@ -1,37 +1,175 @@
 document.addEventListener('DOMContentLoaded', () =>
 {
+    const inputOficio = document.getElementById('inputOficio');
+    const btnLimpiarOficio = document.getElementById('btnLimpiarOficio');
+
     const inputUbicacion = document.getElementById('inputUbicacion');
+    const btnLimpiarUbicacion = document.getElementById('btnLimpiarUbicacion');
     const menuUbicaciones = document.getElementById('menuUbicaciones');
-    const listaSugerencias = document.getElementById('listaUbicacionesSugeridas');
+    const listaSugerenciasPC = document.getElementById('listaUbicacionesSugeridas');
+
+    const modalUbicacionMovil = document.getElementById('modalUbicacionMovil');
+    const btnCerrarModalMovil = document.getElementById('btnCerrarModalMovil');
+    const inputUbicacionMovil = document.getElementById('inputUbicacionMovil');
+    const btnLimpiarUbicacionMovil = document.getElementById('btnLimpiarUbicacionMovil');
+    const listaUbicacionesMovil = document.getElementById('listaUbicacionesMovil');
+
     const campoLatitud = document.getElementById('campoLatitud');
     const campoLongitud = document.getElementById('campoLongitud');
     const campoTipoUbicacion = document.getElementById('campoTipoUbicacion');
-    const textoGps = document.getElementById('textoGps');
+    const etiquetasGps = document.querySelectorAll('.textoGpsEtiqueta');
 
     let temporizadorEscritura = null;
 
-    if (!inputUbicacion || !menuUbicaciones)
+    function esDispositivoMovil()
     {
-        return;
+        return window.innerWidth <= 640;
     }
 
-    // Abre el menú al enfocar o hacer clic
-    inputUbicacion.addEventListener('focus', () =>
+    // Configuración de borrado del campo Oficio
+    if (inputOficio && btnLimpiarOficio)
     {
-        menuUbicaciones.classList.remove('oculto');
-    });
+        inputOficio.addEventListener('input', () =>
+        {
+            btnLimpiarOficio.classList.toggle('oculto', inputOficio.value.trim() === '');
+        });
 
-    // Cierra el menú al hacer clic fuera del componente
+        btnLimpiarOficio.addEventListener('click', () =>
+        {
+            inputOficio.value = '';
+            btnLimpiarOficio.classList.add('oculto');
+            inputOficio.focus();
+        });
+    }
+
+    // Configuración de borrado del campo Ubicación Principal
+    if (inputUbicacion && btnLimpiarUbicacion)
+    {
+        inputUbicacion.addEventListener('input', () =>
+        {
+            btnLimpiarUbicacion.classList.toggle('oculto', inputUbicacion.value.trim() === '');
+        });
+
+        btnLimpiarUbicacion.addEventListener('click', (evento) =>
+        {
+            evento.stopPropagation();
+            limpiarUbicacionSeleccionada();
+            if (!esDispositivoMovil())
+            {
+                inputUbicacion.focus();
+            }
+        });
+    }
+
+    // Control de apertura según dispositivo
+    if (inputUbicacion)
+    {
+        inputUbicacion.addEventListener('click', () =>
+        {
+            if (esDispositivoMovil())
+            {
+                // En móvil evita abrir teclado del input principal
+                inputUbicacion.blur();
+                abrirModalMovil();
+            }
+            else
+            {
+                menuUbicaciones.classList.remove('oculto');
+            }
+        });
+
+        inputUbicacion.addEventListener('focus', () =>
+        {
+            if (esDispositivoMovil())
+            {
+                inputUbicacion.blur();
+                abrirModalMovil();
+            }
+            else
+            {
+                menuUbicaciones.classList.remove('oculto');
+            }
+        });
+    }
+
+    // Cierre en PC al hacer clic afuera
     document.addEventListener('click', (evento) =>
     {
-        if (!evento.target.closest('.contenedor-desplegable-ubicacion'))
+        if (!evento.target.closest('.contenedor-desplegable-ubicacion') && menuUbicaciones)
         {
             menuUbicaciones.classList.add('oculto');
         }
     });
 
-    // Delegación de clics en las opciones fijas o dinámicas
-    menuUbicaciones.addEventListener('click', (evento) =>
+    // Delegación de clics en PC
+    if (menuUbicaciones)
+    {
+        menuUbicaciones.addEventListener('click', procesarClicOpcion);
+    }
+
+    // Gestión del Modal Móvil
+    function abrirModalMovil()
+    {
+        modalUbicacionMovil.classList.remove('oculto');
+        document.body.style.overflow = 'hidden';
+        inputUbicacionMovil.value = inputUbicacion.value;
+        btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
+    }
+
+    function cerrarModalMovil()
+    {
+        modalUbicacionMovil.classList.add('oculto');
+        document.body.style.overflow = '';
+    }
+
+    if (btnCerrarModalMovil)
+    {
+        btnCerrarModalMovil.addEventListener('click', cerrarModalMovil);
+    }
+
+    if (modalUbicacionMovil)
+    {
+        modalUbicacionMovil.addEventListener('click', (evento) =>
+        {
+            if (evento.target.closest('.item-opcion-ubicacion'))
+            {
+                procesarClicOpcion(evento);
+                cerrarModalMovil();
+            }
+        });
+    }
+
+    // Borrado dentro del modal móvil
+    if (inputUbicacionMovil && btnLimpiarUbicacionMovil)
+    {
+        inputUbicacionMovil.addEventListener('input', () =>
+        {
+            btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
+            ejecutarAutocompletado(inputUbicacionMovil.value.trim(), listaUbicacionesMovil);
+        });
+
+        btnLimpiarUbicacionMovil.addEventListener('click', () =>
+        {
+            inputUbicacionMovil.value = '';
+            btnLimpiarUbicacionMovil.classList.add('oculto');
+            limpiarUbicacionSeleccionada();
+            inputUbicacionMovil.focus();
+        });
+    }
+
+    // Escritura en PC
+    if (inputUbicacion)
+    {
+        inputUbicacion.addEventListener('input', () =>
+        {
+            if (!esDispositivoMovil())
+            {
+                ejecutarAutocompletado(inputUbicacion.value.trim(), listaSugerenciasPC);
+            }
+        });
+    }
+
+    function procesarClicOpcion(evento)
     {
         const botonOpcion = evento.target.closest('.item-opcion-ubicacion');
         if (!botonOpcion)
@@ -56,40 +194,70 @@ document.addEventListener('DOMContentLoaded', () =>
             const nombre = botonOpcion.querySelector('.texto-opcion').childNodes[0].textContent.trim();
             seleccionarOpcion(nombre, lat, lon, 'lugar');
         }
-    });
+    }
 
-    // Autocompletado con Nominatim en tiempo real al escribir
-    inputUbicacion.addEventListener('input', () =>
+    function seleccionarOpcion(texto, lat, lon, tipo)
     {
-        const busqueda = inputUbicacion.value.trim();
+        inputUbicacion.value = texto;
+        if (inputUbicacionMovil)
+        {
+            inputUbicacionMovil.value = texto;
+        }
 
+        campoLatitud.value = lat;
+        campoLongitud.value = lon;
+        campoTipoUbicacion.value = tipo;
+
+        btnLimpiarUbicacion.classList.remove('oculto');
+        if (btnLimpiarUbicacionMovil)
+        {
+            btnLimpiarUbicacionMovil.classList.remove('oculto');
+        }
+
+        if (menuUbicaciones)
+        {
+            menuUbicaciones.classList.add('oculto');
+        }
+    }
+
+    function limpiarUbicacionSeleccionada()
+    {
+        inputUbicacion.value = '';
+        if (inputUbicacionMovil)
+        {
+            inputUbicacionMovil.value = '';
+        }
+
+        campoLatitud.value = '';
+        campoLongitud.value = '';
+        campoTipoUbicacion.value = 'texto';
+
+        btnLimpiarUbicacion.classList.add('oculto');
+        if (btnLimpiarUbicacionMovil)
+        {
+            btnLimpiarUbicacionMovil.classList.add('oculto');
+        }
+    }
+
+    function ejecutarAutocompletado(termino, contenedorLista)
+    {
         campoLatitud.value = '';
         campoLongitud.value = '';
         campoTipoUbicacion.value = 'texto';
 
         clearTimeout(temporizadorEscritura);
 
-        if (busqueda.length < 3)
+        if (termino.length < 3)
         {
             return;
         }
 
         temporizadorEscritura = setTimeout(() =>
         {
-            consultarNominatim(busqueda);
-        }, 350); // Espera 350ms para evitar peticiones excesivas
-    });
-
-    function seleccionarOpcion(texto, lat, lon, tipo)
-    {
-        inputUbicacion.value = texto;
-        campoLatitud.value = lat;
-        campoLongitud.value = lon;
-        campoTipoUbicacion.value = tipo;
-        menuUbicaciones.classList.add('oculto');
+            consultarNominatim(termino, contenedorLista);
+        }, 350);
     }
 
-    // API de Geolocalización Nativa del Navegador
     function obtenerUbicacionActual()
     {
         if (!navigator.geolocation)
@@ -98,7 +266,10 @@ document.addEventListener('DOMContentLoaded', () =>
             return;
         }
 
-        textoGps.textContent = 'Localizando...';
+        etiquetasGps.forEach((etiqueta) =>
+        {
+            etiqueta.textContent = 'Localizando...';
+        });
 
         navigator.geolocation.getCurrentPosition(
             (posicion) =>
@@ -106,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () =>
                 const lat = posicion.coords.latitude;
                 const lon = posicion.coords.longitude;
 
-                // Geocodificación inversa para mostrar colonia/ciudad al usuario
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`)
                     .then((resp) => resp.json())
                     .then((datos) =>
@@ -120,12 +290,18 @@ document.addEventListener('DOMContentLoaded', () =>
                     })
                     .finally(() =>
                     {
-                        textoGps.textContent = 'Cerca de mí';
+                        etiquetasGps.forEach((etiqueta) =>
+                        {
+                            etiqueta.textContent = 'Cerca de mí';
+                        });
                     });
             },
-            (error) =>
+            () =>
             {
-                textoGps.textContent = 'Cerca de mí';
+                etiquetasGps.forEach((etiqueta) =>
+                {
+                    etiqueta.textContent = 'Cerca de mí';
+                });
                 alert('No se pudo acceder a tu ubicación. Verifica los permisos de tu navegador.');
             },
             {
@@ -135,10 +311,13 @@ document.addEventListener('DOMContentLoaded', () =>
         );
     }
 
-    // Consulta de Autocompletado a OpenStreetMap Nominatim
-    function consultarNominatim(query)
+    function consultarNominatim(query, contenedorLista)
     {
-        // Prioriza resultados de México (countrycodes=mx)
+        if (!contenedorLista)
+        {
+            return;
+        }
+
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=mx&addressdetails=1&limit=5`;
 
         fetch(url)
@@ -150,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () =>
                     return;
                 }
 
-                listaSugerencias.innerHTML = '';
+                contenedorLista.innerHTML = '';
 
                 lugares.forEach((lugar) =>
                 {
@@ -173,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () =>
                         </span>
                     `;
 
-                    listaSugerencias.appendChild(boton);
+                    contenedorLista.appendChild(boton);
                 });
             })
             .catch((err) =>
