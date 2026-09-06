@@ -21,12 +21,71 @@ document.addEventListener('DOMContentLoaded', () =>
 
     let temporizadorEscritura = null;
 
+    // Catálogo inicial de ciudades predeterminadas
+    const ciudadesFijas = [
+        { nombre: 'Tijuana', lat: '32.5149', lon: '-117.0382' },
+        { nombre: 'Ciudad de México', lat: '19.4326', lon: '-99.1332' },
+        { nombre: 'Guadalajara', lat: '20.6597', lon: '-103.3496' },
+        { nombre: 'Monterrey', lat: '25.6866', lon: '-100.3161' },
+        { nombre: 'Puebla', lat: '19.0414', lon: '-98.2063' }
+    ];
+
     function esDispositivoMovil()
     {
         return window.innerWidth <= 640;
     }
 
-    // Configuración de borrado del campo Oficio
+    function ajustarAtributoReadOnly()
+    {
+        if (inputUbicacion)
+        {
+            if (esDispositivoMovil())
+            {
+                inputUbicacion.setAttribute('readonly', 'true');
+            }
+            else
+            {
+                inputUbicacion.removeAttribute('readonly');
+            }
+        }
+    }
+
+    ajustarAtributoReadOnly();
+    window.addEventListener('resize', ajustarAtributoReadOnly);
+
+    // Renderizado de ciudades fijas en listas
+    function renderizarCiudadesIniciales(contenedor)
+    {
+        if (!contenedor)
+        {
+            return;
+        }
+
+        contenedor.innerHTML = '';
+        ciudadesFijas.forEach((ciudad) =>
+        {
+            const boton = document.createElement('button');
+            boton.type = 'button';
+            boton.className = 'item-opcion-ubicacion';
+            boton.setAttribute('data-tipo', 'ciudad');
+            boton.setAttribute('data-lat', ciudad.lat);
+            boton.setAttribute('data-lon', ciudad.lon);
+
+            boton.innerHTML = `
+                <span class="icono-opcion pin">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                </span>
+                <span class="texto-opcion">${ciudad.nombre}</span>
+            `;
+            contenedor.appendChild(boton);
+        });
+    }
+
+    // Inicializar listas
+    renderizarCiudadesIniciales(listaSugerenciasPC);
+    renderizarCiudadesIniciales(listaUbicacionesMovil);
+
+    // Botón borrar Oficio
     if (inputOficio && btnLimpiarOficio)
     {
         inputOficio.addEventListener('input', () =>
@@ -42,14 +101,9 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Configuración de borrado del campo Ubicación Principal
+    // Botón borrar Ubicación Principal
     if (inputUbicacion && btnLimpiarUbicacion)
     {
-        inputUbicacion.addEventListener('input', () =>
-        {
-            btnLimpiarUbicacion.classList.toggle('oculto', inputUbicacion.value.trim() === '');
-        });
-
         btnLimpiarUbicacion.addEventListener('click', (evento) =>
         {
             evento.stopPropagation();
@@ -61,28 +115,13 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Control de apertura según dispositivo
+    // Control de apertura
     if (inputUbicacion)
     {
         inputUbicacion.addEventListener('click', () =>
         {
             if (esDispositivoMovil())
             {
-                // En móvil evita abrir teclado del input principal
-                inputUbicacion.blur();
-                abrirModalMovil();
-            }
-            else
-            {
-                menuUbicaciones.classList.remove('oculto');
-            }
-        });
-
-        inputUbicacion.addEventListener('focus', () =>
-        {
-            if (esDispositivoMovil())
-            {
-                inputUbicacion.blur();
                 abrirModalMovil();
             }
             else
@@ -92,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Cierre en PC al hacer clic afuera
+    // Cierre en PC
     document.addEventListener('click', (evento) =>
     {
         if (!evento.target.closest('.contenedor-desplegable-ubicacion') && menuUbicaciones)
@@ -101,19 +140,23 @@ document.addEventListener('DOMContentLoaded', () =>
         }
     });
 
-    // Delegación de clics en PC
     if (menuUbicaciones)
     {
         menuUbicaciones.addEventListener('click', procesarClicOpcion);
     }
 
-    // Gestión del Modal Móvil
+    // Funciones del Modal Móvil
     function abrirModalMovil()
     {
         modalUbicacionMovil.classList.remove('oculto');
         document.body.style.overflow = 'hidden';
         inputUbicacionMovil.value = inputUbicacion.value;
         btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
+
+        if (inputUbicacionMovil.value.trim() === '')
+        {
+            renderizarCiudadesIniciales(listaUbicacionesMovil);
+        }
     }
 
     function cerrarModalMovil()
@@ -139,13 +182,22 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Borrado dentro del modal móvil
+    // Input y botón borrar en modal móvil
     if (inputUbicacionMovil && btnLimpiarUbicacionMovil)
     {
         inputUbicacionMovil.addEventListener('input', () =>
         {
-            btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
-            ejecutarAutocompletado(inputUbicacionMovil.value.trim(), listaUbicacionesMovil);
+            const valor = inputUbicacionMovil.value.trim();
+            btnLimpiarUbicacionMovil.classList.toggle('oculto', valor === '');
+
+            if (valor.length === 0)
+            {
+                renderizarCiudadesIniciales(listaUbicacionesMovil);
+            }
+            else
+            {
+                ejecutarAutocompletado(valor, listaUbicacionesMovil);
+            }
         });
 
         btnLimpiarUbicacionMovil.addEventListener('click', () =>
@@ -153,18 +205,29 @@ document.addEventListener('DOMContentLoaded', () =>
             inputUbicacionMovil.value = '';
             btnLimpiarUbicacionMovil.classList.add('oculto');
             limpiarUbicacionSeleccionada();
+            renderizarCiudadesIniciales(listaUbicacionesMovil);
             inputUbicacionMovil.focus();
         });
     }
 
-    // Escritura en PC
+    // Input en PC
     if (inputUbicacion)
     {
         inputUbicacion.addEventListener('input', () =>
         {
             if (!esDispositivoMovil())
             {
-                ejecutarAutocompletado(inputUbicacion.value.trim(), listaSugerenciasPC);
+                const valor = inputUbicacion.value.trim();
+                btnLimpiarUbicacion.classList.toggle('oculto', valor === '');
+
+                if (valor.length === 0)
+                {
+                    renderizarCiudadesIniciales(listaSugerenciasPC);
+                }
+                else
+                {
+                    ejecutarAutocompletado(valor, listaSugerenciasPC);
+                }
             }
         });
     }
