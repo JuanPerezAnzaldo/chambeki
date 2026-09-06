@@ -318,3 +318,125 @@
         padding: 5px 10px;
     }
 }
+
+/* Posicionamiento del Menú Desplegable */
+.contenedor-desplegable-ubicacion
+{
+    position: relative;
+}
+
+.menu-desplegable-ubicaciones
+{
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    min-width: 290px;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    text-align: left;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-desplegable-ubicaciones.oculto
+{
+    display: none;
+}
+
+.divisor-opciones
+{
+    height: 1px;
+    background: var(--color-borde);
+    margin: 4px 0;
+}
+
+.lista-opciones-dinamicas
+{
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.item-opcion-ubicacion
+{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--color-texto-principal);
+    transition: background 0.15s ease;
+    text-align: left;
+}
+
+.item-opcion-ubicacion:hover
+{
+    background: rgba(232, 97, 45, 0.08);
+}
+
+.item-opcion-ubicacion.seleccionado
+{
+    background: rgba(232, 97, 45, 0.15);
+    font-weight: 700;
+}
+
+.icono-opcion
+{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-boton-principal);
+    flex-shrink: 0;
+}
+
+.icono-opcion svg
+{
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.icono-opcion.pin
+{
+    color: var(--color-marcador-posicion);
+}
+
+.texto-opcion
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subtexto-opcion
+{
+    display: block;
+    font-size: 0.72rem;
+    color: var(--color-marcador-posicion);
+}
+
+/* En dispositivos móviles se adapta al ancho disponible */
+@media (max-width: 640px)
+{
+    .menu-desplegable-ubicaciones
+    {
+        position: fixed;
+        top: auto;
+        left: 5%;
+        right: 5%;
+        width: 90%;
+        min-width: auto;
+        bottom: 70px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    }
+}

@@ -4,15 +4,61 @@
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
-            <form action="<?php echo URL_BASE; ?>?accion=servicios" method="GET" class="caja-busqueda">
+            <form action="<?php echo URL_BASE; ?>?accion=servicios" method="GET" class="caja-busqueda" autocomplete="off">
                 <input type="hidden" name="accion" value="servicios">
+                
+                <!-- Campos ocultos para enviar geolocalización precisa -->
+                <input type="hidden" name="latitud" id="campoLatitud" value="">
+                <input type="hidden" name="longitud" id="campoLongitud" value="">
+                <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
 
                 <div class="campo-busqueda">
                     <input type="text" name="oficio" class="input-busqueda" placeholder="Oficio, especialidad o técnico...">
                 </div>
 
-                <div class="campo-busqueda">
-                    <input type="text" name="ubicacion" class="input-busqueda" placeholder="Ciudad, colonia o radio (km)">
+                <!-- Campo de Ubicación con Menú Desplegable -->
+                <div class="campo-busqueda contenedor-desplegable-ubicacion">
+                    <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ciudad, colonia o en línea">
+                    
+                    <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">
+                        <div class="opciones-fijas">
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="online">
+                                <span class="icono-opcion">
+                                    <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                                </span>
+                                <span class="texto-opcion">En línea / Remoto</span>
+                            </button>
+
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="gps">
+                                <span class="icono-opcion">
+                                    <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                                </span>
+                                <span class="texto-opcion" id="textoGps">Cerca de mí</span>
+                            </button>
+                        </div>
+
+                        <div class="divisor-opciones"></div>
+
+                        <!-- Opciones dinámicas y populares -->
+                        <div id="listaUbicacionesSugeridas" class="lista-opciones-dinamicas">
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="32.5149" data-lon="-117.0382">
+                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+                                <span class="texto-opcion">Tijuana</span>
+                            </button>
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="19.4326" data-lon="-99.1332">
+                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+                                <span class="texto-opcion">Ciudad de México</span>
+                            </button>
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="20.6597" data-lon="-103.3496">
+                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+                                <span class="texto-opcion">Guadalajara</span>
+                            </button>
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="25.6866" data-lon="-100.3161">
+                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+                                <span class="texto-opcion">Monterrey</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" class="boton-buscar" aria-label="Buscar profesional">
@@ -33,6 +79,7 @@
     </div>
 </section>
 
+<!-- El resto de la vista home sigue igual -->
 <div class="envoltorio-contenido">
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
