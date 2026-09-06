@@ -19,10 +19,10 @@
 
                 <div class="divisor-vertical-campos"></div>
 
-                <!-- Campo de Ubicación -->
-                <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
-                    <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación">
-                    <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
+                    <!-- Campo de Ubicación -->
+                    <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
+                        <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
+                        <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
                     
                     <!-- Menú Desplegable en PC -->
                     <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">

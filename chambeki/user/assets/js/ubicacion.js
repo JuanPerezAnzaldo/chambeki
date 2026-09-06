@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () =>
 
     let temporizadorEscritura = null;
 
-    // Catálogo inicial de ciudades predeterminadas
+    // Catálogo de ciudades predeterminadas
     const ciudadesFijas = [
         { nombre: 'Tijuana', lat: '32.5149', lon: '-117.0382' },
         { nombre: 'Ciudad de México', lat: '19.4326', lon: '-99.1332' },
@@ -30,30 +30,38 @@ document.addEventListener('DOMContentLoaded', () =>
         { nombre: 'Puebla', lat: '19.0414', lon: '-98.2063' }
     ];
 
+    // Detección móvil híbrida (pantalla y capacidad táctil real)
     function esDispositivoMovil()
     {
-        return window.innerWidth <= 640;
+        const pantallaChica = window.innerWidth <= 768;
+        const pantallaTactil = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        return pantallaChica || pantallaTactil;
     }
 
-    function ajustarAtributoReadOnly()
+    // Bloquea el teclado virtual en el input principal solo en móvil
+    function configurarModoInputPrincipal()
     {
-        if (inputUbicacion)
+        if (!inputUbicacion)
         {
-            if (esDispositivoMovil())
-            {
-                inputUbicacion.setAttribute('readonly', 'true');
-            }
-            else
-            {
-                inputUbicacion.removeAttribute('readonly');
-            }
+            return;
+        }
+
+        if (esDispositivoMovil())
+        {
+            inputUbicacion.setAttribute('readonly', 'true');
+            inputUbicacion.setAttribute('inputmode', 'none');
+        }
+        else
+        {
+            inputUbicacion.removeAttribute('readonly');
+            inputUbicacion.removeAttribute('inputmode');
         }
     }
 
-    ajustarAtributoReadOnly();
-    window.addEventListener('resize', ajustarAtributoReadOnly);
+    configurarModoInputPrincipal();
+    window.addEventListener('resize', configurarModoInputPrincipal);
 
-    // Renderizado de ciudades fijas en listas
+    // Renderiza las opciones iniciales
     function renderizarCiudadesIniciales(contenedor)
     {
         if (!contenedor)
@@ -81,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Inicializar listas
     renderizarCiudadesIniciales(listaSugerenciasPC);
     renderizarCiudadesIniciales(listaUbicacionesMovil);
 
@@ -115,23 +122,42 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Control de apertura
+    // Apertura del modal en móvil / dropdown en PC
     if (inputUbicacion)
     {
-        inputUbicacion.addEventListener('click', () =>
+        const abrirSelectorUbicacion = (evento) =>
         {
             if (esDispositivoMovil())
             {
+                if (evento.cancelable)
+                {
+                    evento.preventDefault();
+                }
+                inputUbicacion.blur();
                 abrirModalMovil();
             }
             else
             {
-                menuUbicaciones.classList.remove('oculto');
+                if (menuUbicaciones)
+                {
+                    menuUbicaciones.classList.remove('oculto');
+                }
+            }
+        };
+
+        // Escucha táctil adelantada para bloquear teclado de inmediato
+        inputUbicacion.addEventListener('pointerdown', (e) =>
+        {
+            if (esDispositivoMovil())
+            {
+                abrirSelectorUbicacion(e);
             }
         });
+
+        inputUbicacion.addEventListener('click', abrirSelectorUbicacion);
     }
 
-    // Cierre en PC
+    // Cierre en PC al hacer clic afuera
     document.addEventListener('click', (evento) =>
     {
         if (!evento.target.closest('.contenedor-desplegable-ubicacion') && menuUbicaciones)
@@ -145,22 +171,39 @@ document.addEventListener('DOMContentLoaded', () =>
         menuUbicaciones.addEventListener('click', procesarClicOpcion);
     }
 
-    // Funciones del Modal Móvil
+    // Gestión del Modal Móvil
     function abrirModalMovil()
     {
+        if (!modalUbicacionMovil)
+        {
+            return;
+        }
+
         modalUbicacionMovil.classList.remove('oculto');
         document.body.style.overflow = 'hidden';
-        inputUbicacionMovil.value = inputUbicacion.value;
-        btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
 
-        if (inputUbicacionMovil.value.trim() === '')
+        if (inputUbicacionMovil)
         {
-            renderizarCiudadesIniciales(listaUbicacionesMovil);
+            inputUbicacionMovil.value = inputUbicacion ? inputUbicacion.value : '';
+            if (btnLimpiarUbicacionMovil)
+            {
+                btnLimpiarUbicacionMovil.classList.toggle('oculto', inputUbicacionMovil.value.trim() === '');
+            }
+
+            if (inputUbicacionMovil.value.trim() === '')
+            {
+                renderizarCiudadesIniciales(listaUbicacionesMovil);
+            }
         }
     }
 
     function cerrarModalMovil()
     {
+        if (!modalUbicacionMovil)
+        {
+            return;
+        }
+
         modalUbicacionMovil.classList.add('oculto');
         document.body.style.overflow = '';
     }
@@ -182,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Input y botón borrar en modal móvil
+    // Input y botón borrar dentro del modal móvil
     if (inputUbicacionMovil && btnLimpiarUbicacionMovil)
     {
         inputUbicacionMovil.addEventListener('input', () =>
@@ -210,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Input en PC
+    // Escritura en PC
     if (inputUbicacion)
     {
         inputUbicacion.addEventListener('input', () =>
@@ -218,7 +261,10 @@ document.addEventListener('DOMContentLoaded', () =>
             if (!esDispositivoMovil())
             {
                 const valor = inputUbicacion.value.trim();
-                btnLimpiarUbicacion.classList.toggle('oculto', valor === '');
+                if (btnLimpiarUbicacion)
+                {
+                    btnLimpiarUbicacion.classList.toggle('oculto', valor === '');
+                }
 
                 if (valor.length === 0)
                 {
@@ -261,17 +307,36 @@ document.addEventListener('DOMContentLoaded', () =>
 
     function seleccionarOpcion(texto, lat, lon, tipo)
     {
-        inputUbicacion.value = texto;
+        if (inputUbicacion)
+        {
+            inputUbicacion.value = texto;
+        }
+
         if (inputUbicacionMovil)
         {
             inputUbicacionMovil.value = texto;
         }
 
-        campoLatitud.value = lat;
-        campoLongitud.value = lon;
-        campoTipoUbicacion.value = tipo;
+        if (campoLatitud)
+        {
+            campoLatitud.value = lat;
+        }
 
-        btnLimpiarUbicacion.classList.remove('oculto');
+        if (campoLongitud)
+        {
+            campoLongitud.value = lon;
+        }
+
+        if (campoTipoUbicacion)
+        {
+            campoTipoUbicacion.value = tipo;
+        }
+
+        if (btnLimpiarUbicacion)
+        {
+            btnLimpiarUbicacion.classList.remove('oculto');
+        }
+
         if (btnLimpiarUbicacionMovil)
         {
             btnLimpiarUbicacionMovil.classList.remove('oculto');
@@ -285,17 +350,36 @@ document.addEventListener('DOMContentLoaded', () =>
 
     function limpiarUbicacionSeleccionada()
     {
-        inputUbicacion.value = '';
+        if (inputUbicacion)
+        {
+            inputUbicacion.value = '';
+        }
+
         if (inputUbicacionMovil)
         {
             inputUbicacionMovil.value = '';
         }
 
-        campoLatitud.value = '';
-        campoLongitud.value = '';
-        campoTipoUbicacion.value = 'texto';
+        if (campoLatitud)
+        {
+            campoLatitud.value = '';
+        }
 
-        btnLimpiarUbicacion.classList.add('oculto');
+        if (campoLongitud)
+        {
+            campoLongitud.value = '';
+        }
+
+        if (campoTipoUbicacion)
+        {
+            campoTipoUbicacion.value = 'texto';
+        }
+
+        if (btnLimpiarUbicacion)
+        {
+            btnLimpiarUbicacion.classList.add('oculto');
+        }
+
         if (btnLimpiarUbicacionMovil)
         {
             btnLimpiarUbicacionMovil.classList.add('oculto');
@@ -304,9 +388,20 @@ document.addEventListener('DOMContentLoaded', () =>
 
     function ejecutarAutocompletado(termino, contenedorLista)
     {
-        campoLatitud.value = '';
-        campoLongitud.value = '';
-        campoTipoUbicacion.value = 'texto';
+        if (campoLatitud)
+        {
+            campoLatitud.value = '';
+        }
+
+        if (campoLongitud)
+        {
+            campoLongitud.value = '';
+        }
+
+        if (campoTipoUbicacion)
+        {
+            campoTipoUbicacion.value = 'texto';
+        }
 
         clearTimeout(temporizadorEscritura);
 
