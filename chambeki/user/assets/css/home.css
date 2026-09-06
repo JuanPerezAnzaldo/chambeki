@@ -95,7 +95,7 @@
     color: var(--color-marcador-posicion);
 }
 
-/* Botón 'X' para Borrar Contenido */
+/* Botón 'X' para Borrar */
 .boton-limpiar-input
 {
     position: absolute;
@@ -122,11 +122,6 @@
 {
     background: #D1D5DB;
     color: #111827;
-}
-
-.boton-limpiar-input.oculto
-{
-    display: none;
 }
 
 .boton-buscar
@@ -178,11 +173,6 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}
-
-.menu-desplegable-ubicaciones.oculto
-{
-    display: none;
 }
 
 .divisor-opciones
@@ -285,87 +275,13 @@
     background: var(--color-etiqueta-hover);
 }
 
-/* Modal Superpuesto en Móvil (Estilo Doctoralia) */
+/* Control del Modal Móvil en PC: Inexistente */
 .modal-ubicacion-movil
 {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--color-fondo-tarjeta);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
+    display: none !important;
 }
 
-.modal-ubicacion-movil.oculto
-{
-    display: none;
-}
-
-.cabecera-modal-ubicacion
-{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 1.2rem 0.6rem;
-    background: var(--color-fondo-tarjeta);
-}
-
-.titulo-modal
-{
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-texto-principal);
-}
-
-.boton-cerrar-modal
-{
-    background: #F3F4F6;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 22px;
-    color: var(--color-texto-principal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.cuerpo-modal-ubicacion
-{
-    padding: 1rem 1.2rem;
-    flex: 1;
-    overflow-y: auto;
-}
-
-.caja-input-modal
-{
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: var(--color-fondo-input);
-    border: 1.5px solid var(--color-borde);
-    border-radius: var(--radio-mediano);
-    padding: 0.5rem 0.8rem;
-    margin-bottom: 1.2rem;
-}
-
-.input-modal-texto
-{
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 0.95rem;
-    color: var(--color-texto-principal);
-    padding-right: 26px;
-}
-
-/* Contenido Principal Inferior */
+/* Contenido Inferior */
 .envoltorio-contenido
 {
     max-width: 1100px;
@@ -482,7 +398,7 @@
     border-color: var(--color-boton-principal);
 }
 
-/* Ajustes Específicos para Móvil */
+/* Reglas Exclusivas para Teléfonos */
 @media (max-width: 640px)
 {
     .seccion-hero
@@ -539,9 +455,89 @@
         height: 17px;
     }
 
-    /* En móvil se oculta el menú flotante estándar y opera solo el modal superpuesto */
+    /* En móvil se desactiva el dropdown regular */
     .menu-desplegable-ubicaciones
     {
         display: none !important;
+    }
+
+    /* Activación del Modal Móvil Superpuesto */
+    .modal-ubicacion-movil
+    {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--color-fondo-tarjeta);
+        z-index: 2000;
+        flex-direction: column;
+    }
+
+    .modal-ubicacion-movil.oculto
+    {
+        display: none !important;
+    }
+
+    .cabecera-modal-ubicacion
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.2rem 0.6rem;
+        background: var(--color-fondo-tarjeta);
+    }
+
+    .titulo-modal
+    {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-texto-principal);
+    }
+
+    .boton-cerrar-modal
+    {
+        background: #F3F4F6;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 22px;
+        color: var(--color-texto-principal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .cuerpo-modal-ubicacion
+    {
+        padding: 1rem 1.2rem;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .caja-input-modal
+    {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--color-fondo-input);
+        border: 1.5px solid var(--color-borde);
+        border-radius: var(--radio-mediano);
+        padding: 0.5rem 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .input-modal-texto
+    {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.95rem;
+        color: var(--color-texto-principal);
+        padding-right: 26px;
     }
 }
