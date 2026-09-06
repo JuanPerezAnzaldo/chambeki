@@ -1,4 +1,3 @@
-/* cons derechos */
 :root
 {
     --color-fondo-hero: #ff682e;
@@ -16,8 +15,8 @@
     --color-boton-principal-hover: #D05221;
     --color-boton-principal-texto: #FFFFFF;
 
-    --color-etiqueta-fondo: rgba(255, 255, 255, 0.15);
-    --color-etiqueta-hover: rgba(255, 255, 255, 0.25);
+    --color-etiqueta-fondo: rgba(255, 255, 255, 0.18);
+    --color-etiqueta-hover: rgba(255, 255, 255, 0.30);
     --color-etiqueta-texto: #FFFFFF;
 
     --sombra-general: 0 10px 25px -5px rgba(232, 97, 45, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -27,7 +26,6 @@
     --radio-grande: 8px;
 }
 
-/* sin derechos */
 [data-theme="dark"]
 {
     --color-fondo-hero: linear-gradient(135deg, #1A1614 0%, #27211E 100%);
@@ -74,12 +72,14 @@ main
     flex: 1;
 }
 
-//* Encabezado y Navegación */
+/* Encabezado */
 .encabezado-principal
 {
     background: var(--color-fondo-hero);
     color: var(--color-texto-encabezado);
     padding: 1.2rem 2.5rem;
+    position: relative;
+    z-index: 50;
 }
 
 .contenedor-navegacion
@@ -95,7 +95,7 @@ main
 {
     font-size: 1.8rem;
     font-weight: 900;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     text-decoration: none;
     letter-spacing: -0.5px;
 }
@@ -104,32 +104,34 @@ main
 {
     display: flex;
     align-items: center;
-    gap: 1.4rem;
+    gap: 1.2rem;
 }
 
+/* Estilos de botones de navegación */
 .enlace-navegacion
 {
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 600;
     opacity: 0.95;
     transition: opacity 0.2s;
+    padding: 6px 12px;
+    border-radius: var(--radio-pequeno);
 }
 
 .enlace-navegacion:hover
 {
     opacity: 1;
-    text-decoration: underline;
+    background: rgba(255, 255, 255, 0.12);
 }
 
-/* Botón llamativo para Iniciar Sesión en el Header */
 .boton-nav-sesion
 {
-    background: rgba(255, 255, 255, 0.2);
-    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF !important;
     text-decoration: none;
-    padding: 8px 18px;
+    padding: 7px 16px;
     border-radius: var(--radio-pequeno);
     border: 1px solid rgba(255, 255, 255, 0.4);
     font-size: 0.9rem;
@@ -143,7 +145,7 @@ main
 .boton-nav-sesion:hover
 {
     background: #FFFFFF;
-    color: var(--color-fondo-hero);
+    color: var(--color-fondo-hero) !important;
     transform: translateY(-1px);
 }
 
@@ -168,13 +170,13 @@ main
     border: 1px solid var(--color-borde);
     box-shadow: var(--sombra-general);
     border-radius: var(--radio-mediano);
-    padding: 10px 14px;
-    font-size: 0.85rem;
+    padding: 8px 14px;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: transform 0.2s, background 0.2s;
 }
 
@@ -183,7 +185,7 @@ main
     transform: translateY(-2px);
 }
 
-/* Footer de escritorio */
+/* Pie de Página */
 .pie-pagina-principal
 {
     background: var(--color-fondo-tarjeta);
@@ -241,14 +243,49 @@ main
     color: var(--color-marcador-posicion);
 }
 
-/* Barra inferior para movil */
 .barra-navegacion-movil
 {
     display: none;
 }
 
+/* Responsive para Teléfonos */
 @media (max-width: 768px)
 {
+    .encabezado-principal
+    {
+        padding: 0.8rem 1rem;
+    }
+
+    .logotipo-marca
+    {
+        font-size: 1.35rem;
+    }
+
+    .acciones-navegacion
+    {
+        gap: 0.5rem;
+    }
+
+    .enlace-navegacion
+    {
+        font-size: 0.8rem;
+        padding: 4px 6px;
+    }
+
+    .boton-nav-sesion
+    {
+        font-size: 0.78rem;
+        padding: 5px 10px;
+    }
+
+    .boton-tema-flotante
+    {
+        bottom: 68px;
+        right: 12px;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+    }
+
     .pie-pagina-principal
     {
         padding-bottom: 5rem;
@@ -266,7 +303,7 @@ main
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 60px;
+        height: 56px;
         background: var(--color-fondo-tarjeta);
         border-top: 1px solid var(--color-borde);
         display: flex;
@@ -282,8 +319,8 @@ main
         align-items: center;
         text-decoration: none;
         color: var(--color-texto-cuerpo);
-        font-size: 0.75rem;
-        gap: 3px;
+        font-size: 0.7rem;
+        gap: 2px;
     }
 
     .elemento-nav-movil.activo
@@ -294,35 +331,8 @@ main
 
     .elemento-nav-movil svg
     {
-        width: 20px;
-        height: 20px;
+        width: 19px;
+        height: 19px;
         fill: currentColor;
-    }
-}
-
-@media (max-width: 768px)
-{
-    .encabezado-principal
-    {
-        padding: 1rem 1.2rem;
-    }
-
-    .logotipo-marca
-    {
-        font-size: 1.5rem;
-    }
-
-    .acciones-navegacion
-    {
-        gap: 1rem;
-    }
-
-    /* En celular se ubica arriba de la barra de navegación inferior */
-    .boton-tema-flotante
-    {
-        bottom: 70px;
-        right: 15px;
-        padding: 8px 12px;
-        font-size: 0.75rem;
     }
 }
