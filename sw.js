@@ -1,71 +1,85 @@
-const NOMBRE_CACHE = 'chambeki-cache-v7';
-const RECURSOS_PRECACHE = [
+const NOMBRE_CACHE = 'chambeki-cache-v5';
+const ARCHIVOS_CACHE = [
     '/',
-    '/offline.html',
     '/user/assets/css/global.css',
     '/user/assets/css/home.css',
+    '/user/assets/js/app.js',
+    '/user/assets/js/ubicacion.js',
     '/user/assets/js/theme.js'
 ];
+
+window.addEventListener = undefined; // Previene errores si se copia código de navegador
 
 self.addEventListener('install', (evento) =>
 {
     evento.waitUntil(
-        caches.open(NOMBRE_CACHE).then((cache) =>
-        {
-            return cache.addAll(RECURSOS_PRECACHE);
-        })
+        caches.open(NOMBRE_CACHE)
+            .then((cache) =>
+            {
+                return cache.addAll(ARCHIVOS_CACHE);
+            })
+            .then(() => self.skipWaiting())
     );
-    self.skipWaiting();
 });
 
 self.addEventListener('activate', (evento) =>
 {
     evento.waitUntil(
-        caches.keys().then((claves) =>
+        caches.keys().then((nombresCaches) =>
         {
             return Promise.all(
-                claves.map((clave) =>
+                nombresCaches.map((cache) =>
                 {
-                    if (clave !== NOMBRE_CACHE)
+                    if (cache !== NOMBRE_CACHE)
                     {
-                        return caches.delete(clave);
+                        return caches.delete(cache);
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
 self.addEventListener('fetch', (evento) =>
 {
+    // Solo intercepta peticiones GET estándar
+    if (evento.request.method !== 'GET')
+    {
+        return;
+    }
+
     evento.respondWith(
-        fetch(evento.request)
-            .then((respuestaRed) =>
+        caches.match(evento.request)
+            .then((respuestaCache) =>
             {
-                return respuestaRed;
-            })
-            .catch(async () =>
-            {
-                const respuestaCache = await caches.match(evento.request);
                 if (respuestaCache)
                 {
                     return respuestaCache;
                 }
 
-                if (evento.request.mode === 'navigate')
+                return fetch(evento.request).then((respuestaRed) =>
                 {
-                    const paginaOffline = await caches.match('/offline.html');
-                    if (paginaOffline)
+                    // Si la respuesta es inválida o externa, la retorna directamente sin cachear
+                    if (!respuestaRed || respuestaRed.status !== 200 || respuestaRed.type !== 'basic')
                     {
-                        return paginaOffline;
+                        return respuestaRed;
                     }
-                }
 
-                return new Response('Sin conexión a Internet', {
-                    status: 503,
-                    statusText: 'Servicio no disponible',
-                    headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
+                    const respuestaAEliminarCache = respuestaRed.clone();
+                    caches.open(NOMBRE_CACHE).then((cache) =>
+                    {
+                        cache.put(evento.request, respuestaAEliminarCache);
+                    });
+
+                    return respuestaRed;
+                }).catch(() =>
+                {
+                    // Fallback offline genérico si falla la red
+                    return new Response('Conexión perdida con CHAMBEKI', {
+                        status: 503,
+                        statusText: 'Service Unavailable',
+                        headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
+                    });
                 });
             })
     );
