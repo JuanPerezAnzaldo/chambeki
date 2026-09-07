@@ -1,4 +1,9 @@
 <?php
+    ob_start(function($buffer)
+    {
+        return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
+    });
+
     include $_SERVER['DOCUMENT_ROOT'] . '/chambeki/shared/includes/configuration.php';
     
     $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
