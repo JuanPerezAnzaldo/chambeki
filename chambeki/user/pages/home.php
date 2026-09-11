@@ -11,7 +11,7 @@
                 <input type="hidden" name="longitud" id="campoLongitud" value="">
                 <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
 
-                <!-- Campo de Oficio con Botón de Limpiar -->
+                <!-- Campo de oficio-->
                 <div class="campo-busqueda campo-oficio">
                     <input type="text" name="oficio" id="inputOficio" class="input-busqueda" placeholder="Oficio, especialidad o técnico...">
                     <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarOficio" aria-label="Limpiar campo">&times;</button>
@@ -24,7 +24,7 @@
                         <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
                         <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
                     
-                    <!-- Menú Desplegable en PC -->
+                    
                     <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">
                         <div class="opciones-fijas">
                             <button type="button" class="item-opcion-ubicacion" data-tipo="online">
@@ -71,19 +71,20 @@
             </form>
         </div>
 
+        <!-- Etiquetas populares -->
         <div class="etiquetas-rapidas">
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Electricista" class="enlace-etiqueta">Electricista</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Plomero" class="enlace-etiqueta">Plomero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Carpintero" class="enlace-etiqueta">Carpintero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Aire+Acondicionado" class="enlace-etiqueta">Técnico A/C</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Pintor" class="enlace-etiqueta">Pintor</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Cerrajero" class="enlace-etiqueta">Cerrajero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&q=Albañilería" class="enlace-etiqueta">Albañil</a>
+            <a href="" class="enlace-etiqueta">Electricista</a>
+            <a href="" class="enlace-etiqueta">Plomero</a>
+            <a href="" class="enlace-etiqueta">Carpintero</a>
+            <a href="" class="enlace-etiqueta">Técnico A/C</a>
+            <a href="" class="enlace-etiqueta">Pintor</a>
+            <a href="" class="enlace-etiqueta">Cerrajero</a>
+            <a href="" class="enlace-etiqueta">Albañil</a>
         </div>
     </div>
 </section>
 
-<!-- Modal Superpuesto para Móvil -->
+<!-- Modal de ubicacion para Móvil -->
 <div id="modalUbicacionMovil" class="modal-ubicacion-movil oculto">
     <div class="cabecera-modal-ubicacion">
         <h3 class="titulo-modal">Ubicación</h3>
@@ -135,36 +136,37 @@
     </div>
 </div>
 
+<!-- Lo que esta abajo del buscador -->
 <div class="envoltorio-contenido">
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Profesionales recién incorporados</h2>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios">Ver todos &rarr;</a>
+            <a href="">Ver todos &rarr;</a>
         </div>
 
         <div class="rejilla-especialistas">
-            <a href="#" class="tarjeta-especialista">
+            <a href="" class="tarjeta-especialista">
                 <div class="avatar-miniatura">MT</div>
                 <div class="info-especialista">
                     <h4>Mario Torres</h4>
                     <p>Electricista Residencial</p>
                 </div>
             </a>
-            <a href="#" class="tarjeta-especialista">
+            <a href="" class="tarjeta-especialista">
                 <div class="avatar-miniatura">JR</div>
                 <div class="info-especialista">
                     <h4>Jorge Ramírez</h4>
                     <p>Técnico en Climas y A/C</p>
                 </div>
             </a>
-            <a href="#" class="tarjeta-especialista">
+            <a href="" class="tarjeta-especialista">
                 <div class="avatar-miniatura">LC</div>
                 <div class="info-especialista">
                     <h4>Luis Castro</h4>
                     <p>Plomería y Gas</p>
                 </div>
             </a>
-            <a href="#" class="tarjeta-especialista">
+            <a href="" class="tarjeta-especialista">
                 <div class="avatar-miniatura">AS</div>
                 <div class="info-especialista">
                     <h4>Arturo Salinas</h4>
@@ -177,19 +179,19 @@
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Especialidades y oficios más solicitados</h2>
-            <a href="<?php echo URL_BASE; ?>?accion=categorias">Mostrar todas</a>
+            <a href="">Mostrar todas</a>
         </div>
 
         <div class="rejilla-pildoras">
-            <a href="#" class="item-pildora">Instalación eléctrica</a>
-            <a href="#" class="item-pildora">Fuga de gas</a>
-            <a href="#" class="item-pildora">Destape de cañerías</a>
-            <a href="#" class="item-pildora">Cerrajería 24/7</a>
-            <a href="#" class="item-pildora">Impermeabilización</a>
-            <a href="#" class="item-pildora">Herrería y soldadura</a>
-            <a href="#" class="item-pildora">Mantenimiento de Boiler</a>
-            <a href="#" class="item-pildora">Instalación de minisplit</a>
-            <a href="#" class="item-pildora">Reparación de lavadoras</a>
+            <a href="" class="item-pildora">Instalación eléctrica</a>
+            <a href="" class="item-pildora">Fuga de gas</a>
+            <a href="" class="item-pildora">Destape de cañerías</a>
+            <a href="" class="item-pildora">Cerrajería 24/7</a>
+            <a href="" class="item-pildora">Impermeabilización</a>
+            <a href="" class="item-pildora">Herrería y soldadura</a>
+            <a href="" class="item-pildora">Mantenimiento de Boiler</a>
+            <a href="" class="item-pildora">Instalación de minisplit</a>
+            <a href="" class="item-pildora">Reparación de lavadoras</a>
         </div>
     </section>
 </div>

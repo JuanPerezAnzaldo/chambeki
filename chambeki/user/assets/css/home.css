@@ -1,4 +1,4 @@
-/* Zona Naranja Principal */
+
 .seccion-hero
 {
     background: var(--color-fondo-hero);
@@ -33,7 +33,6 @@
     margin-bottom: 2rem;
 }
 
-/* Buscador en Una Sola Fila */
 .contenedor-buscador
 {
     width: 100%;
@@ -95,7 +94,6 @@
     color: var(--color-marcador-posicion);
 }
 
-/* Botón 'X' para Borrar Contenido */
 .boton-limpiar-input
 {
     position: absolute;
@@ -156,7 +154,6 @@
     fill: currentColor;
 }
 
-/* Menú Desplegable en PC */
 .contenedor-desplegable-ubicacion
 {
     position: relative;
@@ -257,7 +254,6 @@
     color: var(--color-marcador-posicion);
 }
 
-/* Badges / Etiquetas Rápidas */
 .etiquetas-rapidas
 {
     display: flex;
@@ -286,13 +282,11 @@
     background: var(--color-etiqueta-hover);
 }
 
-/* Control del Modal Móvil en PC: Totalmente inactivo */
 .modal-ubicacion-movil
 {
     display: none !important;
 }
 
-/* Contenido Principal Inferior */
 .envoltorio-contenido
 {
     max-width: 1100px;
@@ -409,7 +403,6 @@
     border-color: var(--color-boton-principal);
 }
 
-/* Reglas Exclusivas para Móviles */
 @media (max-width: 640px)
 {
     .seccion-hero
@@ -471,7 +464,6 @@
         display: none !important;
     }
 
-    /* Modal Superpuesto en Móvil */
     .modal-ubicacion-movil
     {
         display: flex !important;

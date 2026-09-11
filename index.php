@@ -1,4 +1,5 @@
 <?php
+    //ingnoren esto, es para borrar los comentarios al inspeccionar la pagina
     ob_start(function($buffer)
     {
         return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);

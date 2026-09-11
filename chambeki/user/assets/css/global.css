@@ -77,7 +77,7 @@ main
     display: none !important;
 }
 
-/* Encabezado Principal */
+/* header*/
 .encabezado-principal
 {
     background: var(--color-fondo-hero);
@@ -112,7 +112,7 @@ main
     gap: 1.2rem;
 }
 
-/* Botón Tres Puntos */
+/* botón de las 3 bolas */
 .contenedor-menu-opciones
 {
     position: relative;
@@ -153,7 +153,7 @@ main
     display: block;
 }
 
-/* Menú Desplegable */
+/* Menú desplegable */
 .menu-desplegable-opciones
 {
     position: absolute;
@@ -212,7 +212,7 @@ main
     margin: 4px 0;
 }
 
-/* Botón Iniciar Sesión */
+/* boton de inicio de sesion */
 .boton-nav-sesion
 {
     background: rgba(255, 255, 255, 0.22);
@@ -245,7 +245,7 @@ main
     font-weight: 600;
 }
 
-/* Botón Flotante de Modo Nocturno */
+/* boton para quitarle derechos a la pagina */
 .boton-tema-flotante
 {
     position: fixed;
@@ -272,7 +272,7 @@ main
     transform: translateY(-2px);
 }
 
-/* Pie de Página */
+/* footer */
 .pie-pagina-principal
 {
     background: var(--color-fondo-tarjeta);

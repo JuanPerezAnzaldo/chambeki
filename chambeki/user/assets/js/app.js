@@ -28,7 +28,7 @@ if (botonDescargarPWA)
     });
 }
 
-// Inicialización de eventos del menú de opciones
+
 document.addEventListener('DOMContentLoaded', () =>
 {
     const botonMenu = document.getElementById('btnMenuOpciones');

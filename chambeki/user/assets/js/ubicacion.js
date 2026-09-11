@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () =>
 
     let temporizadorEscritura = null;
 
-    // Catálogo de ciudades predeterminadas
+    // ciudades predeterminadas
     const ciudadesFijas = [
         { nombre: 'Tijuana', lat: '32.5149', lon: '-117.0382' },
         { nombre: 'Ciudad de México', lat: '19.4326', lon: '-99.1332' },
@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () =>
         { nombre: 'Puebla', lat: '19.0414', lon: '-98.2063' }
     ];
 
-    // Detección móvil híbrida (pantalla y capacidad táctil real)
     function esDispositivoMovil()
     {
         const pantallaChica = window.innerWidth <= 768;
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () =>
         return pantallaChica || pantallaTactil;
     }
 
-    // Bloquea el teclado virtual en el input principal solo en móvil
+    // Bloquea el teclado en el input de telefonoss
     function configurarModoInputPrincipal()
     {
         if (!inputUbicacion)
@@ -61,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () =>
     configurarModoInputPrincipal();
     window.addEventListener('resize', configurarModoInputPrincipal);
 
-    // Renderiza las opciones iniciales
+
     function renderizarCiudadesIniciales(contenedor)
     {
         if (!contenedor)
@@ -92,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () =>
     renderizarCiudadesIniciales(listaSugerenciasPC);
     renderizarCiudadesIniciales(listaUbicacionesMovil);
 
-    // Botón borrar Oficio
+    // Botón borrar
     if (inputOficio && btnLimpiarOficio)
     {
         inputOficio.addEventListener('input', () =>
@@ -108,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Botón borrar Ubicación Principal
+    // Botón borrar 
     if (inputUbicacion && btnLimpiarUbicacion)
     {
         btnLimpiarUbicacion.addEventListener('click', (evento) =>
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Apertura del modal en móvil / dropdown en PC
+    // Apertura de la ubicacion
     if (inputUbicacion)
     {
         const abrirSelectorUbicacion = (evento) =>
@@ -145,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () =>
             }
         };
 
-        // Escucha táctil adelantada para bloquear teclado de inmediato
         inputUbicacion.addEventListener('pointerdown', (e) =>
         {
             if (esDispositivoMovil())
@@ -157,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () =>
         inputUbicacion.addEventListener('click', abrirSelectorUbicacion);
     }
 
-    // Cierre en PC al hacer clic afuera
     document.addEventListener('click', (evento) =>
     {
         if (!evento.target.closest('.contenedor-desplegable-ubicacion') && menuUbicaciones)
@@ -171,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () =>
         menuUbicaciones.addEventListener('click', procesarClicOpcion);
     }
 
-    // Gestión del Modal Móvil
     function abrirModalMovil()
     {
         if (!modalUbicacionMovil)
@@ -225,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Input y botón borrar dentro del modal móvil
     if (inputUbicacionMovil && btnLimpiarUbicacionMovil)
     {
         inputUbicacionMovil.addEventListener('input', () =>
@@ -253,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-    // Escritura en PC
     if (inputUbicacion)
     {
         inputUbicacion.addEventListener('input', () =>
