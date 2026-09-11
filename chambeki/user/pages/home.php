@@ -1,6 +1,8 @@
 <section class="seccion-hero">
     <div class="contenedor-hero">
-        <h1 class="titulo-hero">Encuentra al HOla profesional que necesitas</h1>
+        ok ahora arriba ya vez que sale home.php y una +
+        picale al mas y abre shell 
+        <h1 class="titulo-hero">Encuentra al profesional que necesitas</h1> 
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
