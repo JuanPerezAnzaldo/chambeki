@@ -1,6 +1,6 @@
 <section class="seccion-hero">
     <div class="contenedor-hero">
-        <h1 class="titulo-hero">Encuentra al que necesitas</h1> 
+        <h1 class="titulo-hero">Encuentra al listoopoooo tu puedes papu, que necesitas</h1> 
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
