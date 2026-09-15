@@ -18,6 +18,12 @@
             include(PAGINAS . 'servicios.php');
             break;
         }
+
+        case 'nuevo-archivo':
+        {
+            include(PAGINAS . 'nuevoArchivo.php');
+            break;
+        }
     
         case 'inicio':
         default:
