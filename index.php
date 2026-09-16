@@ -18,7 +18,11 @@
             include(PAGINAS . 'servicios.php');
             break;
         }
-
+        case 'correo':
+        {
+            include(PAGINAS . 'correos.php');
+            break;
+        }
         case 'nuevo-archivo':
         {
             include(PAGINAS . 'nuevoArchivo.php');
