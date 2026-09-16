@@ -14,7 +14,7 @@ function enviarCorreoChambeki($tipoCorreo, $correoDestino, $nombreUsuario, $dato
 
     $asunto = "";
     $cuerpoHtml = "";
-    $enlaceBoton = "https://lavender-seal-170625.hostingersite.com" . URL_BASE . "?accion=login";
+    $enlaceBoton = "https://chambeki.com" . URL_BASE . "?accion=login";
 
     //colores
     $colorHero = "#ff682e";
@@ -53,7 +53,7 @@ function enviarCorreoChambeki($tipoCorreo, $correoDestino, $nombreUsuario, $dato
 
                                     <p style='font-size: 13px; color: #A6958E; margin-top: 30px; border-top: 1px solid #F0D7CC; padding-top: 20px;'>
                                         Si no creaste esta cuenta, ignora este mensaje.<br><br>
-                                        <strong>El Equipo de CHAMBEKI</strong>
+                                        <strong>CHAMBEKI</strong>
                                     </p>
                                 </td>
                             </tr>
@@ -83,7 +83,7 @@ function enviarCorreoChambeki($tipoCorreo, $correoDestino, $nombreUsuario, $dato
                             <tr>
                                 <td style='padding: 30px 20px; text-align: center;'>
                                     <h3 style='color: #2B2320; margin-top: 0; font-size: 20px;'>Hola, $nombreUsuario</h3>
-                                    <p style='font-size: 16px; line-height: 1.6; color: $colorTexto; margin-bottom: 25px;'>Se ha solicitado un código de un solo uso (OTP) para acceder a tu cuenta o confirmar una acción. Utiliza el siguiente código de 6 dígitos:</p>
+                                    <p style='font-size: 16px; line-height: 1.6; color: $colorTexto; margin-bottom: 25px;'>Se ha solicitado un código de un solo uso para acceder a tu cuenta o confirmar una acción. Utiliza el siguiente código de 6 dígitos:</p>
 
                                     <div style='background-color: #FDFBF7; border: 2px dashed $colorHero; padding: 15px; margin: 0 auto 25px auto; max-width: 250px; border-radius: 8px;'>
                                         <h1 style='margin: 0; font-size: 32px; color: $colorHero; letter-spacing: 5px;'>$codigoAcceso</h1>
@@ -101,7 +101,7 @@ function enviarCorreoChambeki($tipoCorreo, $correoDestino, $nombreUsuario, $dato
 
                                     <p style='font-size: 13px; color: #A6958E; margin-top: 30px; border-top: 1px solid #F0D7CC; padding-top: 20px;'>
                                         Nunca compartas este código con nadie. Si no lo solicitaste, por favor cambia tu contraseña.<br><br>
-                                        <strong>El Equipo de CHAMBEKI</strong>
+                                        <strong>CHAMBEKI</strong>
                                     </p>
                                 </td>
                             </tr>
