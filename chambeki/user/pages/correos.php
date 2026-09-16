@@ -1,6 +1,5 @@
 <?php
-// Ya no incluimos configuration.php porque index.php lo hace
-require_once DOCROOT . 'shared/includes/mailer.php';
+//require_once DOCROOT . 'shared/includes/mailer.php';
 
 $mensajeEstado = "";
 $claseMensaje = "";
@@ -12,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
     if (empty($correoDestino))
     {
-        $mensajeEstado = "Por favor, ingresa un correo válido.";
+        $mensajeEstado = "Por favor, ingresa un corSreo válido.";
         $claseMensaje = "error";
     }
     else
