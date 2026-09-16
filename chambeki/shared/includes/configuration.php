@@ -1,7 +1,7 @@
 <?php
     define('SITENAME', 'CHAMBEKI');
     
-    define('DOCROOT', dirname(__DIR__, 2) . '/');
+    define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/chambeki/');
 
     define('URL_BASE', '/chambeki/');
     define('HEADER', DOCROOT . 'user/includes/header.php');
