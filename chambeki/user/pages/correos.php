@@ -1,5 +1,5 @@
 <?php
-//require_once DOCROOT . 'shared/includes/mailer.php';
+require_once DOCROOT . 'shared/includes/mailer.php';
 
 $mensajeEstado = "";
 $claseMensaje = "";
