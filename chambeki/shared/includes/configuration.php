@@ -1,28 +1,36 @@
 <?php
-    define('SITENAME', 'CHAMBEKI');
-    
-    define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    define('URL_BASE', '/');
-    define('HEADER', DOCROOT . 'user/includes/header.php');
-    define('FOOTER', DOCROOT . 'user/includes/footer.php');
-    define('FUNCIONES', DOCROOT . 'user/includes/functions.php');
-    define('PAGINAS', DOCROOT . 'user/pages/');
-    define('MAI','shared/libs/PHPMailer/src/');
+define('SITENAME', 'CHAMBEKI');
 
-    //Para aaceder a las paginas js, css y esas weas
-    //se usan asi "echo JS_RUTA archivo.js
-    define('CSS_RUTA', '/chambeki/user/assets/css/');
-    define('JS_RUTA', '/chambeki/user/assets/js/');
-    define('IMG_RUTA', '/chambeki/user/assets/img/');
-    
-    if (file_exists(FUNCIONES))
-    {
-        include(FUNCIONES);
-    }
-    
-    if (session_status() === PHP_SESSION_NONE)
-    {
-        session_start();
-    }
-?> 
+//raíz del servidor
+define('DOCROOT', $_SERVER['DOCUMENT_ROOT'] . '/');
+
+//URL Base
+define('URL_BASE', '/');
+
+define('HEADER', DOCROOT . 'user/includes/header.php');
+define('FOOTER', DOCROOT . 'user/includes/footer.php');
+define('FUNCIONES', DOCROOT . 'user/includes/functions.php');
+define('PAGINAS', DOCROOT . 'user/pages/');
+
+//pa los correos
+define('MAI', DOCROOT . 'shared/libs/PHPMailer/src/');
+
+//si
+define('CSS_RUTA', URL_BASE . 'user/assets/css/');
+define('JS_RUTA', URL_BASE . 'user/assets/js/');
+define('IMG_RUTA', URL_BASE . 'user/assets/img/');
+
+if (file_exists(FUNCIONES))
+{
+    include(FUNCIONES);
+}
+
+if (session_status() === PHP_SESSION_NONE)
+{
+    session_start();
+}
+?>
