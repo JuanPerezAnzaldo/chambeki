@@ -5,7 +5,7 @@
         return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
     });
 
-    include $_SERVER['DOCUMENT_ROOT'] . '/chambeki/shared/includes/configuration.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
     
     $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
     
