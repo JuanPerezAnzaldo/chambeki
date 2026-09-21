@@ -1,11 +1,11 @@
 <?php
 /*
-    PROCESO: Registro de usuario
+    PROCESO: Registro de usuario (paso 1 de 2)
     Requerimientos: RF-04, RNF-01, RSIS-05, RS-01, RS-05, RI-03, RLN-02, RNF-05
 
-    El proceso tiene dos pasos dentro de la misma pantalla:
-      paso 'datos'  -> captura y validacion de duplicidad, envio del codigo
-      paso 'codigo' -> validacion del codigo y guardado del registro
+    Esta pantalla solo captura los datos y envia el codigo.
+    La validacion del codigo vive en su propia pagina:
+    user/pages/verificarCodigo.php (accion=verificar-codigo).
 */
 
 require_once MAILER;
@@ -15,6 +15,12 @@ require_once DOCROOT . 'user/includes/plantillaAutenticacion.php';
 if (hayUsuarioEnSesion())
 {
     redirigir(URL_BASE);
+}
+
+//si ya se envio un codigo y todavia no se valida, no hay nada que hacer aqui
+if (isset($_SESSION['registro_pendiente']))
+{
+    redirigir(URL_BASE . '?accion=verificar-codigo');
 }
 
 $errores = [];
@@ -29,16 +35,6 @@ $valores = [
     'tipo_cuenta' => 'personal'
 ];
 
-if (isset($_SESSION['registro_pendiente']))
-{
-    $valores['nombre']      = $_SESSION['registro_pendiente']['nombre'];
-    $valores['correo']      = $_SESSION['registro_pendiente']['correo'];
-    $valores['telefono']    = $_SESSION['registro_pendiente']['telefono'];
-    $valores['tipo_cuenta'] = $_SESSION['registro_pendiente']['tipo_cuenta'];
-}
-
-$paso = isset($_SESSION['registro_pendiente']) ? 'codigo' : 'datos';
-
 if (isset($_SESSION['registro_exito']))
 {
     $registroCompletado = true;
@@ -46,203 +42,87 @@ if (isset($_SESSION['registro_exito']))
     unset($_SESSION['registro_exito']);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST')
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['operacion'] ?? '') === 'capturar_datos')
 {
-    $operacion = isset($_POST['operacion']) ? $_POST['operacion'] : '';
+    $datos = [
+        'nombre'               => limpiarEntrada($_POST['nombre'] ?? ''),
+        'correo'               => strtolower(limpiarEntrada($_POST['correo'] ?? '')),
+        'telefono'             => limpiarEntrada($_POST['telefono'] ?? ''),
+        'contrasena'           => (string) ($_POST['contrasena'] ?? ''),
+        'contrasena_confirmar' => (string) ($_POST['contrasena_confirmar'] ?? ''),
+        'tipo_cuenta'          => ($_POST['tipo_cuenta'] ?? 'personal') === 'empresarial' ? 'empresarial' : 'personal',
+        'terminos'             => isset($_POST['terminos'])
+    ];
 
-    switch ($operacion)
+    $valores['nombre']      = $datos['nombre'];
+    $valores['correo']      = $datos['correo'];
+    $valores['telefono']    = $datos['telefono'];
+    $valores['tipo_cuenta'] = $datos['tipo_cuenta'];
+
+    //RS-05: toda la validacion se repite en el servidor
+    $errores = validarDatosRegistro($datos);
+
+    //validacion de duplicidad contra la base de datos
+    if (!isset($errores['correo']) && correoYaRegistrado($datos['correo']))
     {
-        //-----------------------------------------------------
-        // PASO 1: captura de datos y envio del codigo
-        //-----------------------------------------------------
-        case 'capturar_datos':
+        $errores['correo'] = 'Ese correo ya tiene una cuenta en CHAMBEKI. Inicia sesion o recupera tu contrasena.';
+    }
+
+    //RNF-01 y RNF-05: foto de perfil de maximo 2MB
+    $resultadoFoto = null;
+
+    if (empty($errores))
+    {
+        $resultadoFoto = guardarFotoPerfil($_FILES['foto_perfil'] ?? null);
+
+        if (!$resultadoFoto['exito'])
         {
-            $datos = [
-                'nombre'               => limpiarEntrada($_POST['nombre'] ?? ''),
-                'correo'               => strtolower(limpiarEntrada($_POST['correo'] ?? '')),
-                'telefono'             => limpiarEntrada($_POST['telefono'] ?? ''),
-                'contrasena'           => (string) ($_POST['contrasena'] ?? ''),
-                'contrasena_confirmar' => (string) ($_POST['contrasena_confirmar'] ?? ''),
-                'tipo_cuenta'          => ($_POST['tipo_cuenta'] ?? 'personal') === 'empresarial' ? 'empresarial' : 'personal',
-                'terminos'             => isset($_POST['terminos'])
+            $errores['foto_perfil'] = $resultadoFoto['error'];
+        }
+    }
+
+    if (empty($errores))
+    {
+        //RSIS-05 + RI-03: codigo temporal enviado por SMTP con PHPMailer
+        $codigo = generarCodigoVerificacion($datos['correo'], 'registro');
+
+        $resultadoCorreo = enviarCorreo('codigo', $datos['correo'], $datos['nombre'], [
+            'codigo'   => $codigo,
+            'motivo'   => 'registro',
+            'vigencia' => MINUTOS_VIGENCIA_CODIGO
+        ]);
+
+        if (!$resultadoCorreo['exito'])
+        {
+            eliminarFotoPerfil($resultadoFoto['ruta']);
+            $avisoGeneral = ['tipo' => 'error', 'texto' => 'No pudimos enviar el codigo a ese correo. Revisalo e intenta de nuevo.'];
+        }
+        else
+        {
+            /*
+                El usuario todavia NO se guarda en la tabla: el diagrama
+                indica que el registro se inserta hasta que el codigo es
+                correcto. Mientras tanto queda en la sesion, ya con la
+                contrasena cifrada (RS-01).
+            */
+            $_SESSION['registro_pendiente'] = [
+                'nombre'          => $datos['nombre'],
+                'correo'          => $datos['correo'],
+                'telefono'        => preg_replace('/[^0-9]/', '', $datos['telefono']),
+                'contrasena_hash' => password_hash($datos['contrasena'], PASSWORD_DEFAULT),
+                'foto_perfil'     => $resultadoFoto['ruta'],
+                'tipo_cuenta'     => $datos['tipo_cuenta']
             ];
 
-            $valores['nombre']      = $datos['nombre'];
-            $valores['correo']      = $datos['correo'];
-            $valores['telefono']    = $datos['telefono'];
-            $valores['tipo_cuenta'] = $datos['tipo_cuenta'];
+            guardarMensaje('exito', 'Te enviamos un codigo de 6 digitos a ' . $datos['correo'] . '.');
 
-            //RS-05: toda la validacion se repite en el servidor
-            $errores = validarDatosRegistro($datos);
-
-            //validacion de duplicidad contra la base de datos
-            if (!isset($errores['correo']) && correoYaRegistrado($datos['correo']))
-            {
-                $errores['correo'] = 'Ese correo ya tiene una cuenta en CHAMBEKI. Inicia sesion o recupera tu contrasena.';
-            }
-
-            //RNF-01 y RNF-05: foto de perfil de maximo 2MB
-            $resultadoFoto = null;
-
-            if (empty($errores))
-            {
-                $resultadoFoto = guardarFotoPerfil($_FILES['foto_perfil'] ?? null);
-
-                if (!$resultadoFoto['exito'])
-                {
-                    $errores['foto_perfil'] = $resultadoFoto['error'];
-                }
-            }
-
-            if (empty($errores))
-            {
-                // 1. Guardar primero en sesion para que el Paso 2 quede activado
-                $_SESSION['registro_pendiente'] = [
-                    'nombre'          => $datos['nombre'],
-                    'correo'          => $datos['correo'],
-                    'telefono'        => preg_replace('/[^0-9]/', '', $datos['telefono']),
-                    'contrasena_hash' => password_hash($datos['contrasena'], PASSWORD_DEFAULT),
-                    'foto_perfil'     => $resultadoFoto['ruta'],
-                    'tipo_cuenta'     => $datos['tipo_cuenta']
-                ];
-
-                // 2. IMPORTANTE: Liberar candado de sesion para evitar congelar el navegador
-                session_write_close();
-
-                // 3. Generar codigo en BD
-                $codigo = generarCodigoVerificacion($datos['correo'], 'registro');
-
-                // 4. Enviar correo por SMTP
-                $resultadoCorreo = enviarCorreo('codigo', $datos['correo'], $datos['nombre'], [
-                    'codigo'   => $codigo,
-                    'motivo'   => 'registro',
-                    'vigencia' => MINUTOS_VIGENCIA_CODIGO
-                ]);
-
-                // 5. Reabrir sesion para notificaciones flash
-                session_start();
-
-                if ($resultadoCorreo['exito'])
-                {
-                    guardarMensaje('exito', 'Te enviamos un codigo de 6 digitos a ' . $datos['correo'] . '.');
-                }
-                else
-                {
-                    guardarMensaje('error', 'El codigo de verificacion fue generado. Si tarda en llegar a tu bandeja de entrada, revisa tu carpeta de Spam o usa "Reenviar codigo".');
-                }
-
-                redirigir(URL_BASE . '?accion=registro');
-            }
-
-            $paso = 'datos';
-            break;
-        }
-
-        //-----------------------------------------------------
-        // PASO 2: validacion del codigo y alta del registro
-        //-----------------------------------------------------
-        case 'validar_codigo':
-        {
-            if (!isset($_SESSION['registro_pendiente']))
-            {
-                redirigir(URL_BASE . '?accion=registro');
-            }
-
-            $pendiente = $_SESSION['registro_pendiente'];
-            $codigoCapturado = preg_replace('/[^0-9]/', '', limpiarEntrada($_POST['codigo'] ?? ''));
-
-            $resultadoCodigo = validarCodigoVerificacion($pendiente['correo'], 'registro', $codigoCapturado);
-
-            if (!$resultadoCodigo['valido'])
-            {
-                $errores['codigo'] = $resultadoCodigo['mensaje'];
-                $paso = 'codigo';
-                break;
-            }
-
-            //segunda revision de duplicidad por si alguien registro el correo mientras tanto
-            if (correoYaRegistrado($pendiente['correo']))
-            {
-                eliminarFotoPerfil($pendiente['foto_perfil']);
-                unset($_SESSION['registro_pendiente']);
-
-                guardarMensaje('error', 'Ese correo acaba de ser registrado. Intenta iniciar sesion.');
-                redirigir(URL_BASE . '?accion=registro');
-            }
-
-            //RF-04: se guarda el registro con la fecha actual y la contrasena cifrada
-            crearUsuario($pendiente);
-            registrarEnBitacora($pendiente['correo'], 'registro_completado');
-
-            //correo de bienvenida
-            session_write_close();
-            enviarCorreo('registro', $pendiente['correo'], $pendiente['nombre']);
-
-            session_start();
-            unset($_SESSION['registro_pendiente']);
-            $_SESSION['registro_exito'] = $pendiente['nombre'];
-
-            redirigir(URL_BASE . '?accion=registro');
-        }
-
-        //-----------------------------------------------------
-        // Reenviar el codigo
-        //-----------------------------------------------------
-        case 'reenviar_codigo':
-        {
-            if (!isset($_SESSION['registro_pendiente']))
-            {
-                redirigir(URL_BASE . '?accion=registro');
-            }
-
-            $pendiente = $_SESSION['registro_pendiente'];
-
-            session_write_close();
-            $codigo = generarCodigoVerificacion($pendiente['correo'], 'registro');
-
-            $resultadoCorreo = enviarCorreo('codigo', $pendiente['correo'], $pendiente['nombre'], [
-                'codigo'   => $codigo,
-                'motivo'   => 'registro',
-                'vigencia' => MINUTOS_VIGENCIA_CODIGO
-            ]);
-
-            session_start();
-            if ($resultadoCorreo['exito'])
-            {
-                guardarMensaje('exito', 'Listo, te enviamos un codigo nuevo.');
-            }
-            else
-            {
-                guardarMensaje('error', 'No se pudo reenviar el codigo. Intenta en un momento.');
-            }
-
-            redirigir(URL_BASE . '?accion=registro');
-        }
-
-        //-----------------------------------------------------
-        // Cancelar el registro en curso
-        //-----------------------------------------------------
-        case 'cancelar_registro':
-        {
-            if (isset($_SESSION['registro_pendiente']))
-            {
-                eliminarFotoPerfil($_SESSION['registro_pendiente']['foto_perfil']);
-                unset($_SESSION['registro_pendiente']);
-            }
-
-            redirigir(URL_BASE . '?accion=registro');
+            //aqui esta el reenvio a la pagina dedicada de verificacion
+            redirigir(URL_BASE . '?accion=verificar-codigo');
         }
     }
 }
 
-$mensajeFlash = obtenerMensaje();
-?>
-
-<?php
-    //pestanas solo en el formulario de datos; en el paso del codigo estorban
-    $pestanaActiva = (!$registroCompletado && $paso === 'datos') ? 'registro' : null;
-
-    abrirPantallaAutenticacion($pestanaActiva);
+abrirPantallaAutenticacion($registroCompletado ? null : 'registro');
 ?>
 
         <?php if ($registroCompletado): ?>
@@ -260,51 +140,10 @@ $mensajeFlash = obtenerMensaje();
                 <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-autenticacion">Iniciar sesion</a>
             </div>
 
-        <?php elseif ($paso === 'codigo'): ?>
-
-            <h1 class="titulo-autenticacion">Verifica tu correo</h1>
-            <p class="texto-autenticacion">
-                Escribe el codigo de 6 digitos que enviamos a
-                <strong><?php echo escaparSalida($valores['correo']); ?></strong>.
-                Vence en <?php echo MINUTOS_VIGENCIA_CODIGO; ?> minutos.
-            </p>
-
-            <?php if ($mensajeFlash !== null): ?>
-                <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
-            <?php endif; ?>
-
-            <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST" class="formulario-autenticacion" novalidate>
-                <input type="hidden" name="operacion" value="validar_codigo">
-
-                <div class="campo-formulario">
-                    <label for="campoCodigo">Codigo de verificacion</label>
-                    <input type="text" id="campoCodigo" name="codigo" class="campo-codigo" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" required autofocus>
-                    <?php if (isset($errores['codigo'])): ?><span class="error-campo"><?php echo escaparSalida($errores['codigo']); ?></span><?php endif; ?>
-                </div>
-
-                <button type="submit" class="boton-autenticacion">Crear mi cuenta</button>
-            </form>
-
-            <div class="acciones-secundarias">
-                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
-                    <input type="hidden" name="operacion" value="reenviar_codigo">
-                    <button type="submit" class="boton-enlace">Reenviar codigo</button>
-                </form>
-
-                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
-                    <input type="hidden" name="operacion" value="cancelar_registro">
-                    <button type="submit" class="boton-enlace">Cambiar mis datos</button>
-                </form>
-            </div>
-
         <?php else: ?>
 
             <h1 class="titulo-autenticacion">Crea tu cuenta</h1>
             <p class="texto-autenticacion">Solo necesitamos tus datos basicos y una foto donde se vea tu rostro.</p>
-
-            <?php if ($mensajeFlash !== null): ?>
-                <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
-            <?php endif; ?>
 
             <?php if ($avisoGeneral !== null): ?>
                 <p class="aviso-autenticacion aviso-error"><?php echo escaparSalida($avisoGeneral['texto']); ?></p>

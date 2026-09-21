@@ -17,7 +17,7 @@
         <?php endif; ?>
 
         <!-- pantallas de registro y recuperacion de contrasena -->
-        <?php if (isset($accion) && ($accion === 'login' || $accion === 'registro' || $accion === 'recuperar')): ?>
+        <?php if (isset($accion) && in_array($accion, ['login', 'registro', 'verificar-codigo', 'recuperar'], true)): ?>
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
         <?php endif; ?>
     </head>

@@ -49,6 +49,13 @@
             break;
         }
 
+        //Paso 2 del registro: captura del codigo de verificacion
+        case 'verificar-codigo':
+        {
+            include(PAGINAS . 'verificarCodigo.php');
+            break;
+        }
+
         //Proceso de cambio / recuperacion de contrasena
         case 'recuperar':
         {
