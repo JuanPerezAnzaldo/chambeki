@@ -36,6 +36,20 @@
     margin: 0 auto 1.8rem;
 }
 
+.contenedor-buscador.transicion-arriba{
+    position:fixed;
+    left: 50%;
+    z-index: 500;
+    transform: translateX(-50%);
+    transition: top 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+.contenedor-buscador.transicion-arriba.en-posicion-arriba{
+    top: 16px !important;
+}
+
+.titulo-hero,.
+
 .caja-busqueda {
     display: flex;
     flex-direction: row;
