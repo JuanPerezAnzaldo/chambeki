@@ -28,33 +28,6 @@
             include(PAGINAS . 'nuevoArchivo.php');
             break;
         }
-
-        //Proceso de inicio de sesion
-        case 'login':
-        {
-            include(PAGINAS . 'login.php');
-            break;
-        }
-
-        case 'cerrar_sesion':
-        {
-            include(PAGINAS . 'cerrarSesion.php');
-            break;
-        }
-
-        //Proceso de registro de usuario
-        case 'registro':
-        {
-            include(PAGINAS . 'registro.php');
-            break;
-        }
-
-        //Proceso de cambio / recuperacion de contrasena
-        case 'recuperar':
-        {
-            include(PAGINAS . 'recuperar.php');
-            break;
-        }
     
         case 'inicio':
         default:

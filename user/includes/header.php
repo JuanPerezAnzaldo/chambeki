@@ -15,11 +15,6 @@
         <?php if (!isset($accion) || $accion === 'inicio' || $accion === 'home'): ?>
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>home.css?v=10">
         <?php endif; ?>
-
-        <!-- pantallas de registro y recuperacion de contrasena -->
-        <?php if (isset($accion) && ($accion === 'login' || $accion === 'registro' || $accion === 'recuperar')): ?>
-            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
-        <?php endif; ?>
     </head>
     
     <body>
@@ -66,7 +61,6 @@
                             <a href="<?php echo URL_BASE; ?>?accion=cerrar_sesion" class="boton-nav-sesion">(Salir)</a>
                         </div>
                     <?php else: ?>
-                        <a href="<?php echo URL_BASE; ?>?accion=registro" class="boton-nav-sesion">Crea tu cuenta</a>
                         <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-nav-sesion">Inicia sesión</a>
                     <?php endif; ?>
                 </nav>

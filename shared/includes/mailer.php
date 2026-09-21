@@ -3,18 +3,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require_once DOCROOT . 'shared/libs/PHPMailer/src/Exception.php';
-require_once DOCROOT . 'shared/libs/PHPMailer/src/PHPMailer.php';
-require_once DOCROOT . 'shared/libs/PHPMailer/src/SMTP.php';
+require DOCROOT . 'shared/libs/PHPMailer/src/Exception.php';
+require DOCROOT . 'shared/libs/PHPMailer/src/PHPMailer.php';
+require DOCROOT . 'shared/libs/PHPMailer/src/SMTP.php';
 
-/*
-    Envio de correos automatizados (RSIS-05 protocolo SMTP, RI-03 PHPMailer)
-
-    Tipos disponibles:
-      'registro'            -> bienvenida despues de crear la cuenta
-      'codigo'              -> codigo temporal de verificacion o recuperacion
-      'contrasena_cambiada' -> aviso de que la contrasena fue actualizada
-*/
 function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra = [])
 {
     $correoEnviado = false;
@@ -59,19 +51,7 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
         {
             $asunto = "¡Bienvenido a CHAMBEKI, {$nombreUsuario}!";
 
-            $cuerpoPrincipal = "
-                <p>Tu cuenta quedo creada y verificada. Ya puedes iniciar sesion para buscar
-                plomeros, electricistas, carpinteros y demas oficios cerca de ti.</p>
-
-                <p style='text-align: center; margin: 30px 0;'>
-                    <a href='{$enlaceBoton}' style='background-color: {$colorBoton}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; display: inline-block;'>
-                        Entrar a mi cuenta
-                    </a>
-                </p>
-
-                <p style='font-size: 14px; color: #777777;'>Si quieres ofrecer tus servicios, puedes
-                convertir tu cuenta en perfil de freelancer desde el menu de opciones.</p>
-            ";
+            $cuerpoPrincipal = "" ;
 
             $cuerpoHtml = $encabezadoHtml . $cuerpoPrincipal . $pieHtml;
             break;
@@ -81,49 +61,7 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
         {
             $asunto = "Tu código de seguridad de CHAMBEKI";
 
-            $codigo = isset($datosExtra['codigo']) ? $datosExtra['codigo'] : '';
-            $vigencia = isset($datosExtra['vigencia']) ? (int) $datosExtra['vigencia'] : 15;
-
-            $motivo = (isset($datosExtra['motivo']) && $datosExtra['motivo'] === 'recuperacion')
-                ? "Recibimos una solicitud para restablecer la contrasena de tu cuenta."
-                : "Usa este codigo para confirmar tu correo y terminar tu registro.";
-
-            $cuerpoPrincipal = "
-                <p>{$motivo}</p>
-
-                <div style='text-align: center; margin: 30px 0;'>
-                    <div style='display: inline-block; background-color: {$colorFondo}; border: 2px dashed {$colorBoton}; border-radius: 8px; padding: 18px 34px;'>
-                        <span style='font-size: 34px; font-weight: bold; letter-spacing: 10px; color: {$colorBoton};'>{$codigo}</span>
-                    </div>
-                </div>
-
-                <p style='font-size: 14px; color: #777777;'>El codigo vence en {$vigencia} minutos y solo
-                se puede usar una vez. No lo compartas con nadie: el equipo de CHAMBEKI nunca te lo va a pedir.</p>
-            ";
-
-            $cuerpoHtml = $encabezadoHtml . $cuerpoPrincipal . $pieHtml;
-            break;
-        }
-
-        case 'contrasena_cambiada':
-        {
-            $asunto = "Tu contraseña de CHAMBEKI fue actualizada";
-
-            $fechaCambio = date('d/m/Y H:i');
-
-            $cuerpoPrincipal = "
-                <p>Tu contrasena se actualizo correctamente el {$fechaCambio}. Ya puedes iniciar
-                sesion con la nueva.</p>
-
-                <p style='text-align: center; margin: 30px 0;'>
-                    <a href='{$enlaceBoton}' style='background-color: {$colorBoton}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; display: inline-block;'>
-                        Iniciar sesion
-                    </a>
-                </p>
-
-                <p style='font-size: 14px; color: #777777;'>Si no fuiste tu, escribenos de inmediato a
-                admin@chambeki.com para bloquear la cuenta.</p>
-            ";
+            $cuerpoPrincipal = "";
 
             $cuerpoHtml = $encabezadoHtml . $cuerpoPrincipal . $pieHtml;
             break;
