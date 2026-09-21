@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
             if (empty($errores))
             {
-                // Se guarda PRIMERO la sesion para asegurar que la pantalla avance al Paso 2
+                // 1. Guardar primero en sesion para que el Paso 2 quede activado
                 $_SESSION['registro_pendiente'] = [
                     'nombre'          => $datos['nombre'],
                     'correo'          => $datos['correo'],
@@ -106,15 +106,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                     'tipo_cuenta'     => $datos['tipo_cuenta']
                 ];
 
-                // Generar codigo en BD
+                // 2. IMPORTANTE: Liberar candado de sesion para evitar congelar el navegador
+                session_write_close();
+
+                // 3. Generar codigo en BD
                 $codigo = generarCodigoVerificacion($datos['correo'], 'registro');
 
-                // Enviar el correo por SMTP
+                // 4. Enviar correo por SMTP
                 $resultadoCorreo = enviarCorreo('codigo', $datos['correo'], $datos['nombre'], [
                     'codigo'   => $codigo,
                     'motivo'   => 'registro',
                     'vigencia' => MINUTOS_VIGENCIA_CODIGO
                 ]);
+
+                // 5. Reabrir sesion para notificaciones flash
+                session_start();
 
                 if ($resultadoCorreo['exito'])
                 {
@@ -122,10 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 }
                 else
                 {
-                    guardarMensaje('error', 'El codigo fue generado. Si tarda en llegar a tu correo, revisa tu carpeta de Spam o presiona "Reenviar codigo".');
+                    guardarMensaje('error', 'El codigo de verificacion fue generado. Si tarda en llegar a tu bandeja de entrada, revisa tu carpeta de Spam o usa "Reenviar codigo".');
                 }
 
-                // Redirigir siempre para cargar el formulario de verificacion de codigo
                 redirigir(URL_BASE . '?accion=registro');
             }
 
@@ -170,8 +175,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             registrarEnBitacora($pendiente['correo'], 'registro_completado');
 
             //correo de bienvenida
+            session_write_close();
             enviarCorreo('registro', $pendiente['correo'], $pendiente['nombre']);
 
+            session_start();
             unset($_SESSION['registro_pendiente']);
             $_SESSION['registro_exito'] = $pendiente['nombre'];
 
@@ -190,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
             $pendiente = $_SESSION['registro_pendiente'];
 
+            session_write_close();
             $codigo = generarCodigoVerificacion($pendiente['correo'], 'registro');
 
             $resultadoCorreo = enviarCorreo('codigo', $pendiente['correo'], $pendiente['nombre'], [
@@ -198,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 'vigencia' => MINUTOS_VIGENCIA_CODIGO
             ]);
 
+            session_start();
             if ($resultadoCorreo['exito'])
             {
                 guardarMensaje('exito', 'Listo, te enviamos un codigo nuevo.');

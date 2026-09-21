@@ -139,20 +139,19 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
 
     try 
     {
-        // Configuración SMTP optimizada para Hostinger
+        // Uso de puerto 587 + STARTTLS para respuesta instantanea en Hostinger
         $correoObj->isSMTP();
         $correoObj->Host       = 'smtp.hostinger.com';
         $correoObj->SMTPAuth   = true;
         $correoObj->Username   = 'admin@chambeki.com';
         $correoObj->Password   = 'chambeki_Pr0ces0s';
-        $correoObj->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $correoObj->Port       = 465;
+        $correoObj->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $correoObj->Port       = 587;
 
-        // Limite de tiempo para evitar cuelgues (10 segundos maximo)
-        $correoObj->Timeout       = 10;
+        // Limite de 5 segundos para no colgar la experiencia de usuario
+        $correoObj->Timeout       = 5;
         $correoObj->SMTPKeepAlive = false;
 
-        // Opciones SSL para mayor rapidez de handshake en Hostinger
         $correoObj->SMTPOptions = [
             'ssl' => [
                 'verify_peer'       => false,
@@ -170,8 +169,6 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
         $correoObj->CharSet = 'UTF-8';
         $correoObj->Subject = $asunto;
         $correoObj->Body    = $cuerpoHtml;
-
-        // Alternativa texto plano
         $correoObj->AltBody = strip_tags(str_replace(['<br>', '</p>'], ["\r\n", "\r\n\r\n"], $cuerpoHtml));
 
         $correoObj->send();
@@ -181,7 +178,7 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
     {
         $correoEnviado = false;
         $mensajeError = $correoObj->ErrorInfo;
-        error_log('Error enviando correo SMTP: ' . $mensajeError);
+        error_log('Error SMTP PHPMailer: ' . $mensajeError);
     }
 
     return [
