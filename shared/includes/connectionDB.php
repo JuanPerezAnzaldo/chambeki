@@ -18,7 +18,7 @@ define('BD_NOMBRE',   'u168577920_titmraa');
 define('BD_USUARIO',  'u168577920_titmraa');
 //nunca se sube la clave real al repositorio: se toma de una variable de entorno
 //y solo se usa el segundo valor como respaldo mientras pruebas en tu maquina
-define('BD_CLAVE',    getenv('CHAMBEKI_BD_CLAVE') ?: 'PON_AQUI_LA_CLAVE');
+define('BD_CLAVE',    getenv('CHAMBEKI_BD_CLAVE') ?: 'Chambek1');
 define('BD_CHARSET',  'utf8mb4');
 
 function conexionBD()
