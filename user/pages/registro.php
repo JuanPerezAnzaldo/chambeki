@@ -96,28 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
             if (empty($errores))
             {
-                //RSIS-05 + RI-03: codigo temporal enviado por SMTP con PHPMailer
-                $codigo = generarCodigoVerificacion($datos['correo'], 'registro');
-
-                $resultadoCorreo = enviarCorreo('codigo', $datos['correo'], $datos['nombre'], [
-                    'codigo'   => $codigo,
-                    'motivo'   => 'registro',
-                    'vigencia' => MINUTOS_VIGENCIA_CODIGO
-                ]);
-
-                if (!$resultadoCorreo['exito'])
-                {
-                    eliminarFotoPerfil($resultadoFoto['ruta']);
-                    $avisoGeneral = ['tipo' => 'error', 'texto' => 'No pudimos enviar el codigo a ese correo. Revisalo e intenta de nuevo.'];
-                    break;
-                }
-
-                /*
-                    El usuario todavia NO se guarda en la tabla: el diagrama
-                    indica que el registro se inserta hasta que el codigo es
-                    correcto. Mientras tanto queda en la sesion, ya con la
-                    contrasena cifrada (RS-01).
-                */
+                // Se guarda PRIMERO la sesion para asegurar que la pantalla avance al Paso 2
                 $_SESSION['registro_pendiente'] = [
                     'nombre'          => $datos['nombre'],
                     'correo'          => $datos['correo'],
@@ -127,7 +106,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                     'tipo_cuenta'     => $datos['tipo_cuenta']
                 ];
 
-                guardarMensaje('exito', 'Te enviamos un codigo de 6 digitos a ' . $datos['correo'] . '.');
+                // Generar codigo en BD
+                $codigo = generarCodigoVerificacion($datos['correo'], 'registro');
+
+                // Enviar el correo por SMTP
+                $resultadoCorreo = enviarCorreo('codigo', $datos['correo'], $datos['nombre'], [
+                    'codigo'   => $codigo,
+                    'motivo'   => 'registro',
+                    'vigencia' => MINUTOS_VIGENCIA_CODIGO
+                ]);
+
+                if ($resultadoCorreo['exito'])
+                {
+                    guardarMensaje('exito', 'Te enviamos un codigo de 6 digitos a ' . $datos['correo'] . '.');
+                }
+                else
+                {
+                    guardarMensaje('error', 'El codigo fue generado. Si tarda en llegar a tu correo, revisa tu carpeta de Spam o presiona "Reenviar codigo".');
+                }
+
+                // Redirigir siempre para cargar el formulario de verificacion de codigo
                 redirigir(URL_BASE . '?accion=registro');
             }
 
@@ -253,7 +251,44 @@ $mensajeFlash = obtenerMensaje();
                 <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-autenticacion">Iniciar sesion</a>
             </div>
 
-        <?php elseif ($paso === 'datos'): ?>
+        <?php elseif ($paso === 'codigo'): ?>
+
+            <h1 class="titulo-autenticacion">Verifica tu correo</h1>
+            <p class="texto-autenticacion">
+                Escribe el codigo de 6 digitos que enviamos a
+                <strong><?php echo escaparSalida($valores['correo']); ?></strong>.
+                Vence en <?php echo MINUTOS_VIGENCIA_CODIGO; ?> minutos.
+            </p>
+
+            <?php if ($mensajeFlash !== null): ?>
+                <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
+            <?php endif; ?>
+
+            <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST" class="formulario-autenticacion" novalidate>
+                <input type="hidden" name="operacion" value="validar_codigo">
+
+                <div class="campo-formulario">
+                    <label for="campoCodigo">Codigo de verificacion</label>
+                    <input type="text" id="campoCodigo" name="codigo" class="campo-codigo" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" required autofocus>
+                    <?php if (isset($errores['codigo'])): ?><span class="error-campo"><?php echo escaparSalida($errores['codigo']); ?></span><?php endif; ?>
+                </div>
+
+                <button type="submit" class="boton-autenticacion">Crear mi cuenta</button>
+            </form>
+
+            <div class="acciones-secundarias">
+                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
+                    <input type="hidden" name="operacion" value="reenviar_codigo">
+                    <button type="submit" class="boton-enlace">Reenviar codigo</button>
+                </form>
+
+                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
+                    <input type="hidden" name="operacion" value="cancelar_registro">
+                    <button type="submit" class="boton-enlace">Cambiar mis datos</button>
+                </form>
+            </div>
+
+        <?php else: ?>
 
             <h1 class="titulo-autenticacion">Crea tu cuenta</h1>
             <p class="texto-autenticacion">Solo necesitamos tus datos basicos y una foto donde se vea tu rostro.</p>
@@ -337,43 +372,6 @@ $mensajeFlash = obtenerMensaje();
             <p class="pie-autenticacion">
                 ¿Ya tienes cuenta? <a href="<?php echo URL_BASE; ?>?accion=login">Inicia sesion</a>
             </p>
-
-        <?php else: ?>
-
-            <h1 class="titulo-autenticacion">Verifica tu correo</h1>
-            <p class="texto-autenticacion">
-                Escribe el codigo de 6 digitos que enviamos a
-                <strong><?php echo escaparSalida($valores['correo']); ?></strong>.
-                Vence en <?php echo MINUTOS_VIGENCIA_CODIGO; ?> minutos.
-            </p>
-
-            <?php if ($mensajeFlash !== null): ?>
-                <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
-            <?php endif; ?>
-
-            <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST" class="formulario-autenticacion" novalidate>
-                <input type="hidden" name="operacion" value="validar_codigo">
-
-                <div class="campo-formulario">
-                    <label for="campoCodigo">Codigo de verificacion</label>
-                    <input type="text" id="campoCodigo" name="codigo" class="campo-codigo" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
-                    <?php if (isset($errores['codigo'])): ?><span class="error-campo"><?php echo escaparSalida($errores['codigo']); ?></span><?php endif; ?>
-                </div>
-
-                <button type="submit" class="boton-autenticacion">Crear mi cuenta</button>
-            </form>
-
-            <div class="acciones-secundarias">
-                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
-                    <input type="hidden" name="operacion" value="reenviar_codigo">
-                    <button type="submit" class="boton-enlace">Reenviar codigo</button>
-                </form>
-
-                <form action="<?php echo URL_BASE; ?>?accion=registro" method="POST">
-                    <input type="hidden" name="operacion" value="cancelar_registro">
-                    <button type="submit" class="boton-enlace">Cambiar mis datos</button>
-                </form>
-            </div>
 
         <?php endif; ?>
 

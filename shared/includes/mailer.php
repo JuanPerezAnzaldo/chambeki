@@ -139,7 +139,7 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
 
     try 
     {
-        // Configuración SMTP del servidor
+        // Configuración SMTP optimizada para Hostinger
         $correoObj->isSMTP();
         $correoObj->Host       = 'smtp.hostinger.com';
         $correoObj->SMTPAuth   = true;
@@ -148,17 +148,30 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
         $correoObj->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $correoObj->Port       = 465;
 
-        //rremitente y Destinatario
+        // Limite de tiempo para evitar cuelgues (10 segundos maximo)
+        $correoObj->Timeout       = 10;
+        $correoObj->SMTPKeepAlive = false;
+
+        // Opciones SSL para mayor rapidez de handshake en Hostinger
+        $correoObj->SMTPOptions = [
+            'ssl' => [
+                'verify_peer'       => false,
+                'verify_peer_name'  => false,
+                'allow_self_signed' => true
+            ]
+        ];
+
+        // Remitente y Destinatario
         $correoObj->setFrom('admin@chambeki.com', 'Sistema CHAMBEKI');
         $correoObj->addAddress($correoDestino, $nombreUsuario);
 
-        //formato del correo
+        // Formato del correo
         $correoObj->isHTML(true);
         $correoObj->CharSet = 'UTF-8';
         $correoObj->Subject = $asunto;
         $correoObj->Body    = $cuerpoHtml;
 
-        //por si se bloquea el HTML
+        // Alternativa texto plano
         $correoObj->AltBody = strip_tags(str_replace(['<br>', '</p>'], ["\r\n", "\r\n\r\n"], $cuerpoHtml));
 
         $correoObj->send();
@@ -168,6 +181,7 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
     {
         $correoEnviado = false;
         $mensajeError = $correoObj->ErrorInfo;
+        error_log('Error enviando correo SMTP: ' . $mensajeError);
     }
 
     return [
