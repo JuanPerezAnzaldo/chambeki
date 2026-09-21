@@ -48,7 +48,22 @@
     top: 16px !important;
 }
 
-.titulo-hero,.
+.titulo-hero,.subtitulo-hero,.etiquetas-rapidas{
+    transition: opacity 0.3s ease, transform 0.3 ease;
+}
+
+.oculto-transicion{
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+    .contenedor-buscador.transicion-arriba,
+    .titulo-hero,.subtitulo-hero,.etiquetas-rapidas{
+        transition: none !important;
+    }
+}
 
 .caja-busqueda {
     display: flex;

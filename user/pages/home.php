@@ -4,7 +4,8 @@
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
-            <form action="<?php echo URL_BASE; ?>?accion=servicios" method="GET" class="caja-busqueda" autocomplete="off">
+            <form action="<?php echo URL_BASE; ?>?accion=servicios" method="GET" class="caja-busqueda"
+                id="formularioBusqueda" autocomplete="off">
                 <input type="hidden" name="accion" value="servicios">
                 
                 <input type="hidden" name="latitud" id="campoLatitud" value="">
@@ -195,3 +196,9 @@
         </div>
     </section>
 </div>
+
+<script>
+(function(){
+    const formulario
+})    
+</script>
