@@ -80,6 +80,12 @@
             include(PAGINAS . 'terminos.php');
             break;
         }
+
+        case 'privacidad':
+        {
+            include(PAGINAS . 'privacidad.php');
+            break;
+        }
     }
 
     include(FOOTER);
