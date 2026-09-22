@@ -13,7 +13,7 @@
     
     switch ($accion)
     {
-        case 'servicios':
+        case 'servicio':
         {
             include(PAGINAS . 'servicios.php');
             break;
@@ -26,6 +26,11 @@
         case 'nuevo-archivo':
         {
             include(PAGINAS . 'nuevoArchivo.php');
+            break;
+        }
+        case 'servicios':
+        {
+            include(PAGINAS . 'servicio.php');
             break;
         }
 

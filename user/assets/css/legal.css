@@ -1,0 +1,137 @@
+/* ============================================================
+   CHAMBEKI - Paginas legales (terminos, privacidad)
+   Documento simple y legible, centrado, con la paleta de global.css
+   ============================================================ */
+
+.seccion-legal
+{
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px 80px;
+    background-color: var(--color-fondo-principal);
+}
+
+.contenedor-legal
+{
+    width: 100%;
+    max-width: 760px;
+}
+
+.migaja-legal
+{
+    margin-bottom: 18px;
+    font-size: 0.88rem;
+}
+
+.migaja-legal a
+{
+    color: var(--color-boton-principal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.migaja-legal a:hover
+{
+    text-decoration: underline;
+}
+
+.titulo-legal
+{
+    color: var(--color-texto-principal);
+    font-size: 2rem;
+    line-height: 1.25;
+    margin-bottom: 6px;
+}
+
+.fecha-legal
+{
+    color: var(--color-texto-cuerpo);
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-bottom: 30px;
+}
+
+.tarjeta-legal
+{
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    box-shadow: var(--sombra-general);
+    padding: 34px 36px;
+}
+
+.tarjeta-legal h2
+{
+    color: var(--color-texto-principal);
+    font-size: 1.15rem;
+    margin: 28px 0 10px;
+}
+
+.tarjeta-legal h2:first-child
+{
+    margin-top: 0;
+}
+
+.tarjeta-legal p
+{
+    color: var(--color-texto-cuerpo);
+    font-size: 0.96rem;
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+.tarjeta-legal ul
+{
+    margin: 0 0 14px;
+    padding-left: 22px;
+}
+
+.tarjeta-legal li
+{
+    color: var(--color-texto-cuerpo);
+    font-size: 0.96rem;
+    line-height: 1.7;
+    margin-bottom: 6px;
+}
+
+.tarjeta-legal strong
+{
+    color: var(--color-texto-principal);
+}
+
+.acciones-legal
+{
+    margin-top: 30px;
+    text-align: center;
+}
+
+.acciones-legal a
+{
+    color: var(--color-boton-principal-texto);
+    background-color: var(--color-boton-principal);
+    padding: 12px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.94rem;
+}
+
+.acciones-legal a:hover
+{
+    background-color: var(--color-boton-principal-hover);
+}
+
+@media (max-width: 600px)
+{
+    .tarjeta-legal
+    {
+        padding: 24px 20px;
+        border: none;
+        box-shadow: none;
+    }
+
+    .titulo-legal
+    {
+        font-size: 1.6rem;
+    }
+}

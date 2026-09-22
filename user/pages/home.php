@@ -7,7 +7,7 @@
             <form action="<?php echo URL_BASE; ?>" method="GET" class="caja-busqueda"
                 id="formularioBusqueda" autocomplete="off">
                 <input type="hidden" name="accion" value="servicios">
-                
+
                 <input type="hidden" name="latitud" id="campoLatitud" value="">
                 <input type="hidden" name="longitud" id="campoLongitud" value="">
                 <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
@@ -24,7 +24,7 @@
                 <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
                     <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
                     <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
-                    
+
                     <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">
                         <div class="opciones-fijas">
                             <button type="button" class="item-opcion-ubicacion" data-tipo="online">
