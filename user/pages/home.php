@@ -4,10 +4,10 @@
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
-            <form action="<?php echo URL_BASE; ?>" method="GET" class="caja-busqueda"
+            <form action="/" method="GET" class="caja-busqueda"
                 id="formularioBusqueda" autocomplete="off">
                 <input type="hidden" name="accion" value="servicios">
-
+                
                 <input type="hidden" name="latitud" id="campoLatitud" value="">
                 <input type="hidden" name="longitud" id="campoLongitud" value="">
                 <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
@@ -24,7 +24,7 @@
                 <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
                     <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
                     <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
-
+                    
                     <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">
                         <div class="opciones-fijas">
                             <button type="button" class="item-opcion-ubicacion" data-tipo="online">
@@ -58,13 +58,13 @@
 
         <!-- Etiquetas populares -->
         <div class="etiquetas-rapidas">
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Electricista" class="enlace-etiqueta">Electricista</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Plomero" class="enlace-etiqueta">Plomero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Carpintero" class="enlace-etiqueta">Carpintero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Técnico" class="enlace-etiqueta">Técnico A/C</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Pintor" class="enlace-etiqueta">Pintor</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Cerrajero" class="enlace-etiqueta">Cerrajero</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Albañil" class="enlace-etiqueta">Albañil</a>
+            <a href="/?accion=servicios&oficio=Electricista" class="enlace-etiqueta">Electricista</a>
+            <a href="/?accion=servicios&oficio=Plomero" class="enlace-etiqueta">Plomero</a>
+            <a href="/?accion=servicios&oficio=Carpintero" class="enlace-etiqueta">Carpintero</a>
+            <a href="/?accion=servicios&oficio=Técnico" class="enlace-etiqueta">Técnico A/C</a>
+            <a href="/?accion=servicios&oficio=Pintor" class="enlace-etiqueta">Pintor</a>
+            <a href="/?accion=servicios&oficio=Cerrajero" class="enlace-etiqueta">Cerrajero</a>
+            <a href="/?accion=servicios&oficio=Albañil" class="enlace-etiqueta">Albañil</a>
         </div>
     </div>
 </section>
@@ -111,32 +111,32 @@
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Profesionales recién incorporados</h2>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios">Ver todos &rarr;</a>
+            <a href="/?accion=servicios">Ver todos &rarr;</a>
         </div>
 
         <div class="rejilla-especialistas">
-            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
+            <a href="/?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">MT</div>
                 <div class="info-especialista">
                     <h4>Mario Torres</h4>
                     <p>Electricista Residencial</p>
                 </div>
             </a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
+            <a href="/?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">JR</div>
                 <div class="info-especialista">
                     <h4>Jorge Ramírez</h4>
                     <p>Técnico en Climas y A/C</p>
                 </div>
             </a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
+            <a href="/?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">LC</div>
                 <div class="info-especialista">
                     <h4>Luis Castro</h4>
                     <p>Plomería y Gas</p>
                 </div>
             </a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
+            <a href="/?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">AS</div>
                 <div class="info-especialista">
                     <h4>Arturo Salinas</h4>
@@ -149,19 +149,19 @@
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Especialidades y oficios más solicitados</h2>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios">Mostrar todas</a>
+            <a href="/?accion=servicios">Mostrar todas</a>
         </div>
 
         <div class="rejilla-pildoras">
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Instalación eléctrica" class="item-pildora">Instalación eléctrica</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Fuga de gas" class="item-pildora">Fuga de gas</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Destape de cañerías" class="item-pildora">Destape de cañerías</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Cerrajería 24/7" class="item-pildora">Cerrajería 24/7</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Impermeabilización" class="item-pildora">Impermeabilización</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Herrería y soldadura" class="item-pildora">Herrería y soldadura</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Mantenimiento de Boiler" class="item-pildora">Mantenimiento de Boiler</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Instalación de minisplit" class="item-pildora">Instalación de minisplit</a>
-            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Reparación de lavadoras" class="item-pildora">Reparación de lavadoras</a>
+            <a href="/?accion=servicios&oficio=Instalación eléctrica" class="item-pildora">Instalación eléctrica</a>
+            <a href="/?accion=servicios&oficio=Fuga de gas" class="item-pildora">Fuga de gas</a>
+            <a href="/?accion=servicios&oficio=Destape de cañerías" class="item-pildora">Destape de cañerías</a>
+            <a href="/?accion=servicios&oficio=Cerrajería 24/7" class="item-pildora">Cerrajería 24/7</a>
+            <a href="/?accion=servicios&oficio=Impermeabilización" class="item-pildora">Impermeabilización</a>
+            <a href="/?accion=servicios&oficio=Herrería y soldadura" class="item-pildora">Herrería y soldadura</a>
+            <a href="/?accion=servicios&oficio=Mantenimiento de Boiler" class="item-pildora">Mantenimiento de Boiler</a>
+            <a href="/?accion=servicios&oficio=Instalación de minisplit" class="item-pildora">Instalación de minisplit</a>
+            <a href="/?accion=servicios&oficio=Reparación de lavadoras" class="item-pildora">Reparación de lavadoras</a>
         </div>
     </section>
 </div>
