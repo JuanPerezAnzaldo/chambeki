@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title><?php echo SITENAME; ?> - Soluciones a tu alcance</title>
-    
+
         <!-- Para lo de la app descargada -->
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#ff682e">
@@ -17,16 +17,22 @@
         <?php endif; ?>
 
         <!-- pantallas de registro y recuperacion de contrasena -->
-        <?php if (isset($accion) && in_array($accion, ['login', 'registro', 'verificar-codigo', 'recuperar'], true)): ?>
+        <?php if (isset($accion) && ($accion === 'login' || $accion === 'registro' || $accion === 'recuperar')): ?>
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
         <?php endif; ?>
+
+        <!-- pantalla de perfil (reusa botones/avisos de autenticacion.css) -->
+        <?php if (isset($accion) && $accion === 'perfil'): ?>
+            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
+            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>perfil.css?v=1">
+        <?php endif; ?>
     </head>
-    
+
     <body>
         <header class="encabezado-principal">
             <div class="contenedor-navegacion">
                 <a href="<?php echo URL_BASE; ?>" class="logotipo-marca"><?php echo SITENAME; ?></a>
-    
+
                 <nav class="acciones-navegacion">
                     <!-- Botón de opciones  -->
                     <div class="contenedor-menu-opciones">
@@ -37,7 +43,7 @@
                                 <circle cx="12" cy="19" r="2.2"/>
                             </svg>
                         </button>
-    
+
                         <div id="desplegableOpciones" class="menu-desplegable-opciones" style="display: none;">
                             <a href="<?php echo URL_BASE; ?>?accion=registro_socio" class="item-menu-opcion">
                                 <svg class="icono-menu-opcion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -46,9 +52,9 @@
                                 </svg>
                                 <span>Ofrece tu servicio</span>
                             </a>
-    
+
                             <div class="divisor-menu-opciones"></div>
-    
+
                             <a href="<?php echo URL_BASE; ?>?accion=ayuda" class="item-menu-opcion">
                                 <svg class="icono-menu-opcion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
@@ -59,24 +65,33 @@
                             </a>
                         </div>
                     </div>
-    
+
                     <?php if (isset($_SESSION['id_usuario'])): ?>
-                        <div class="tarjeta-usuario-sesion">
-                            <span>Hola, <?php echo htmlspecialchars($_SESSION['nombre_usuario'] ?? 'Usuario'); ?></span>
-                            <a href="<?php echo URL_BASE; ?>?accion=cerrar_sesion" class="boton-nav-sesion">(Salir)</a>
-                        </div>
+                        <a href="<?php echo URL_BASE; ?>?accion=perfil" class="tarjeta-usuario-sesion" title="Ver mi perfil">
+                            <?php if (!empty($_SESSION['foto_usuario'])): ?>
+                                <img src="<?php echo URL_BASE . htmlspecialchars($_SESSION['foto_usuario']); ?>" alt="" class="avatar-nav-usuario">
+                            <?php else: ?>
+                                <span class="avatar-nav-usuario avatar-nav-iniciales"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($_SESSION['nombre_usuario'] ?? 'U', 0, 1))); ?></span>
+                            <?php endif; ?>
+
+                            <span class="datos-usuario-nav">
+                                <span class="nombre-usuario-nav">Hola, <?php echo htmlspecialchars($_SESSION['nombre_usuario'] ?? 'Usuario'); ?></span>
+                                <span class="rol-usuario-nav"><?php echo htmlspecialchars(nombreRol($_SESSION['rol_usuario'] ?? null)); ?></span>
+                            </span>
+                        </a>
+                        <a href="<?php echo URL_BASE; ?>?accion=cerrar_sesion" class="boton-nav-sesion">Salir</a>
                     <?php else: ?>
                         <a href="<?php echo URL_BASE; ?>?accion=registro" class="boton-nav-sesion">Crea tu cuenta</a>
                         <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-nav-sesion">Inicia sesión</a>
                     <?php endif; ?>
                 </nav>
-    
+
                 <script>
                     (function()
                      {
                         const boton = document.getElementById('btnMenuOpciones');
                         const menu = document.getElementById('desplegableOpciones');
-    
+
                         if (boton && menu)
                         {
                             boton.addEventListener('click', function(e)
@@ -86,7 +101,7 @@
                                 menu.style.display = visible ? 'none' : 'flex';
                                 boton.setAttribute('aria-expanded', !visible);
                             });
-    
+
                             document.addEventListener('click', function(e)
                             {
                                 if (!e.target.closest('.contenedor-menu-opciones'))
@@ -100,5 +115,5 @@
                 </script>
             </div>
         </header>
-    
+
         <main>

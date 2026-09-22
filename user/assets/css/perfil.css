@@ -1,0 +1,125 @@
+.seccion-perfil {
+  padding: 2.5rem 1.2rem 4rem;
+}
+
+.contenedor-perfil {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tarjeta-perfil {
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-general);
+  padding: 2rem;
+}
+
+.cabecera-perfil {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.foto-perfil-grande {
+  width: 84px;
+  height: 84px;
+  min-width: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-boton-principal);
+}
+
+.foto-perfil-iniciales {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fondo-hero);
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.identidad-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.nombre-perfil {
+  font-size: 1.4rem;
+  color: var(--color-texto-principal);
+}
+
+.etiqueta-rol-perfil {
+  display: inline-block;
+  align-self: flex-start;
+  background: rgba(232, 97, 45, 0.12);
+  color: var(--color-boton-principal);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.lista-datos-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dato-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dato-perfil dt {
+  font-size: 0.78rem;
+  color: var(--color-marcador-posicion);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dato-perfil dd {
+  font-size: 1rem;
+  color: var(--color-texto-principal);
+}
+
+.acciones-perfil {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-borde);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.boton-perfil-enlace {
+  width: auto;
+  display: inline-flex;
+  padding-left: 1.6rem;
+  padding-right: 1.6rem;
+}
+
+@media (max-width: 480px) {
+  .tarjeta-perfil {
+      padding: 1.4rem;
+  }
+
+  .cabecera-perfil {
+      flex-direction: column;
+      text-align: center;
+  }
+
+  .identidad-perfil {
+      align-items: center;
+  }
+}

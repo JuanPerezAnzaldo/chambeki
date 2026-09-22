@@ -20,6 +20,7 @@ define('ESTATUS_SUSPENDIDO', 2);
 //columna `tipo` de codigos_verificacion
 define('TIPO_CODIGO_REGISTRO',     1);
 define('TIPO_CODIGO_RECUPERACION', 2);
+define('TIPO_CODIGO_LOGIN',        3);
 
 //=============================================================
 // Utilidades generales
@@ -157,7 +158,7 @@ function obtenerUsuarioPorCorreo($correo)
     $conexion = conexionBD();
 
     $sentencia = $conexion->prepare(
-        'SELECT id_usuario, nombre, correo, password_hash, rol, estatus
+        'SELECT id_usuario, nombre, correo, password_hash, rol, estatus, foto_perfil_url
          FROM usuarios
          WHERE correo = :correo
          LIMIT 1'
@@ -167,6 +168,48 @@ function obtenerUsuarioPorCorreo($correo)
     $usuario = $sentencia->fetch();
 
     return $usuario === false ? null : $usuario;
+}
+
+//RSIS-01: se usa para recargar los datos del dueno de la sesion (perfil.php)
+function obtenerUsuarioPorId($idUsuario)
+{
+    $conexion = conexionBD();
+
+    $sentencia = $conexion->prepare(
+        'SELECT id_usuario, nombre, correo, telefono, rol, tipo_cuenta, foto_perfil_url, estatus, fecha_registro
+         FROM usuarios
+         WHERE id_usuario = :id
+         LIMIT 1'
+    );
+    $sentencia->execute([':id' => $idUsuario]);
+
+    $usuario = $sentencia->fetch();
+
+    return $usuario === false ? null : $usuario;
+}
+
+//=============================================================
+// Etiquetas legibles de los catalogos (header y perfil)
+//=============================================================
+
+function nombreRol($rol)
+{
+    switch ((int) $rol)
+    {
+        case ROL_ADMIN:      return 'Administrador';
+        case ROL_FREELANCER: return 'Freelancer';
+        default:             return 'Cliente';
+    }
+}
+
+function nombreTipoCuenta($tipoCuenta)
+{
+    return (int) $tipoCuenta === 2 ? 'Empresarial' : 'Personal';
+}
+
+function nombreEstatus($estatus)
+{
+    return (int) $estatus === ESTATUS_ACTIVO ? 'Activa' : 'Suspendida';
 }
 
 //guarda el registro ya verificado: fecha actual + contrasena encriptada
@@ -239,7 +282,17 @@ define('MAXIMO_INTENTOS_CODIGO', 5);
 */
 function tipoCodigoATinyint($tipo)
 {
-    return $tipo === 'recuperacion' ? TIPO_CODIGO_RECUPERACION : TIPO_CODIGO_REGISTRO;
+    if ($tipo === 'recuperacion')
+    {
+        return TIPO_CODIGO_RECUPERACION;
+    }
+
+    if ($tipo === 'login')
+    {
+        return TIPO_CODIGO_LOGIN;
+    }
+
+    return TIPO_CODIGO_REGISTRO;
 }
 
 function generarCodigoVerificacion($correo, $tipo)
@@ -418,7 +471,9 @@ function iniciarSesionUsuario($usuario)
 
     $_SESSION['id_usuario']     = $usuario['id_usuario'];
     $_SESSION['nombre_usuario'] = $usuario['nombre'];
+    $_SESSION['correo_usuario'] = $usuario['correo'];
     $_SESSION['rol_usuario']    = $usuario['rol'];
+    $_SESSION['foto_usuario']   = $usuario['foto_perfil_url'] ?? null;
     $_SESSION['ultima_actividad'] = time();
 }
 ?>

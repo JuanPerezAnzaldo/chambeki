@@ -240,9 +240,49 @@ main
 {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.6rem;
     color: #FFFFFF;
     font-weight: 600;
+    text-decoration: none;
+}
+
+.avatar-nav-usuario
+{
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.avatar-nav-iniciales
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+    font-size: 0.9rem;
+}
+
+.datos-usuario-nav
+{
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.nombre-usuario-nav
+{
+    font-size: 0.88rem;
+}
+
+.rol-usuario-nav
+{
+    font-size: 0.7rem;
+    font-weight: 500;
+    opacity: 0.85;
 }
 
 /* boton para quitarle derechos a la pagina */

@@ -83,10 +83,20 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
 
             $codigo = isset($datosExtra['codigo']) ? $datosExtra['codigo'] : '';
             $vigencia = isset($datosExtra['vigencia']) ? (int) $datosExtra['vigencia'] : 15;
+            $motivoCorreo = isset($datosExtra['motivo']) ? $datosExtra['motivo'] : 'registro';
 
-            $motivo = (isset($datosExtra['motivo']) && $datosExtra['motivo'] === 'recuperacion')
-                ? "Recibimos una solicitud para restablecer la contrasena de tu cuenta."
-                : "Usa este codigo para confirmar tu correo y terminar tu registro.";
+            if ($motivoCorreo === 'recuperacion')
+            {
+                $motivo = "Recibimos una solicitud para restablecer la contrasena de tu cuenta.";
+            }
+            elseif ($motivoCorreo === 'login')
+            {
+                $motivo = "Usa este codigo para confirmar que eres tu e iniciar sesion de forma segura.";
+            }
+            else
+            {
+                $motivo = "Usa este codigo para confirmar tu correo y terminar tu registro.";
+            }
 
             $cuerpoPrincipal = "
                 <p>{$motivo}</p>
