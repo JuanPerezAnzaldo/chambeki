@@ -489,16 +489,40 @@ function buscarServicios($oficio, $ubicacion)
     $sql = "SELECT s.titulo, s.descripcion, s.monto, u.nombre AS freelancer, c.nombre_categoria 
             FROM servicios s
             INNER JOIN usuarios u ON s.id_usuario = u.id_usuario
-            INNER JOIN cat_categorias c ON s.id_categoria = c.id_categoria
-            WHERE (s.titulo LIKE :busqueda1 OR s.descripcion LIKE :busqueda2 OR c.nombre_categoria LIKE :busqueda3)";
+            INNER JOIN cat_categorias c ON s.id_categoria = c.id_categoria";
 
-    $termino = '%' . $oficio . '%';
+    $oficio = trim($oficio);
+
+    // Si el usuario no escribió nada, traemos todos los servicios
+    if ($oficio === '') {
+        $sentencia = $conexion->prepare($sql);
+        $sentencia->execute();
+        return $sentencia->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Truco 1: Reemplazar espacios con comodines
+    // "Instalación eléctrica" -> encontrará "Instalación de Cableado Eléctrico"
+    $busqueda_flexible = '%' . str_replace(' ', '%', $oficio) . '%';
+
+    // Truco 2: Cortar la última letra para oficios
+    // "Plomero" -> buscará "%Plomer%" y encontrará "Plomería"
+    $raiz = mb_substr($oficio, 0, -1);
+    $busqueda_raiz = '%' . $raiz . '%';
+
+    // Truco 3: Excepción para palabras cuya raíz cambia demasiado
+    if (mb_strtolower($oficio) === 'electricista') {
+        $busqueda_raiz = '%electricidad%';
+    }
+
+    // Aplicar los filtros a la consulta
+    $sql .= " WHERE (s.titulo LIKE :flexible 
+                  OR s.descripcion LIKE :flexible 
+                  OR c.nombre_categoria LIKE :raiz)";
+
     $sentencia = $conexion->prepare($sql);
-
     $sentencia->execute([
-        ':busqueda1' => $termino,
-        ':busqueda2' => $termino,
-        ':busqueda3' => $termino
+        ':flexible' => $busqueda_flexible,
+        ':raiz' => $busqueda_raiz
     ]);
 
     return $sentencia->fetchAll(PDO::FETCH_ASSOC);
