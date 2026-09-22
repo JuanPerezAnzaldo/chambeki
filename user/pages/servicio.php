@@ -1,28 +1,13 @@
 <?php
 // Recibir parámetros del método GET
-$oficio_buscado = isset($_GET['oficio']) ? limpiarEntrada($_GET['oficio']) : '';$ubicacion_buscada = isset($_GET['ubicacion']) ? limpiarEntrada($_GET['ubicacion']) : '';
+$oficio_buscado = isset($_GET['oficio']) ? limpiarEntrada($_GET['oficio']) : '';
+$ubicacion_buscada = isset($_GET['ubicacion']) ? limpiarEntrada($_GET['ubicacion']) : '';
 
-// Conexión a la BD
-$conexion = conexionBD();
-
-// Consulta con parámetros separados para evitar el error HY093
-$sql = "SELECT s.titulo, s.descripcion, s.monto, u.nombre AS freelancer, c.nombre_categoria 
-        FROM servicios s
-        INNER JOIN usuarios u ON s.id_usuario = u.id_usuario
-        INNER JOIN cat_categorias c ON s.id_categoria = c.id_categoria
-        WHERE (s.titulo LIKE :busqueda1 OR s.descripcion LIKE :busqueda2 OR c.nombre_categoria LIKE :busqueda3)";
-
-$termino = '%' . $oficio_buscado . '\%';$sentencia = $conexion->prepare($sql);
-
-$sentencia->execute([
-    ':busqueda1' => $termino,
-    ':busqueda2' => $termino,
-    ':busqueda3' => $termino
-]);
-
-$resultados =$sentencia->fetchAll(PDO::FETCH_ASSOC);
+// Usar la función que agregaste en functions.php
+$resultados = buscarServicios($oficio_buscado, $ubicacion_buscada);
 ?>
 
+<!-- Buscador en la parte superior del listado -->
 <div style="background: var(--color-fondo-hero); padding: 2rem 1rem;">
     <div class="contenedor-buscador" style="margin-bottom: 0;">
         <form action="/" method="GET" class="caja-busqueda">
@@ -45,16 +30,20 @@ $resultados =$sentencia->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
+<!-- Contenedor Principal de Resultados -->
 <div class="envoltorio-contenido">
     <div class="cabecera-seccion">
         <h2><?php echo $oficio_buscado ? 'Resultados para: "' . escaparSalida($oficio_buscado) . '"' : 'Todos los servicios disponibles'; ?></h2>
     </div>
 
+    <!-- Rejilla de tarjetas de resultados -->
     <div class="rejilla-especialistas" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+
         <?php if (count($resultados) > 0): ?>
-            <?php foreach ($resultados as$servicio): ?>
+            <?php foreach ($resultados as $servicio): ?>
                 <div class="tarjeta-especialista" style="flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.2rem;">
 
+                    <!-- Categoría y Precio -->
                     <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                         <span style="font-size: 0.75rem; background: var(--color-borde); padding: 3px 8px; border-radius: var(--radio-pequeno); color: var(--color-texto-principal); font-weight: 600;">
                             <?php echo escaparSalida($servicio['nombre_categoria']); ?>
@@ -64,26 +53,31 @@ $resultados =$sentencia->fetchAll(PDO::FETCH_ASSOC);
                         </span>
                     </div>
 
+                    <!-- Título y Descripción -->
                     <h3 style="font-size: 1.15rem; color: var(--color-texto-principal); margin: 0;"><?php echo escaparSalida($servicio['titulo']); ?></h3>
                     <p style="font-size: 0.88rem; color: var(--color-texto-cuerpo); line-height: 1.4; margin: 0; flex-grow: 1;">
                         <?php echo escaparSalida($servicio['descripcion']); ?>
                     </p>
 
+                    <!-- Nombre del Profesional -->
                     <div style="font-size: 0.85rem; color: var(--color-marcador-posicion); display: flex; align-items: center; gap: 5px; margin-top: 5px;">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         <?php echo escaparSalida($servicio['freelancer']); ?>
                     </div>
 
-                    <button class="boton-nav-sesion" style="width: 100%; margin-top: 10px; background: #e5e7eb; color: #9ca3af !important; border: 1px solid #d1d5db; cursor: not-allowed;" disabled>
+                    <!-- Botón de Agendar Deshabilitado -->
+                    <button class="boton-nav-sesion" style="width: 100%; margin-top: 10px; background: #e5e7eb; color: #9ca3af !important; border: 1px solid #d1d5db; cursor: not-allowed;" disabled title="Disponible en futuras actualizaciones">
                         Agendar Cita
                     </button>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
+            <!-- Mensaje de no hay resultados -->
             <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--color-fondo-tarjeta); border-radius: var(--radio-mediano); border: 1px dashed var(--color-borde);">
                 <h3 style="color: var(--color-texto-principal); margin-bottom: 0.5rem;">No encontramos profesionales</h3>
                 <p style="color: var(--color-marcador-posicion);">Intenta utilizar términos más generales o revisar la ortografía.</p>
             </div>
         <?php endif; ?>
+
     </div>
 </div>

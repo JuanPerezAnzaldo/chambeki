@@ -476,4 +476,32 @@ function iniciarSesionUsuario($usuario)
     $_SESSION['foto_usuario']   = $usuario['foto_perfil_url'] ?? null;
     $_SESSION['ultima_actividad'] = time();
 }
+
+
+//=============================================================
+// Búsqueda de Servicios
+//=============================================================
+
+function buscarServicios($oficio, $ubicacion)
+{
+    $conexion = conexionBD();
+
+    $sql = "SELECT s.titulo, s.descripcion, s.monto, u.nombre AS freelancer, c.nombre_categoria 
+            FROM servicios s
+            INNER JOIN usuarios u ON s.id_usuario = u.id_usuario
+            INNER JOIN cat_categorias c ON s.id_categoria = c.id_categoria
+            WHERE (s.titulo LIKE :busqueda1 OR s.descripcion LIKE :busqueda2 OR c.nombre_categoria LIKE :busqueda3)";
+
+    $termino = '%' . $oficio . '%';
+    $sentencia = $conexion->prepare($sql);
+
+    $sentencia->execute([
+        ':busqueda1' => $termino,
+        ':busqueda2' => $termino,
+        ':busqueda3' => $termino
+    ]);
+
+    return $sentencia->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
+
