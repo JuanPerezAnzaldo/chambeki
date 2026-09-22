@@ -4,7 +4,7 @@
         <p class="subtitulo-hero">Plomeros, electricistas, carpinteros, técnicos y más a domicilio</p>
 
         <div class="contenedor-buscador">
-            <form action="<?php echo URL_BASE; ?>?accion=servicios" method="GET" class="caja-busqueda"
+            <form action="<?php echo URL_BASE; ?>" method="GET" class="caja-busqueda"
                 id="formularioBusqueda" autocomplete="off">
                 <input type="hidden" name="accion" value="servicios">
                 
@@ -20,11 +20,10 @@
 
                 <div class="divisor-vertical-campos"></div>
 
-                    <!-- Campo de Ubicación -->
-                    <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
-                        <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
-                        <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
-                    
+                <!-- Campo de Ubicación -->
+                <div class="campo-busqueda campo-zona contenedor-desplegable-ubicacion">
+                    <input type="text" name="ubicacion" id="inputUbicacion" class="input-busqueda" placeholder="Ubicación" inputmode="none" readonly>
+                    <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarUbicacion" aria-label="Limpiar ubicación">&times;</button>
                     
                     <div id="menuUbicaciones" class="menu-desplegable-ubicaciones oculto">
                         <div class="opciones-fijas">
@@ -46,22 +45,7 @@
                         <div class="divisor-opciones"></div>
 
                         <div id="listaUbicacionesSugeridas" class="lista-opciones-dinamicas">
-                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="32.5149" data-lon="-117.0382">
-                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                                <span class="texto-opcion">Tijuana</span>
-                            </button>
-                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="19.4326" data-lon="-99.1332">
-                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                                <span class="texto-opcion">Ciudad de México</span>
-                            </button>
-                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="20.6597" data-lon="-103.3496">
-                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                                <span class="texto-opcion">Guadalajara</span>
-                            </button>
-                            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="25.6866" data-lon="-100.3161">
-                                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                                <span class="texto-opcion">Monterrey</span>
-                            </button>
+                            <!-- JS llena esto -->
                         </div>
                     </div>
                 </div>
@@ -74,13 +58,13 @@
 
         <!-- Etiquetas populares -->
         <div class="etiquetas-rapidas">
-            <a href="" class="enlace-etiqueta">Electricista</a>
-            <a href="" class="enlace-etiqueta">Plomero</a>
-            <a href="" class="enlace-etiqueta">Carpintero</a>
-            <a href="" class="enlace-etiqueta">Técnico A/C</a>
-            <a href="" class="enlace-etiqueta">Pintor</a>
-            <a href="" class="enlace-etiqueta">Cerrajero</a>
-            <a href="" class="enlace-etiqueta">Albañil</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Electricista" class="enlace-etiqueta">Electricista</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Plomero" class="enlace-etiqueta">Plomero</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Carpintero" class="enlace-etiqueta">Carpintero</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Técnico" class="enlace-etiqueta">Técnico A/C</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Pintor" class="enlace-etiqueta">Pintor</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Cerrajero" class="enlace-etiqueta">Cerrajero</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Albañil" class="enlace-etiqueta">Albañil</a>
         </div>
     </div>
 </section>
@@ -117,22 +101,7 @@
         <div class="divisor-opciones"></div>
 
         <div id="listaUbicacionesMovil" class="lista-opciones-dinamicas">
-            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="32.5149" data-lon="-117.0382">
-                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                <span class="texto-opcion">Tijuana</span>
-            </button>
-            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="19.4326" data-lon="-99.1332">
-                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                <span class="texto-opcion">Ciudad de México</span>
-            </button>
-            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="20.6597" data-lon="-103.3496">
-                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                <span class="texto-opcion">Guadalajara</span>
-            </button>
-            <button type="button" class="item-opcion-ubicacion" data-tipo="ciudad" data-lat="25.6866" data-lon="-100.3161">
-                <span class="icono-opcion pin"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
-                <span class="texto-opcion">Monterrey</span>
-            </button>
+            <!-- JS llena esto -->
         </div>
     </div>
 </div>
@@ -142,32 +111,32 @@
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Profesionales recién incorporados</h2>
-            <a href="">Ver todos &rarr;</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios">Ver todos &rarr;</a>
         </div>
 
         <div class="rejilla-especialistas">
-            <a href="" class="tarjeta-especialista">
+            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">MT</div>
                 <div class="info-especialista">
                     <h4>Mario Torres</h4>
                     <p>Electricista Residencial</p>
                 </div>
             </a>
-            <a href="" class="tarjeta-especialista">
+            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">JR</div>
                 <div class="info-especialista">
                     <h4>Jorge Ramírez</h4>
                     <p>Técnico en Climas y A/C</p>
                 </div>
             </a>
-            <a href="" class="tarjeta-especialista">
+            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">LC</div>
                 <div class="info-especialista">
                     <h4>Luis Castro</h4>
                     <p>Plomería y Gas</p>
                 </div>
             </a>
-            <a href="" class="tarjeta-especialista">
+            <a href="<?php echo URL_BASE; ?>?accion=servicios" class="tarjeta-especialista">
                 <div class="avatar-miniatura">AS</div>
                 <div class="info-especialista">
                     <h4>Arturo Salinas</h4>
@@ -180,25 +149,19 @@
     <section class="bloque-seccion">
         <div class="cabecera-seccion">
             <h2>Especialidades y oficios más solicitados</h2>
-            <a href="">Mostrar todas</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios">Mostrar todas</a>
         </div>
 
         <div class="rejilla-pildoras">
-            <a href="" class="item-pildora">Instalación eléctrica</a>
-            <a href="" class="item-pildora">Fuga de gas</a>
-            <a href="" class="item-pildora">Destape de cañerías</a>
-            <a href="" class="item-pildora">Cerrajería 24/7</a>
-            <a href="" class="item-pildora">Impermeabilización</a>
-            <a href="" class="item-pildora">Herrería y soldadura</a>
-            <a href="" class="item-pildora">Mantenimiento de Boiler</a>
-            <a href="" class="item-pildora">Instalación de minisplit</a>
-            <a href="" class="item-pildora">Reparación de lavadoras</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Instalación eléctrica" class="item-pildora">Instalación eléctrica</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Fuga de gas" class="item-pildora">Fuga de gas</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Destape de cañerías" class="item-pildora">Destape de cañerías</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Cerrajería 24/7" class="item-pildora">Cerrajería 24/7</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Impermeabilización" class="item-pildora">Impermeabilización</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Herrería y soldadura" class="item-pildora">Herrería y soldadura</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Mantenimiento de Boiler" class="item-pildora">Mantenimiento de Boiler</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Instalación de minisplit" class="item-pildora">Instalación de minisplit</a>
+            <a href="<?php echo URL_BASE; ?>?accion=servicios&oficio=Reparación de lavadoras" class="item-pildora">Reparación de lavadoras</a>
         </div>
     </section>
 </div>
-
-<script>
-(function(){
-    const formulario
-})    
-</script>
