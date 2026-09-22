@@ -12,7 +12,7 @@
 
         <!-- aqui pal css -->
         <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css?v=10">
-        <?php if (!isset($accion) || $accion === 'inicio' || $accion === 'home'): ?>
+        <?php if (!isset($accion) || $accion === 'inicio' || $accion === 'home' || $accion === 'servicios'): ?>
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>home.css?v=10">
         <?php endif; ?>
 
