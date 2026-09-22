@@ -6,11 +6,11 @@
     });
 
     include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
-
+    
     $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
-
+    
     include(HEADER);
-
+    
     switch ($accion)
     {
         case 'servicios':
@@ -49,6 +49,13 @@
             break;
         }
 
+        //Paso 2 del registro: captura del codigo de verificacion
+        case 'verificar-codigo':
+        {
+            include(PAGINAS . 'verificarCodigo.php');
+            break;
+        }
+
         //Proceso de cambio / recuperacion de contrasena
         case 'recuperar':
         {
@@ -56,13 +63,27 @@
             break;
         }
 
-        //Perfil del usuario que inicio sesion (RSIS-01)
-        case 'perfil':
+        //Paso 2 de la recuperacion: codigo temporal
+        case 'verificar-codigo-recuperacion':
         {
-            include(PAGINAS . 'perfil.php');
+            include(PAGINAS . 'verificarCodigoRecuperacion.php');
             break;
         }
 
+        //Paso 3 de la recuperacion: contrasena nueva
+        case 'nueva-contrasena':
+        {
+            include(PAGINAS . 'nuevaContrasena.php');
+            break;
+        }
+
+        //Terminos y condiciones
+        case 'terminos':
+        {
+            include(PAGINAS . 'terminos.php');
+            break;
+        }
+    
         case 'inicio':
         default:
         {
@@ -70,6 +91,6 @@
             break;
         }
     }
-
+    
     include(FOOTER);
 ?>
