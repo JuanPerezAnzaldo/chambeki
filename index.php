@@ -76,7 +76,6 @@
         }
 
         case 'terminos':
-        default:
         {
             include(PAGINAS . 'terminos.php');
             break;
