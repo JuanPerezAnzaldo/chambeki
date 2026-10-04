@@ -9,8 +9,8 @@
     limitada (MINUTOS_VENTANA_CAMBIO) para completar el cambio.
 */
 
+// Solo dependencias lógicas aquí arriba
 require_once MAILER;
-require_once DOCROOT . 'user/includes/plantillaAutenticacion.php';
 
 //ventana para definir la contrasena despues de validar el codigo
 define('MINUTOS_VENTANA_CAMBIO', 10);
@@ -67,6 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['operacion'] ?? '') === 'gu
     }
 }
 
+// AHORA SÍ cargamos la plantilla visual
+require_once DOCROOT . 'user/includes/plantillaAutenticacion.php';
 abrirPantallaAutenticacion(null);
 ?>
 

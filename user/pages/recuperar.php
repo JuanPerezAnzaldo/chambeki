@@ -9,8 +9,8 @@
       'nueva'  -> captura, cifrado y actualizacion de la contrasena
 */
 
+// Solo cargamos dependencias de lógica aquí arriba
 require_once MAILER;
-require_once DOCROOT . 'user/includes/plantillaAutenticacion.php';
 
 //ventana para definir la contrasena despues de validar el codigo
 define('MINUTOS_VENTANA_CAMBIO', 10);
@@ -209,6 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 }
 
 $mensajeFlash = obtenerMensaje();
+
+// AHORA SÍ cargamos la plantilla, ya que terminaron todas las redirecciones
+require_once DOCROOT . 'user/includes/plantillaAutenticacion.php';
 ?>
 
 <?php abrirPantallaAutenticacion(null); ?>
