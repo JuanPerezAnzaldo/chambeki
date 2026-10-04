@@ -143,9 +143,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             iniciarSesionUsuario($usuario);
             registrarEnBitacora($usuario['correo'], 'inicio_sesion');
 
-            //recordarme: mantiene la cookie de sesion 30 dias
+            //recordarme: la cookie de sesion dura 30 dias y, para que
+            //de verdad sirva, configuration.php tambien deja viva la
+            //sesion por 30 dias de inactividad en vez de solo 30 min
             if (!empty($pendiente['recordarme']))
             {
+                $_SESSION['recordarme'] = true;
+
                 setcookie(session_name(), session_id(), [
                     'expires'  => time() + (30 * 24 * 60 * 60),
                     'path'     => '/',

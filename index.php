@@ -1,9 +1,17 @@
 <?php
-    //ingnoren esto, es para borrar los comentarios al inspeccionar la pagina
-    //ob_start(function($buffer)
-    //{
-        //return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
-    //});
+    /*
+        Se guarda TODA la salida en un buffer antes de imprimir nada.
+        header.php ya imprime el <!DOCTYPE html>... antes de que cada
+        pagina (login.php, recuperar.php, cerrarSesion.php, etc.) corra
+        su logica y a veces necesite redirigir con header('Location').
+        Sin este buffer, esos redirects fallan en cuanto el servidor ya
+        envio el primer byte de HTML (dependia de si el hosting traia
+        output_buffering activado en su php.ini, por eso fallaba "a
+        veces" y no siempre). Con el buffer, nada sale al navegador
+        hasta el final del script, asi que cualquier redirect en
+        cualquier pagina SIEMPRE funciona.
+    */
+    ob_start();
 
     include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
 
@@ -38,6 +46,14 @@
         case 'login':
         {
             include(PAGINAS . 'login.php');
+            break;
+        }
+
+        //Proceso de registro de usuario, paso 2: verificacion del codigo
+        //(registro.php redirige aqui con ?accion=verificar-codigo)
+        case 'verificar-codigo':
+        {
+            include(PAGINAS . 'verificarCodigo.php');
             break;
         }
 
@@ -96,5 +112,7 @@
     }
 
     include(FOOTER);
-?>
 
+    //se envia todo el buffer junto al navegador
+    ob_end_flush();
+?>
