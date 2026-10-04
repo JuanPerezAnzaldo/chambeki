@@ -1,13 +1,11 @@
-const NOMBRE_CACHE = 'chambeki-cache-v6';
+const NOMBRE_CACHE = 'chambeki-cache-v7';
+const PAGINA_OFFLINE = '/offline.html';
 
 self.addEventListener('install', (evento) =>
 {
     evento.waitUntil(
         caches.open(NOMBRE_CACHE)
-            .then((cache) =>
-            {
-                return cache.add('/');
-            })
+            .then((cache) => cache.add(PAGINA_OFFLINE))
             .then(() => self.skipWaiting())
     );
 });
@@ -32,38 +30,58 @@ self.addEventListener('activate', (evento) =>
 
 self.addEventListener('fetch', (evento) =>
 {
-    if (evento.request.method !== 'GET')
+    const peticion = evento.request;
+
+    if (peticion.method !== 'GET')
+    {
+        return;
+    }
+
+    const url = new URL(peticion.url);
+
+    //solo se manejan peticiones del mismo origen
+    if (url.origin !== self.location.origin)
+    {
+        return;
+    }
+
+    //Paginas PHP (dependen de la sesion): siempre red, nunca cache.
+    //Si no hay conexion se muestra offline.html
+    if (peticion.mode === 'navigate')
+    {
+        evento.respondWith(
+            fetch(peticion).catch(() => caches.match(PAGINA_OFFLINE))
+        );
+        return;
+    }
+
+    //Estaticos (css, js, imagenes, fuentes): responde rapido desde cache
+    //y se actualiza en segundo plano
+    const esEstatico = ['style', 'script', 'image', 'font'].includes(peticion.destination);
+
+    if (!esEstatico)
     {
         return;
     }
 
     evento.respondWith(
-        caches.match(evento.request)
-            .then((respuestaCache) =>
+        caches.open(NOMBRE_CACHE).then((cache) =>
+        {
+            return cache.match(peticion).then((respuestaCache) =>
             {
-                if (respuestaCache)
+                const peticionRed = fetch(peticion).then((respuestaRed) =>
                 {
-                    return respuestaCache;
-                }
-
-                return fetch(evento.request).then((respuestaRed) =>
-                {
-                    if (!respuestaRed || respuestaRed.status !== 200 || respuestaRed.type !== 'basic')
+                    if (respuestaRed && respuestaRed.status === 200 && respuestaRed.type === 'basic')
                     {
-                        return respuestaRed;
+                        cache.put(peticion, respuestaRed.clone());
                     }
 
-                    const respuestaAClonar = respuestaRed.clone();
-                    caches.open(NOMBRE_CACHE).then((cache) =>
-                    {
-                        cache.put(evento.request, respuestaAClonar);
-                    });
-
                     return respuestaRed;
-                }).catch(() =>
-                {
-                    return caches.match('/');
-                });
-            })
+                }).catch(() => respuestaCache);
+
+                return respuestaCache || peticionRed;
+            });
+        })
     );
 });
+
