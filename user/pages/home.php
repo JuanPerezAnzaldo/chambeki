@@ -11,7 +11,7 @@
                 <input type="hidden" name="latitud" id="campoLatitud" value="">
                 <input type="hidden" name="longitud" id="campoLongitud" value="">
                 <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
-
+ 
                 <!-- Campo de oficio-->
                 <div class="campo-busqueda campo-oficio">
                     <input type="text" name="oficio" id="inputOficio" class="input-busqueda" placeholder="Oficio, especialidad o técnico...">

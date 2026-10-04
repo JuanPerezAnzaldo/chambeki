@@ -1,0 +1,311 @@
+
+Configuracion · CSS
+/* ============================================================
+   CHAMBEKI - Configuracion de perfil
+   Reusa autenticacion.css (campos, botones, avisos) y las
+   variables de global.css. Se carga despues de autenticacion.css.
+   ============================================================ */
+
+.seccion-config
+{
+    padding: 2.5rem 1.2rem 4rem;
+    background-color: var(--color-fondo-principal);
+}
+
+.contenedor-config
+{
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+/* ---------- Menu lateral ---------- */
+
+.menu-config
+{
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.enlace-menu-config
+{
+    padding: 10px 12px;
+    border-radius: var(--radio-mediano);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-texto-cuerpo);
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.enlace-menu-config:hover
+{
+    background: rgba(232, 97, 45, 0.1);
+    color: var(--color-boton-principal);
+}
+
+/* ---------- Columna principal ---------- */
+
+.columna-config
+{
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    min-width: 0;
+}
+
+.encabezado-config
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.encabezado-config h1
+{
+    font-size: 1.5rem;
+    color: var(--color-texto-principal);
+}
+
+.tarjeta-config
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+    padding: 1.8rem;
+    scroll-margin-top: 1rem;
+}
+
+.tarjeta-config h2
+{
+    font-size: 1.15rem;
+    color: var(--color-texto-principal);
+    margin-bottom: 4px;
+}
+
+.descripcion-config
+{
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--color-texto-cuerpo);
+    margin-bottom: 1.2rem;
+}
+
+.boton-config
+{
+    width: auto;
+    align-self: flex-start;
+    padding-left: 1.8rem;
+    padding-right: 1.8rem;
+}
+
+/* el correo deshabilitado se ve como solo lectura */
+.campo-formulario input:disabled
+{
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.area-texto-config
+{
+    width: 100%;
+    padding: 13px 14px;
+    font-size: 0.98rem;
+    line-height: 1.5;
+    font-family: inherit;
+    resize: vertical;
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.area-texto-config:focus
+{
+    outline: none;
+    border-color: var(--color-boton-principal);
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+/* ---------- Editor de foto ---------- */
+
+.editor-foto-config
+{
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.editor-foto-config .campo-formulario
+{
+    flex: 1;
+    min-width: 0;
+}
+
+/* perfil.css define la foto grande; si no esta cargado se asegura aqui */
+.editor-foto-config .foto-perfil-grande
+{
+    width: 84px;
+    height: 84px;
+    min-width: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-boton-principal);
+}
+
+.editor-foto-config .foto-perfil-iniciales
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+/* ---------- Interruptor de disponibilidad ---------- */
+
+.interruptor-config
+{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+}
+
+.interruptor-config input
+{
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pista-interruptor
+{
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-borde);
+    transition: background 0.2s ease;
+}
+
+.pista-interruptor::after
+{
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.interruptor-config input:checked + .pista-interruptor
+{
+    background: var(--color-boton-principal);
+}
+
+.interruptor-config input:checked + .pista-interruptor::after
+{
+    transform: translateX(20px);
+}
+
+.interruptor-config input:focus-visible + .pista-interruptor
+{
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.3);
+}
+
+/* ---------- Invitacion a ser freelancer / zona de sesion ---------- */
+
+.tarjeta-invitacion-config
+{
+    border-style: dashed;
+}
+
+.zona-sesion-config
+{
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--color-borde);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 800px)
+{
+    .contenedor-config
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-config
+    {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 2px;
+    }
+
+    .enlace-menu-config
+    {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px)
+{
+    .tarjeta-config
+    {
+        padding: 1.3rem;
+    }
+
+    .editor-foto-config
+    {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .editor-foto-config .foto-perfil-grande
+    {
+        align-self: center;
+    }
+
+    .boton-config
+    {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce)
+{
+    .pista-interruptor,
+    .pista-interruptor::after,
+    .enlace-menu-config
+    {
+        transition: none;
+    }
+}
+

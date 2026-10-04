@@ -90,3 +90,97 @@
 
     include(FOOTER);
 ?>
+
+<?php
+    //ingnoren esto, es para borrar los comentarios al inspeccionar la pagina
+    ob_start(function($buffer)
+    {
+        return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
+    });
+
+    include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
+
+    $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
+
+    include(HEADER);
+
+    switch ($accion)
+    {
+        case 'servicio':
+        {
+            include(PAGINAS . 'servicios.php');
+            break;
+        }
+        case 'servicios':
+        {
+            include(PAGINAS . 'servicio.php');
+            break;
+        }
+        case 'correo':
+        {
+            include(PAGINAS . 'correos.php');
+            break;
+        }
+        case 'nuevo-archivo':
+        {
+            include(PAGINAS . 'nuevoArchivo.php');
+            break;
+        }
+
+        //Proceso de inicio de sesion
+        case 'login':
+        {
+            include(PAGINAS . 'login.php');
+            break;
+        }
+
+        case 'cerrar_sesion':
+        {
+            include(PAGINAS . 'cerrarSesion.php');
+            break;
+        }
+
+        //Proceso de registro de usuario
+        case 'registro':
+        {
+            include(PAGINAS . 'registro.php');
+            break;
+        }
+
+        //Proceso de cambio / recuperacion de contrasena
+        case 'recuperar':
+        {
+            include(PAGINAS . 'recuperar.php');
+            break;
+        }
+
+        //Perfil del usuario que inicio sesion (RSIS-01)
+        case 'perfil':
+        {
+            include(PAGINAS . 'perfil.php');
+            break;
+        }
+
+        case 'inicio':
+        default:
+        {
+            include(PAGINAS . 'home.php');
+            break;
+        }
+
+        case 'terminos':
+        {
+            include(PAGINAS . 'terminos.php');
+            break;
+        }
+
+        case 'privacidad':
+        {
+            include(PAGINAS . 'privacidad.php');
+            break;
+        }
+    }
+
+    include(FOOTER);
+?>
+
