@@ -11,8 +11,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title><?php echo SITENAME; ?> - Soluciones a tu alcance</title>
 
-        <!-- Para lo de la app descargada -->
-        <link rel="manifest" href="/manifest.json">
+        <!-- Para lo de la app descargada 
+        <link rel="manifest" href="/manifest.json">-->
         <meta name="theme-color" content="#ff682e">
 
         <!-- aqui pal css -->

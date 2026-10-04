@@ -64,8 +64,8 @@
 <script src="<?php echo JS_RUTA; ?>theme.js"></script>
 <script src="<?php echo JS_RUTA; ?>app.js?v=2"></script>
 <script src="<?php echo JS_RUTA; ?>ubicacion.js?v=5"></script>
-    <script>
-        if ('serviceWorker' in navigator)
+<script>
+    /*if ('serviceWorker' in navigator)
         {
             window.addEventListener('load', () =>
             {
@@ -79,7 +79,7 @@
                         console.error('Error al registrar SW', error);
                     });
             });
-        }
+        }*/
     </script>
 </body>
 </html>
