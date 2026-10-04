@@ -1,9 +1,9 @@
 <?php
     //ingnoren esto, es para borrar los comentarios al inspeccionar la pagina
-    ob_start(function($buffer)
-    {
+    //ob_start(function($buffer)
+    //{
         //return preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
-    });
+    //});
 
     include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
 
@@ -88,11 +88,11 @@
         }
 
         //configuracion de usuario/freelancer
-        case 'configuracion':
-        {
-            include(PAGINAS . 'configuracion.php');
-            break;
-        }
+        //case 'configuracion':
+        //{
+           // include(PAGINAS . 'configuracion.php');
+          //  break;
+       // }
     }
 
     include(FOOTER);
