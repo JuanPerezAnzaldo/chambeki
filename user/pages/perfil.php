@@ -82,7 +82,8 @@ $mensajeFlash = obtenerMensaje();
             </dl>
 
             <div class="acciones-perfil">
-                <a href="/?accion=recuperar" class="boton-autenticacion boton-perfil-enlace">Cambiar mi contrasena</a>
+                <a href="<?php echo URL_BASE; ?>?accion=configuracion" class="boton-autenticacion boton-perfil-enlace">Editar mi perfil</a>
+                <a href="<?php echo URL_BASE; ?>?accion=recuperar" class="boton-enlace">Cambiar mi contrasena</a>
                 <a href="<?php echo URL_BASE; ?>?accion=cerrar_sesion" class="boton-enlace">Cerrar sesion</a>
             </div>
 

@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
     <head>
-           <?php if (isset($accion) && $accion === 'configuracion'): ?>
-               <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
-               <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>perfil.css?v=1">
-               <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>configuracion.css?v=1">
-           <?php endif; ?>
         <!-- Pa que agarre acentos y caracteres bien y para que se adapte el contenido a todas las pantallas -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -30,6 +25,13 @@
         <?php if (isset($accion) && $accion === 'perfil'): ?>
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
             <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>perfil.css?v=1">
+        <?php endif; ?>
+
+        <!-- pantalla de configuracion de perfil (usuario y freelancer) -->
+        <?php if (isset($accion) && $accion === 'configuracion'): ?>
+            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
+            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>perfil.css?v=1">
+            <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>configuracion.css?v=2">
         <?php endif; ?>
     </head>
 

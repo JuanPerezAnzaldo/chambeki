@@ -103,6 +103,12 @@
             break;
         }
 
+        case 'configuracion':
+        {
+            include(PAGINAS . 'configuracion.php');
+            break;
+        }
+
         //configuracion de usuario/freelancer
         //case 'configuracion':
         //{

@@ -1,4 +1,3 @@
-
 Configuracion · CSS
 /* ============================================================
    CHAMBEKI - Configuracion de perfil
@@ -6,14 +5,12 @@ Configuracion · CSS
    variables de global.css. Se carga despues de autenticacion.css.
    ============================================================ */
 
-.seccion-config
-{
+.seccion-config {
     padding: 2.5rem 1.2rem 4rem;
     background-color: var(--color-fondo-principal);
 }
 
-.contenedor-config
-{
+.contenedor-config {
     max-width: 960px;
     margin: 0 auto;
     display: grid;
@@ -24,8 +21,7 @@ Configuracion · CSS
 
 /* ---------- Menu lateral ---------- */
 
-.menu-config
-{
+.menu-config {
     position: sticky;
     top: 1rem;
     display: flex;
@@ -37,8 +33,7 @@ Configuracion · CSS
     border-radius: var(--radio-grande);
 }
 
-.enlace-menu-config
-{
+.enlace-menu-config {
     padding: 10px 12px;
     border-radius: var(--radio-mediano);
     text-decoration: none;
@@ -48,24 +43,21 @@ Configuracion · CSS
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.enlace-menu-config:hover
-{
+.enlace-menu-config:hover {
     background: rgba(232, 97, 45, 0.1);
     color: var(--color-boton-principal);
 }
 
 /* ---------- Columna principal ---------- */
 
-.columna-config
-{
+.columna-config {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
     min-width: 0;
 }
 
-.encabezado-config
-{
+.encabezado-config {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -73,14 +65,12 @@ Configuracion · CSS
     flex-wrap: wrap;
 }
 
-.encabezado-config h1
-{
+.encabezado-config h1 {
     font-size: 1.5rem;
     color: var(--color-texto-principal);
 }
 
-.tarjeta-config
-{
+.tarjeta-config {
     background: var(--color-fondo-tarjeta);
     border: 1px solid var(--color-borde);
     border-radius: var(--radio-grande);
@@ -89,23 +79,20 @@ Configuracion · CSS
     scroll-margin-top: 1rem;
 }
 
-.tarjeta-config h2
-{
+.tarjeta-config h2 {
     font-size: 1.15rem;
     color: var(--color-texto-principal);
     margin-bottom: 4px;
 }
 
-.descripcion-config
-{
+.descripcion-config {
     font-size: 0.88rem;
     line-height: 1.5;
     color: var(--color-texto-cuerpo);
     margin-bottom: 1.2rem;
 }
 
-.boton-config
-{
+.boton-config {
     width: auto;
     align-self: flex-start;
     padding-left: 1.8rem;
@@ -113,14 +100,12 @@ Configuracion · CSS
 }
 
 /* el correo deshabilitado se ve como solo lectura */
-.campo-formulario input:disabled
-{
+.campo-formulario input:disabled {
     opacity: 0.65;
     cursor: not-allowed;
 }
 
-.area-texto-config
-{
+.area-texto-config {
     width: 100%;
     padding: 13px 14px;
     font-size: 0.98rem;
@@ -133,8 +118,7 @@ Configuracion · CSS
     border-radius: 10px;
 }
 
-.area-texto-config:focus
-{
+.area-texto-config:focus {
     outline: none;
     border-color: var(--color-boton-principal);
     box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
@@ -142,22 +126,19 @@ Configuracion · CSS
 
 /* ---------- Editor de foto ---------- */
 
-.editor-foto-config
-{
+.editor-foto-config {
     display: flex;
     align-items: center;
     gap: 1.2rem;
 }
 
-.editor-foto-config .campo-formulario
-{
+.editor-foto-config .campo-formulario {
     flex: 1;
     min-width: 0;
 }
 
 /* perfil.css define la foto grande; si no esta cargado se asegura aqui */
-.editor-foto-config .foto-perfil-grande
-{
+.editor-foto-config .foto-perfil-grande {
     width: 84px;
     height: 84px;
     min-width: 84px;
@@ -166,8 +147,7 @@ Configuracion · CSS
     border: 3px solid var(--color-boton-principal);
 }
 
-.editor-foto-config .foto-perfil-iniciales
-{
+.editor-foto-config .foto-perfil-iniciales {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,8 +159,7 @@ Configuracion · CSS
 
 /* ---------- Interruptor de disponibilidad ---------- */
 
-.interruptor-config
-{
+.interruptor-config {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -190,15 +169,13 @@ Configuracion · CSS
     color: var(--color-texto-principal);
 }
 
-.interruptor-config input
-{
+.interruptor-config input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-.pista-interruptor
-{
+.pista-interruptor {
     position: relative;
     width: 44px;
     height: 24px;
@@ -208,8 +185,7 @@ Configuracion · CSS
     transition: background 0.2s ease;
 }
 
-.pista-interruptor::after
-{
+.pista-interruptor::after {
     content: "";
     position: absolute;
     top: 3px;
@@ -222,30 +198,25 @@ Configuracion · CSS
     transition: transform 0.2s ease;
 }
 
-.interruptor-config input:checked + .pista-interruptor
-{
+.interruptor-config input:checked+.pista-interruptor {
     background: var(--color-boton-principal);
 }
 
-.interruptor-config input:checked + .pista-interruptor::after
-{
+.interruptor-config input:checked+.pista-interruptor::after {
     transform: translateX(20px);
 }
 
-.interruptor-config input:focus-visible + .pista-interruptor
-{
+.interruptor-config input:focus-visible+.pista-interruptor {
     box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.3);
 }
 
 /* ---------- Invitacion a ser freelancer / zona de sesion ---------- */
 
-.tarjeta-invitacion-config
-{
+.tarjeta-invitacion-config {
     border-style: dashed;
 }
 
-.zona-sesion-config
-{
+.zona-sesion-config {
     margin-top: 1.5rem;
     padding-top: 1.2rem;
     border-top: 1px solid var(--color-borde);
@@ -253,59 +224,181 @@ Configuracion · CSS
 
 /* ---------- Responsivo ---------- */
 
-@media (max-width: 800px)
-{
-    .contenedor-config
-    {
+@media (max-width: 800px) {
+    .contenedor-config {
         grid-template-columns: 1fr;
     }
 
-    .menu-config
-    {
+    .menu-config {
         position: static;
         flex-direction: row;
         overflow-x: auto;
         gap: 2px;
     }
 
-    .enlace-menu-config
-    {
+    .enlace-menu-config {
         white-space: nowrap;
     }
 }
 
-@media (max-width: 480px)
-{
-    .tarjeta-config
-    {
+@media (max-width: 480px) {
+    .tarjeta-config {
         padding: 1.3rem;
     }
 
-    .editor-foto-config
-    {
+    .editor-foto-config {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
     }
 
-    .editor-foto-config .foto-perfil-grande
-    {
+    .editor-foto-config .foto-perfil-grande {
         align-self: center;
     }
 
-    .boton-config
-    {
+    .boton-config {
         width: 100%;
     }
 }
 
-@media (prefers-reduced-motion: reduce)
-{
+@media (prefers-reduced-motion: reduce) {
+
     .pista-interruptor,
     .pista-interruptor::after,
-    .enlace-menu-config
-    {
+    .enlace-menu-config {
         transition: none;
     }
 }
 
+/* ---------- Resumen de cabecera y verificacion ---------- */
+
+.resumen-config {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.foto-resumen-config {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-boton-principal);
+}
+
+.foto-resumen-iniciales {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.subtitulo-config {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 0.88rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.etiqueta-verificacion {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.etiqueta-verificacion.verificado {
+    color: #14725C;
+    background: #DFF6EF;
+}
+
+.etiqueta-verificacion.pendiente {
+    color: #8A5A00;
+    background: #FFF1D6;
+}
+
+[data-theme="dark"] .etiqueta-verificacion.verificado {
+    color: #8FE3CB;
+    background: rgba(20, 114, 92, 0.2);
+}
+
+[data-theme="dark"] .etiqueta-verificacion.pendiente {
+    color: #F5C97A;
+    background: rgba(245, 201, 122, 0.15);
+}
+
+/* ---------- Menu: seccion activa ---------- */
+
+.enlace-menu-config.activo {
+    background: rgba(232, 97, 45, 0.12);
+    color: var(--color-boton-principal);
+}
+
+/* ---------- Formas de cobro ---------- */
+
+.grupo-cobro-config {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.grupo-cobro-config legend {
+    padding: 0 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+}
+
+/* ---------- Control deslizante del radio ---------- */
+
+.campo-formulario input.control-radio-config {
+    --avance-radio: 10%;
+    padding: 0;
+    height: 8px;
+    border: none;
+    border-radius: 999px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: linear-gradient(to right, var(--color-boton-principal) var(--avance-radio), var(--color-borde) var(--avance-radio));
+}
+
+.control-radio-config::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-boton-principal);
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.control-radio-config::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-boton-principal);
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.boton-autenticacion:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+@media (max-width: 480px) {
+    .resumen-config {
+        align-items: flex-start;
+    }
+}

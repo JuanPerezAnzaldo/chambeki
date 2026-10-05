@@ -1,7 +1,8 @@
 <?php
 /*
-    PROCESO: Configuracion de perfil
-    Requerimientos: RSIS-01, RS-01, RS-05, RNF-01, RNF-05
+    PROCESO: Configuracion de perfil (usuario / freelancer)
+    Requerimientos: RSIS-01, RS-01, RS-02, RS-05, RNF-01, RNF-05, RUS-02,
+                    RU-01, RU-02, RU-03, RU-04, RF-06, RLN-03, RLN-07
 
     Todo se hace con el id_usuario de la sesion, nunca con uno que
     venga de la URL o del formulario. Cada seccion es un formulario
@@ -10,197 +11,234 @@
     flash y se redirige, asi un F5 no reenvia el formulario.
 */
 
-require once DOCROOT . "user/includes/funcionesPerfil.php";
+require_once DOCROOT . 'user/includes/funcionesPerfil.php';
 
-if(!hayUsuarioEnSesion())
+if (!hayUsuarioEnSesion())
 {
-  guardarMensaje('error', "Inicia sesión para configurar tu perfil.");
-  redirigir(URL_BASE . '?accion=login');
+    guardarMensaje('error', 'Inicia sesion para configurar tu perfil.');
+    redirigir(URL_BASE . '?accion=login');
 }
 
 $idUsuario = (int) $_SESSION['id_usuario'];
 $usuario = obtenerUsuarioPorId($idUsuario);
 
-if($usuario === null)
+if ($usuario === null)
 {
-  session_unset();
-  session_destroy();
-  session_start();
+    session_unset();
+    session_destroy();
+    session_start();
 
-  guardarMensaje('error', 'No encontramos tu cuenta. Inicia sesión de nuevo.');
-  redirigir(URL_BASE . '?accion=login');
+    guardarMensaje('error', 'No encontramos tu cuenta. Inicia sesion de nuevo.');
+    redirigir(URL_BASE . '?accion=login');
 }
 
 $esFreelancer = (int) $usuario['rol'] === ROL_FREELANCER;
-$perfilFreelancer = $esFreelancer ? obtenerPerfilFreelancer($idUsuario) : null;
+$urlConfig = URL_BASE . '?accion=configuracion';
 
-//errores por seccion y valores conservador por si algo falla (RU-02)
-$errores = ['datos' => [], 'foto' => [], 'contrasena' => [], 'freelancer' => []];
+$perfilFreelancer = $esFreelancer ? obtenerPerfilFreelancer($idUsuario) : null;
+$cobertura = $esFreelancer ? obtenerCoberturaFreelancer($idUsuario) : null;
+$modalidades = $esFreelancer ? obtenerModalidades() : [];
+
+//errores por seccion y valores conservados por si algo falla (RU-02)
+$errores = ['datos' => [], 'foto' => [], 'contrasena' => [], 'freelancer' => [], 'cobertura' => []];
 
 $valoresDatos = [
-    'nombre' => $usuario['nombre'],
-    'telefono' => $usuario['telefono'] ??
+    'nombre'      => $usuario['nombre'],
+    'telefono'    => $usuario['telefono'] ?? '',
     'tipo_cuenta' => (int) $usuario['tipo_cuenta'] === 2 ? 'empresarial' : 'personal'
 ];
 
 $valoresFreelancer = $perfilFreelancer;
+$valoresCobertura = $cobertura;
 
-if($_SERVER['REQUEST_METHOD'] == 'POST')
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
     $operacion = $_POST['operacion'] ?? '';
 
-    if(!validarCsrf($_POST['token_csrf'] ?? ''))
+    if (!validarCsrf($_POST['token_csrf'] ?? ''))
     {
-      guardarMensaje('error', 'La sesion del formulario expiro. Intenta de nuevo.');
-      redirigir(URL_BASE . '?accion=configuracion');
+        guardarMensaje('error', 'La sesion del formulario expiro. Intenta de nuevo.');
+        redirigir($urlConfig);
     }
 
-    switch($operacion)
+    try
     {
-      //-----------------------------------------------------
-      // Datos generales
-      //-----------------------------------------------------
-
-      case 'actualizar_datos':
-      {
-        $datos = [
-          'nombre' => limpiarEntrada($_POST['nombre'] ?? ''),
-          'telefono' => limpiarEntrada($_POST['telefono'] ?? ''),
-          'tipo_cuenta' => ($_POST['tipo_cuenta'] ?? 'personal') === 'empresarial' ? 'empresarial' : 'personal'
-          ];
-
-        $valoresDatos = $datos;
-        $errores['datos'] = validarDatosGenerales($datos);
-
-        if(empty($errores['datos']))
+        switch ($operacion)
         {
-          actualizarDatosGenerales($idUsuario, $datos);
-          $_SESSION['nombre_usuario'] = $datos['nombre'];
+            //-----------------------------------------------------
+            // Datos generales
+            //-----------------------------------------------------
+            case 'actualizar_datos':
+            {
+                $datos = [
+                    'nombre'      => limpiarEntrada($_POST['nombre'] ?? ''),
+                    'telefono'    => limpiarEntrada($_POST['telefono'] ?? ''),
+                    'tipo_cuenta' => ($_POST['tipo_cuenta'] ?? 'personal') === 'empresarial' ? 'empresarial' : 'personal'
+                ];
 
-          guardarMensaje('exito', 'Tus datos se actualizaron correctamente.');
-          redirigir(URL_BASE . '?accion=configuracion');
+                $valoresDatos = $datos;
+                $errores['datos'] = validarDatosGenerales($datos);
+
+                if (empty($errores['datos']))
+                {
+                    actualizarDatosGenerales($idUsuario, $datos);
+                    registrarEnBitacora($usuario['correo'], 'perfil_actualizado');
+                    $_SESSION['nombre_usuario'] = $datos['nombre'];
+
+                    guardarMensaje('exito', 'Tus datos se actualizaron correctamente.');
+                    redirigir($urlConfig . '#datos');
+                }
+
+                break;
+            }
+
+            //-----------------------------------------------------
+            // Foto de perfil (maximo 2MB, se valida el tipo real)
+            //-----------------------------------------------------
+            case 'cambiar_foto':
+            {
+                $resultadoFoto = guardarFotoPerfil($_FILES['foto_perfil'] ?? null);
+
+                if (!$resultadoFoto['exito'])
+                {
+                    $errores['foto']['foto_perfil'] = $resultadoFoto['error'];
+                    break;
+                }
+
+                $fotoAnterior = $usuario['foto_perfil_url'];
+
+                actualizarFotoUsuario($idUsuario, $resultadoFoto['ruta']);
+                eliminarFotoPerfil($fotoAnterior);
+                registrarEnBitacora($usuario['correo'], 'foto_actualizada');
+
+                $_SESSION['foto_usuario'] = $resultadoFoto['ruta'];
+
+                guardarMensaje('exito', 'Tu foto de perfil se actualizo.');
+                redirigir($urlConfig . '#foto');
+            }
+
+            //-----------------------------------------------------
+            // Cambio de contrasena (pide la actual)
+            //-----------------------------------------------------
+            case 'cambiar_contrasena':
+            {
+                $actual    = (string) ($_POST['contrasena_actual'] ?? '');
+                $nueva     = (string) ($_POST['contrasena_nueva'] ?? '');
+                $confirmar = (string) ($_POST['contrasena_confirmar'] ?? '');
+
+                $hashActual = obtenerHashContrasena($idUsuario);
+
+                if ($hashActual === null || !password_verify($actual, $hashActual))
+                {
+                    $errores['contrasena']['actual'] = 'La contrasena actual no es correcta.';
+                    registrarEnBitacora($usuario['correo'], 'cambio_contrasena_fallido');
+                    break;
+                }
+
+                $errorNueva = validarContrasena($nueva, $confirmar);
+
+                if ($errorNueva !== null)
+                {
+                    $errores['contrasena']['nueva'] = $errorNueva;
+                    break;
+                }
+
+                if (password_verify($nueva, $hashActual))
+                {
+                    $errores['contrasena']['nueva'] = 'La contrasena nueva debe ser distinta a la actual.';
+                    break;
+                }
+
+                actualizarContrasena($usuario['correo'], $nueva);
+                registrarEnBitacora($usuario['correo'], 'cambio_contrasena');
+
+                //se renueva el id de sesion tras un cambio de credenciales
+                session_regenerate_id(true);
+
+                guardarMensaje('exito', 'Tu contrasena se cambio correctamente.');
+                redirigir($urlConfig . '#seguridad');
+            }
+
+            //-----------------------------------------------------
+            // Perfil profesional (solo freelancers)
+            //-----------------------------------------------------
+            case 'actualizar_freelancer':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $datos = [
+                    'descripcion'          => limpiarEntrada($_POST['descripcion'] ?? ''),
+                    'identificador_fiscal' => mb_strtoupper(preg_replace('/\s+/', '', limpiarEntrada($_POST['identificador_fiscal'] ?? ''))),
+                    'acepto_efectivo'      => isset($_POST['acepto_efectivo']),
+                    'acepto_tarjeta'       => isset($_POST['acepto_tarjeta'])
+                ];
+
+                $valoresFreelancer = array_merge($perfilFreelancer, $datos);
+                $errores['freelancer'] = validarPerfilFreelancer($datos);
+
+                if (empty($errores['freelancer']))
+                {
+                    guardarPerfilFreelancer($idUsuario, $datos);
+                    registrarEnBitacora($usuario['correo'], 'perfil_freelancer_actualizado');
+
+                    guardarMensaje('exito', 'Tu perfil profesional se actualizo.');
+                    redirigir($urlConfig . '#profesional');
+                }
+
+                break;
+            }
+
+            //-----------------------------------------------------
+            // Cobertura de trabajo (solo freelancers, RUS-02)
+            //-----------------------------------------------------
+            case 'actualizar_cobertura':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $datos = [
+                    'id_modalidad'       => (int) ($_POST['id_modalidad'] ?? 0),
+                    'ciudad_limite'      => limpiarEntrada($_POST['ciudad_limite'] ?? ''),
+                    'direccion_texto'    => limpiarEntrada($_POST['direccion_texto'] ?? ''),
+                    'radio_cobertura_km' => (int) ($_POST['radio_cobertura_km'] ?? 0)
+                ];
+
+                $valoresCobertura = $datos;
+                $errores['cobertura'] = validarCobertura($datos, $modalidades);
+
+                if (empty($errores['cobertura']))
+                {
+                    guardarCobertura($idUsuario, $datos);
+                    registrarEnBitacora($usuario['correo'], 'cobertura_actualizada');
+
+                    guardarMensaje('exito', 'Tu zona de cobertura se guardo.');
+                    redirigir($urlConfig . '#cobertura');
+                }
+
+                break;
+            }
         }
+    }
+    catch (PDOException $excepcion)
+    {
+        //nunca se le muestra el detalle del error al usuario final
+        error_log('Error en configuracion de perfil: ' . $excepcion->getMessage());
 
-        break;
-      }
-
-      //-----------------------------------------------------
-      //Foto de perfil (Maximo 2MB, se valida el tipo real)
-      //-----------------------------------------------------
-      case 'cambiar_foto':
-      {
-        $resultadoFoto = guardarFotoPerfil($_FILES['foto_perfil'] ?? null);
-
-        if(!resultadoFoto['exito'])
-        {
-          $errores['foto']['foto_perfil'] = $resultadoFoto['error'];
-          break;
-        }
-
-        $fotoAnterior = $usuario['foto_perfil_url'];
-
-        actualizarFotoUsuario($idUsuario, $resultadoFoto['ruta']);
-        eliminarFotoPerfil($fotoAnterior);
-
-        $_SESSION['foto_usuario'] = $resultadoFoto['ruta'];
-
-        guardarMensaje('exito', 'Tu foto de perfil se actualizo.');
-        redirigir(URL_BASE . '?accion=configuracion');
-      }
-
-
-      //-------------------------------------------------------
-      //Cambio de contraseña (pide la actual)
-      //--------------------------------------------------------
-      case 'cambiar_contrasena':
-      {
-        $actual    = (string) ($_POST['contrasena_actual'] ?? '');
-        $nueva     = (string) ($_POST['contrasena_nueva'] ?? '');
-        $confirmar = (string) ($_POST['contrasena_confirmar'] ?? '');
-
-        $hashActual = obtenerHashContrasena($idUsuario);
-
-        if ($hashActual === null || !password_verify($actual, $hashActual))
-        {
-            $errores['contrasena']['actual'] = 'La contrasena actual no es correcta.';
-            registrarEnBitacora($usuario['correo'], 'cambio_contrasena_fallido');
-            break;
-        }
-
-        $errorNueva = validarContrasena($nueva, $confirmar);
-
-        if ($errorNueva !== null)
-        {
-            $errores['contrasena']['nueva'] = $errorNueva;
-            break;
-        }
-
-        if (password_verify($nueva, $hashActual))
-        {
-            $errores['contrasena']['nueva'] = 'La contrasena nueva debe ser distinta a la actual.';
-            break;
-        }
-
-        actualizarContrasena($usuario['correo'], $nueva);
-        registrarEnBitacora($usuario['correo'], 'cambio_contrasena');
-
-        //se renueva el id de sesion tras un cambio de credenciales
-        session_regenerate_id(true);
-
-        guardarMensaje('exito', 'Tu contrasena se cambio correctamente.');
-        redirigir(URL_BASE . '?accion=configuracion');
-      }
-
-
-      //-----------------------------------------------------
-      // Perfil profesional (solo freelancers)
-      //-----------------------------------------------------
-      case 'actualizar_freelancer':
-      {
-          if (!$esFreelancer)
-          {
-              guardarMensaje('error', 'Esta seccion es solo para freelancers.');
-              redirigir(URL_BASE . '?accion=configuracion');
-          }
-
-          $tarifaTexto = str_replace(',', '', limpiarEntrada($_POST['tarifa_desde'] ?? ''));
-
-          $datos = [
-              'titulo'            => limpiarEntrada($_POST['titulo'] ?? ''),
-              'descripcion'       => limpiarEntrada($_POST['descripcion'] ?? ''),
-              'anios_experiencia' => (int) ($_POST['anios_experiencia'] ?? 0),
-              'zona_cobertura'    => limpiarEntrada($_POST['zona_cobertura'] ?? ''),
-              'tarifa_desde'      => ($tarifaTexto !== '' && is_numeric($tarifaTexto)) ? (float) $tarifaTexto : null,
-              'disponible'        => isset($_POST['disponible'])
-          ];
-
-          if ($tarifaTexto !== '' && !is_numeric($tarifaTexto))
-          {
-              $errores['freelancer']['tarifa_desde'] = 'Escribe la tarifa solo con numeros.';
-          }
-
-          $errores['freelancer'] = array_merge($errores['freelancer'], validarPerfilFreelancer($datos));
-          $valoresFreelancer = $datos;
-
-          if (empty($errores['freelancer']))
-          {
-              guardarPerfilFreelancer($idUsuario, $datos);
-
-              guardarMensaje('exito', 'Tu perfil profesional se actualizo.');
-              redirigir(URL_BASE . '?accion=configuracion');
-          }
-
-          break;
-      }
-      
+        guardarMensaje('error', 'No pudimos guardar los cambios. Intenta de nuevo en unos minutos.');
+        redirigir($urlConfig);
     }
 }
 
-  $mensajeFlash = obtenerMensaje();
-  $token = tokenCsrf();
-  $urlConfig = URL_BASE . '?accion=configuracion';
-
-
+$mensajeFlash = obtenerMensaje();
+$token = tokenCsrf();
+$inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 ?>
 
 <section class="seccion-config">
@@ -211,6 +249,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
           <a href="#foto" class="enlace-menu-config">Foto de perfil</a>
           <?php if ($esFreelancer): ?>
               <a href="#profesional" class="enlace-menu-config">Perfil profesional</a>
+              <a href="#cobertura" class="enlace-menu-config">Zona de cobertura</a>
           <?php endif; ?>
           <a href="#seguridad" class="enlace-menu-config">Seguridad</a>
       </aside>
@@ -218,12 +257,32 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
       <div class="columna-config">
 
           <header class="encabezado-config">
-              <h1>Configuracion de perfil</h1>
+              <div class="resumen-config">
+                  <?php if (!empty($usuario['foto_perfil_url'])): ?>
+                      <img src="<?php echo URL_BASE . escaparSalida($usuario['foto_perfil_url']); ?>" alt="" class="foto-resumen-config">
+                  <?php else: ?>
+                      <span class="foto-resumen-config foto-resumen-iniciales" aria-hidden="true"><?php echo escaparSalida($inicialNombre); ?></span>
+                  <?php endif; ?>
+
+                  <div>
+                      <h1>Configuracion de perfil</h1>
+                      <p class="subtitulo-config">
+                          <?php echo escaparSalida($usuario['nombre']); ?>
+                          <span class="etiqueta-rol-perfil"><?php echo escaparSalida(nombreRol($usuario['rol'])); ?></span>
+                          <?php if ($esFreelancer): ?>
+                              <span class="etiqueta-verificacion <?php echo !empty($perfilFreelancer['perfil_verificado']) ? 'verificado' : 'pendiente'; ?>">
+                                  <?php echo !empty($perfilFreelancer['perfil_verificado']) ? 'Perfil verificado' : 'Verificacion pendiente'; ?>
+                              </span>
+                          <?php endif; ?>
+                      </p>
+                  </div>
+              </div>
+
               <a href="<?php echo URL_BASE; ?>?accion=perfil" class="boton-enlace">Volver a mi perfil</a>
           </header>
 
           <?php if ($mensajeFlash !== null): ?>
-              <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
+              <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>" role="status"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
           <?php endif; ?>
 
           <!-- ============ Datos personales ============ -->
@@ -251,6 +310,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
                       <div class="campo-formulario">
                           <label for="cfgTelefono">Telefono</label>
                           <input type="tel" id="cfgTelefono" name="telefono" class="icono-telefono" value="<?php echo escaparSalida($valoresDatos['telefono']); ?>" placeholder="664 123 4567" required>
+                          <small class="ayuda-campo">10 digitos.</small>
                           <?php if (isset($errores['datos']['telefono'])): ?><span class="error-campo"><?php echo escaparSalida($errores['datos']['telefono']); ?></span><?php endif; ?>
                       </div>
 
@@ -270,7 +330,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
           <!-- ============ Foto de perfil ============ -->
           <section class="tarjeta-config" id="foto">
               <h2>Foto de perfil</h2>
-              <p class="descripcion-config">JPG, PNG o WEBP de maximo 2MB. En cuentas personales debe verse tu rostro.</p>
+              <p class="descripcion-config">JPG, PNG o WEBP de maximo 2MB. En cuentas personales debe verse tu rostro; las empresariales pueden usar su logotipo.</p>
 
               <form action="<?php echo $urlConfig; ?>" method="POST" enctype="multipart/form-data" class="formulario-autenticacion" novalidate>
                   <input type="hidden" name="operacion" value="cambiar_foto">
@@ -280,14 +340,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
                       <?php if (!empty($usuario['foto_perfil_url'])): ?>
                           <img src="<?php echo URL_BASE . escaparSalida($usuario['foto_perfil_url']); ?>" alt="Tu foto de perfil actual" class="foto-perfil-grande" id="vistaPreviaFoto">
                       <?php else: ?>
-                          <div class="foto-perfil-grande foto-perfil-iniciales" id="vistaPreviaFoto" aria-hidden="true">
-                              <?php echo escaparSalida(mb_strtoupper(mb_substr($usuario['nombre'], 0, 1))); ?>
-                          </div>
+                          <div class="foto-perfil-grande foto-perfil-iniciales" id="vistaPreviaFoto" aria-hidden="true"><?php echo escaparSalida($inicialNombre); ?></div>
                       <?php endif; ?>
 
                       <div class="campo-formulario">
                           <label for="cfgFoto">Elegir nueva foto</label>
                           <input type="file" id="cfgFoto" name="foto_perfil" accept="image/jpeg,image/png,image/webp" required>
+                          <span class="error-campo" id="errorFotoCliente" hidden></span>
                           <?php if (isset($errores['foto']['foto_perfil'])): ?><span class="error-campo"><?php echo escaparSalida($errores['foto']['foto_perfil']); ?></span><?php endif; ?>
                       </div>
                   </div>
@@ -296,57 +355,94 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
               </form>
           </section>
 
-          <!-- ============ Perfil profesional (freelancer) ============ -->
           <?php if ($esFreelancer): ?>
+          <!-- ============ Perfil profesional (freelancer) ============ -->
           <section class="tarjeta-config" id="profesional">
               <h2>Perfil profesional</h2>
-              <p class="descripcion-config">Esta informacion aparece cuando los clientes buscan servicios.</p>
+              <p class="descripcion-config">Esta informacion aparece cuando los clientes comparan servicios. La descripcion pasa por un filtro automatico antes de publicarse.</p>
 
               <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" novalidate>
                   <input type="hidden" name="operacion" value="actualizar_freelancer">
                   <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
 
                   <div class="campo-formulario">
-                      <label for="cfgTitulo">Especialidad u oficio</label>
-                      <input type="text" id="cfgTitulo" name="titulo" maxlength="80" value="<?php echo escaparSalida($valoresFreelancer['titulo']); ?>" placeholder="Electricista residencial" required>
-                      <?php if (isset($errores['freelancer']['titulo'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['titulo']); ?></span><?php endif; ?>
-                  </div>
-
-                  <div class="campo-formulario">
                       <label for="cfgDescripcion">Sobre ti y tu trabajo</label>
-                      <textarea id="cfgDescripcion" name="descripcion" class="area-texto-config" rows="5" maxlength="600" placeholder="Cuenta que haces, con que materiales trabajas, garantias..."><?php echo escaparSalida($valoresFreelancer['descripcion']); ?></textarea>
-                      <small class="ayuda-campo"><span id="contadorDescripcion">0</span>/600 caracteres</small>
+                      <textarea id="cfgDescripcion" name="descripcion" class="area-texto-config" rows="5" maxlength="600" placeholder="Cuenta que haces, con que materiales trabajas, garantias..." required><?php echo escaparSalida($valoresFreelancer['descripcion']); ?></textarea>
+                      <small class="ayuda-campo"><span id="contadorDescripcion">0</span>/600 caracteres (minimo 20)</small>
                       <?php if (isset($errores['freelancer']['descripcion'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['descripcion']); ?></span><?php endif; ?>
                   </div>
 
+                  <div class="campo-formulario">
+                      <label for="cfgRfc">RFC (opcional)</label>
+                      <input type="text" id="cfgRfc" name="identificador_fiscal" maxlength="13" autocomplete="off" value="<?php echo escaparSalida($valoresFreelancer['identificador_fiscal']); ?>" placeholder="XAXX010101000">
+                      <small class="ayuda-campo">Lo usa el equipo de CHAMBEKI para verificar tu perfil. No se muestra a los clientes.</small>
+                      <?php if (isset($errores['freelancer']['identificador_fiscal'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['identificador_fiscal']); ?></span><?php endif; ?>
+                  </div>
+
+                  <fieldset class="grupo-cobro-config">
+                      <legend>Formas de cobro que aceptas</legend>
+
+                      <label class="interruptor-config">
+                          <input type="checkbox" name="acepto_efectivo" value="1" <?php echo !empty($valoresFreelancer['acepto_efectivo']) ? 'checked' : ''; ?>>
+                          <span class="pista-interruptor" aria-hidden="true"></span>
+                          <span>Efectivo</span>
+                      </label>
+
+                      <label class="interruptor-config">
+                          <input type="checkbox" name="acepto_tarjeta" value="1" <?php echo !empty($valoresFreelancer['acepto_tarjeta']) ? 'checked' : ''; ?>>
+                          <span class="pista-interruptor" aria-hidden="true"></span>
+                          <span>Tarjeta de credito o debito</span>
+                      </label>
+
+                      <?php if (isset($errores['freelancer']['cobro'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['cobro']); ?></span><?php endif; ?>
+                  </fieldset>
+
+                  <button type="submit" class="boton-autenticacion boton-config">Guardar perfil profesional</button>
+              </form>
+          </section>
+
+          <!-- ============ Zona de cobertura (freelancer) ============ -->
+          <section class="tarjeta-config" id="cobertura">
+              <h2>Zona de cobertura</h2>
+              <p class="descripcion-config">Los clientes dentro de tu radio podran encontrarte en las busquedas.</p>
+
+              <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" novalidate>
+                  <input type="hidden" name="operacion" value="actualizar_cobertura">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
                   <div class="fila-campos">
                       <div class="campo-formulario">
-                          <label for="cfgAnios">Anios de experiencia</label>
-                          <input type="number" id="cfgAnios" name="anios_experiencia" min="0" max="60" value="<?php echo (int) $valoresFreelancer['anios_experiencia']; ?>">
-                          <?php if (isset($errores['freelancer']['anios_experiencia'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['anios_experiencia']); ?></span><?php endif; ?>
+                          <label for="cfgModalidad">Como ofreces tu servicio</label>
+                          <select id="cfgModalidad" name="id_modalidad" required>
+                              <option value="0">Elige una opcion</option>
+                              <?php foreach ($modalidades as $modalidad): ?>
+                                  <option value="<?php echo (int) $modalidad['id_modalidad']; ?>" <?php echo (int) $valoresCobertura['id_modalidad'] === (int) $modalidad['id_modalidad'] ? 'selected' : ''; ?>><?php echo escaparSalida($modalidad['nombre']); ?></option>
+                              <?php endforeach; ?>
+                          </select>
+                          <?php if (isset($errores['cobertura']['id_modalidad'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['id_modalidad']); ?></span><?php endif; ?>
                       </div>
 
                       <div class="campo-formulario">
-                          <label for="cfgTarifa">Tarifa desde (MXN)</label>
-                          <input type="text" id="cfgTarifa" name="tarifa_desde" inputmode="decimal" value="<?php echo $valoresFreelancer['tarifa_desde'] !== null ? escaparSalida($valoresFreelancer['tarifa_desde']) : ''; ?>" placeholder="350">
-                          <small class="ayuda-campo">Opcional. Vacio se muestra como "A cotizar".</small>
-                          <?php if (isset($errores['freelancer']['tarifa_desde'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['tarifa_desde']); ?></span><?php endif; ?>
+                          <label for="cfgCiudad">Ciudad</label>
+                          <input type="text" id="cfgCiudad" name="ciudad_limite" maxlength="100" value="<?php echo escaparSalida($valoresCobertura['ciudad_limite']); ?>" placeholder="Tijuana" required>
+                          <?php if (isset($errores['cobertura']['ciudad_limite'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['ciudad_limite']); ?></span><?php endif; ?>
                       </div>
                   </div>
 
                   <div class="campo-formulario">
-                      <label for="cfgZona">Zona de cobertura</label>
-                      <input type="text" id="cfgZona" name="zona_cobertura" maxlength="120" value="<?php echo escaparSalida($valoresFreelancer['zona_cobertura']); ?>" placeholder="Tijuana: Otay, Zona Rio, Playas">
-                      <?php if (isset($errores['freelancer']['zona_cobertura'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['zona_cobertura']); ?></span><?php endif; ?>
+                      <label for="cfgDireccion">Direccion o zona base</label>
+                      <input type="text" id="cfgDireccion" name="direccion_texto" maxlength="255" value="<?php echo escaparSalida($valoresCobertura['direccion_texto']); ?>" placeholder="Col. Otay Universidad, cerca de UABC">
+                      <small class="ayuda-campo">Opcional. Solo se usa como referencia de tu zona.</small>
+                      <?php if (isset($errores['cobertura']['direccion_texto'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['direccion_texto']); ?></span><?php endif; ?>
                   </div>
 
-                  <label class="interruptor-config">
-                      <input type="checkbox" name="disponible" value="1" <?php echo !empty($valoresFreelancer['disponible']) ? 'checked' : ''; ?>>
-                      <span class="pista-interruptor" aria-hidden="true"></span>
-                      <span>Disponible para recibir nuevas citas</span>
-                  </label>
+                  <div class="campo-formulario">
+                      <label for="cfgRadio">Radio de cobertura: <output id="valorRadio" for="cfgRadio"><?php echo (int) $valoresCobertura['radio_cobertura_km']; ?></output> km</label>
+                      <input type="range" id="cfgRadio" name="radio_cobertura_km" class="control-radio-config" min="1" max="100" step="1" value="<?php echo (int) $valoresCobertura['radio_cobertura_km']; ?>">
+                      <?php if (isset($errores['cobertura']['radio_cobertura_km'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['radio_cobertura_km']); ?></span><?php endif; ?>
+                  </div>
 
-                  <button type="submit" class="boton-autenticacion boton-config">Guardar perfil profesional</button>
+                  <button type="submit" class="boton-autenticacion boton-config">Guardar cobertura</button>
               </form>
           </section>
           <?php else: ?>
@@ -397,55 +493,5 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
   </div>
 </section>
 
-<script>
-  (function()
-  {
-      //vista previa de la foto antes de subirla
-      const entradaFoto = document.getElementById('cfgFoto');
-      const vistaPrevia = document.getElementById('vistaPreviaFoto');
-
-      if (entradaFoto && vistaPrevia)
-      {
-          entradaFoto.addEventListener('change', function()
-          {
-              const archivo = entradaFoto.files[0];
-
-              if (!archivo || !archivo.type.startsWith('image/'))
-              {
-                  return;
-              }
-
-              const lector = new FileReader();
-
-              lector.onload = function(e)
-              {
-                  let imagen = vistaPrevia;
-
-                  if (imagen.tagName !== 'IMG')
-                  {
-                      imagen = document.createElement('img');
-                      imagen.className = 'foto-perfil-grande';
-                      imagen.id = 'vistaPreviaFoto';
-                      imagen.alt = 'Vista previa de la nueva foto';
-                      vistaPrevia.replaceWith(imagen);
-                  }
-
-                  imagen.src = e.target.result;
-              };
-
-              lector.readAsDataURL(archivo);
-          });
-      }
-
-      //contador de caracteres de la descripcion
-      const area = document.getElementById('cfgDescripcion');
-      const contador = document.getElementById('contadorDescripcion');
-
-      if (area && contador)
-      {
-          const actualizar = function() { contador.textContent = area.value.length; };
-          area.addEventListener('input', actualizar);
-          actualizar();
-      }
-  })();
-</script>
+<script src="<?php echo JS_RUTA; ?>autenticacion.js"></script>
+<script src="<?php echo JS_RUTA; ?>configuracion.js?v=1"></script>
