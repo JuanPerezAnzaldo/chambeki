@@ -110,11 +110,11 @@
         }
 
         //configuracion de usuario/freelancer
-        //case 'configuracion':
-        //{
-           // include(PAGINAS . 'configuracion.php');
-          //  break;
-       // }
+        case 'configuracion':
+        {
+           include(PAGINAS . 'configuracion.php');
+          break;
+        }
     }
 
     include(FOOTER);
