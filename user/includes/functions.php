@@ -1,5 +1,4 @@
 
-Functions · PHP
 <?php
 /*
     Funciones compartidas de CHAMBEKI.
