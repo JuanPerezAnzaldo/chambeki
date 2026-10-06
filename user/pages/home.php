@@ -14,8 +14,11 @@
  
                 <!-- Campo de oficio-->
                 <div class="campo-busqueda campo-oficio">
-                    <input type="text" name="oficio" id="inputOficio" class="input-busqueda" placeholder="Oficio, especialidad o técnico...">
+                    <input type="text" name="oficio" id="inputOficio" class="input-busqueda" placeholder="Oficio, especialidad o técnico..." role="combobox" aria-expanded="false" aria-controls="menuOficios" aria-autocomplete="list">
                     <button type="button" class="boton-limpiar-input oculto" id="btnLimpiarOficio" aria-label="Limpiar campo">&times;</button>
+
+                    <!-- Sugerencias de oficios (las llena busqueda.js) -->
+                    <div id="menuOficios" class="menu-desplegable-oficios oculto" role="listbox"></div>
                 </div>
 
                 <div class="divisor-vertical-campos"></div>
