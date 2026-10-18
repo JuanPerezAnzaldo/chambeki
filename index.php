@@ -5,9 +5,7 @@
         pagina (login.php, recuperar.php, cerrarSesion.php, etc.) corra
         su logica y a veces necesite redirigir con header('Location').
         Sin este buffer, esos redirects fallan en cuanto el servidor ya
-        envio el primer byte de HTML (dependia de si el hosting traia
-        output_buffering activado en su php.ini, por eso fallaba "a
-        veces" y no siempre). Con el buffer, nada sale al navegador
+        envio el primer byte de HTML. Con el buffer, nada sale al navegador
         hasta el final del script, asi que cualquier redirect en
         cualquier pagina SIEMPRE funciona.
     */
@@ -16,6 +14,16 @@
     include $_SERVER['DOCUMENT_ROOT'] . '/shared/includes/configuration.php';
 
     $accion = isset($_GET['accion']) ? trim($_GET['accion']) : 'inicio';
+
+    // -----------------------------------------------------------------
+    // ENDPOINTS API / JSON (Deben procesarse ANTES de imprimir HTML)
+    // -----------------------------------------------------------------
+    if ($accion === 'tarjeta-intent')
+    {
+        ob_end_clean(); // Descarta el buffer previo para entregar JSON puro
+        include(PAGINAS . 'apiTarjetaIntent.php');
+        exit;
+    }
 
     include(HEADER);
 
@@ -84,13 +92,6 @@
             break;
         }
 
-        case 'inicio':
-        default:
-        {
-            include(PAGINAS . 'home.php');
-            break;
-        }
-
         case 'terminos':
         {
             include(PAGINAS . 'terminos.php');
@@ -103,17 +104,18 @@
             break;
         }
 
+        //Configuracion de usuario/freelancer
         case 'configuracion':
         {
             include(PAGINAS . 'configuracion.php');
             break;
         }
 
-        //configuracion de usuario/freelancer
-        case 'configuracion':
+        case 'inicio':
+        default:
         {
-           include(PAGINAS . 'configuracion.php');
-          break;
+            include(PAGINAS . 'home.php');
+            break;
         }
     }
 
