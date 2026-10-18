@@ -1,0 +1,505 @@
+/* ============================================================
+   CHAMBEKI - Métodos de pago del perfil (tarjetas con Stripe)
+   ============================================================ */
+
+.sr-solo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Encabezado de la sección ---------- */
+
+.encabezado-pagos {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+
+.encabezado-pagos .titulo-seccion-perfil {
+  margin-bottom: 4px;
+}
+
+.descripcion-pagos {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Botones ---------- */
+
+.boton-pago {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.boton-pago svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.boton-pago:focus-visible,
+.dialogo-cerrar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.3);
+}
+
+.boton-pago:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.boton-pago-principal {
+  color: var(--color-boton-principal-texto, #FFFFFF);
+  background-color: var(--color-boton-principal, #E8612D);
+}
+
+.boton-pago-principal:hover:not(:disabled) {
+  background-color: var(--color-boton-principal-hover, #D14F1C);
+}
+
+.boton-pago-secundario {
+  color: var(--color-texto-principal);
+  background: transparent;
+  border-color: var(--color-borde);
+}
+
+.boton-pago-secundario:hover:not(:disabled) {
+  border-color: var(--color-boton-principal, #E8612D);
+  color: var(--color-boton-principal, #E8612D);
+}
+
+.boton-pago-texto {
+  padding: 7px 10px;
+  font-size: 0.84rem;
+  color: var(--color-boton-principal, #E8612D);
+  background: transparent;
+}
+
+.boton-pago-texto:hover:not(:disabled) {
+  background: rgba(232, 97, 45, 0.1);
+}
+
+.boton-pago-peligro {
+  color: #C0392B;
+}
+
+.boton-pago-peligro:hover:not(:disabled) {
+  background: rgba(192, 57, 43, 0.1);
+}
+
+.boton-pago-peligro-solido {
+  color: #FFFFFF;
+  background-color: #C0392B;
+}
+
+.boton-pago-peligro-solido:hover:not(:disabled) {
+  background-color: #A02D1F;
+}
+
+/* ---------- Rejilla y estado vacío ---------- */
+
+.rejilla-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.3rem 1.1rem;
+}
+
+.estado-vacio-pagos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-texto-cuerpo);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+.estado-vacio-pagos svg {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 8px;
+  fill: none;
+  stroke: var(--color-boton-principal, #E8612D);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.estado-vacio-pagos strong {
+  color: var(--color-texto-principal);
+}
+
+.nota-limite-pagos {
+  margin-top: 1rem;
+  font-size: 0.84rem;
+  color: var(--color-texto-cuerpo);
+}
+
+.nota-seguridad-pagos {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-texto-cuerpo);
+}
+
+.nota-seguridad-pagos svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--color-boton-principal, #E8612D);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Tarjeta de Crédito/Débito ---------- */
+
+.tarjeta-pago {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.tarjeta-pago-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 1.586 / 1;
+  padding: 18px 20px;
+  overflow: hidden;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #5A463D 0%, #2A211D 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 10px 22px -8px rgba(43, 35, 32, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-pago-visual::before,
+.tarjeta-pago-visual::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.tarjeta-pago-visual::before {
+  width: 190px;
+  height: 190px;
+  top: -95px;
+  right: -50px;
+}
+
+.tarjeta-pago-visual::after {
+  width: 130px;
+  height: 130px;
+  bottom: -75px;
+  left: -30px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.rejilla-tarjetas .tarjeta-pago:hover .tarjeta-pago-visual {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px -10px rgba(43, 35, 32, 0.55);
+}
+
+.tarjeta-pago.es-predetermina .tarjeta-pago-visual,
+.tarjeta-pago.es-predeterminada .tarjeta-pago-visual {
+  background: linear-gradient(135deg, #E8612D 0%, #B8401A 100%);
+  box-shadow: 0 12px 24px -8px rgba(232, 97, 45, 0.55);
+}
+
+.tarjeta-pago.esta-vencida .tarjeta-pago-visual {
+  filter: grayscale(0.85);
+  opacity: 0.8;
+}
+
+.tp-fila {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tp-chip {
+  width: 38px;
+  height: 28px;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(0, 0, 0, 0.18) 49%, rgba(0, 0, 0, 0.18) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(0, 0, 0, 0.18) 49%, rgba(0, 0, 0, 0.18) 51%, transparent 52%),
+    linear-gradient(135deg, #F6D98B, #C9A24B);
+}
+
+.tp-marca {
+  position: relative;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.marca-visa .tp-marca {
+  font-size: 1.35rem;
+  font-style: italic;
+  font-weight: 900;
+}
+
+.marca-mastercard .tp-marca {
+  width: 46px;
+  height: 28px;
+  font-size: 0;
+}
+
+.marca-mastercard .tp-marca::before,
+.marca-mastercard .tp-marca::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.marca-mastercard .tp-marca::before {
+  left: 0;
+  background: #EB001B;
+}
+
+.marca-mastercard .tp-marca::after {
+  right: 0;
+  background: rgba(247, 158, 27, 0.9);
+}
+
+.tp-numero {
+  position: relative;
+  z-index: 1;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tp-vence {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tp-vence small {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.tp-vence strong {
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+}
+
+.tp-insignia {
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #B8401A;
+  background: #FFFFFF;
+  border-radius: 999px;
+}
+
+.tp-insignia-vencida {
+  color: #A02D1F;
+  background: #FBE9E6;
+}
+
+.tarjeta-pago-pie {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tp-descripcion {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-texto-principal);
+}
+
+.tp-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin-left: -10px;
+}
+
+.tp-acciones form {
+  display: inline-flex;
+}
+
+/* ---------- Ventanas Modales (<dialog>) ---------- */
+
+.dialogo-tarjeta {
+  margin: auto;
+  width: min(480px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  overflow: auto;
+  color: var(--color-texto-cuerpo);
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dialogo-tarjeta-chico {
+  width: min(400px, calc(100% - 2rem));
+}
+
+.dialogo-tarjeta::backdrop {
+  background: rgba(30, 20, 16, 0.58);
+  backdrop-filter: blur(3px);
+}
+
+.dialogo-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.dialogo-cabecera h3 {
+  font-size: 1.1rem;
+  color: var(--color-texto-principal);
+}
+
+.dialogo-cerrar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--color-marcador-posicion);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dialogo-cerrar:hover {
+  color: var(--color-texto-principal);
+  background: rgba(232, 97, 45, 0.1);
+}
+
+.dialogo-cerrar svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
+.dialogo-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.3rem 1.4rem;
+}
+
+.dialogo-pie {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 1rem 1.4rem 1.3rem;
+}
+
+.texto-dialogo {
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* Campos de Stripe Elements */
+
+.campo-stripe {
+  min-height: 48px;
+  padding: 14px;
+  background-color: var(--color-fondo-input, #F8F6F5);
+  border: 1px solid var(--color-borde, #E5DDD8);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campo-stripe.enfocado {
+  border-color: var(--color-boton-principal, #E8612D);
+  box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+.campo-stripe.invalido {
+  border-color: #C0392B;
+}
+
+/* Responsivo */
+
+@media (max-width: 480px) {
+  .rejilla-tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .encabezado-pagos .boton-pago {
+    width: 100%;
+  }
+
+  .dialogo-pie {
+    flex-direction: column-reverse;
+  }
+
+  .dialogo-pie .boton-pago {
+    width: 100%;
+  }
+}
