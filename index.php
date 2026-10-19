@@ -117,6 +117,13 @@
             include(PAGINAS . 'home.php');
             break;
         }
+
+        //Planes Basico y Premium
+        case 'planes':
+        {
+            include(PAGINAS . 'planes.php');
+            break;
+        }
     }
 
     include(FOOTER);

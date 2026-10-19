@@ -1,0 +1,224 @@
+/* ============================================================
+   CHAMBEKI - Planes (Basico y Premium)
+   Usa las variables de global.css, asi respeta el modo oscuro.
+   ============================================================ */
+
+.seccion-planes {
+  padding: 3rem 1.2rem 4.5rem;
+  background-color: var(--color-fondo-principal);
+}
+
+.contenedor-planes {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.cabecera-planes {
+  max-width: 560px;
+  margin: 0 auto 2.4rem;
+  text-align: center;
+}
+
+.cabecera-planes h1 {
+  margin-bottom: 0.7rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--color-texto-principal);
+}
+
+.cabecera-planes p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-texto-cuerpo);
+}
+
+.rejilla-planes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  align-items: stretch;
+}
+
+/* ---------- Tarjeta de plan ---------- */
+
+.plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.8rem;
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-general);
+}
+
+.plan-premium {
+  border: 2px solid var(--color-boton-principal);
+}
+
+.plan h2 {
+  font-size: 1.4rem;
+  color: var(--color-texto-principal);
+}
+
+.descripcion-plan {
+  margin-top: 0.4rem;
+  min-height: 3em;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-texto-cuerpo);
+}
+
+.insignia-plan {
+  position: absolute;
+  top: -13px;
+  right: 1.4rem;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-boton-principal-texto);
+  background: var(--color-boton-principal);
+  border-radius: 999px;
+}
+
+.precio-plan {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 1.2rem 0 1.4rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--color-borde);
+  color: var(--color-texto-cuerpo);
+}
+
+.precio-plan strong {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--color-texto-principal);
+}
+
+.precio-plan span {
+  font-size: 0.92rem;
+}
+
+/* ---------- Beneficios ---------- */
+
+.lista-beneficios {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: 1.8rem;
+  list-style: none;
+}
+
+.lista-beneficios li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-texto-cuerpo);
+}
+
+.lista-beneficios li::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background-color: var(--color-boton-principal);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.lista-beneficios li strong {
+  display: block;
+  color: var(--color-texto-principal);
+}
+
+/* ---------- Botones ---------- */
+
+.boton-plan {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.boton-plan:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.3);
+}
+
+.boton-plan-principal {
+  color: var(--color-boton-principal-texto);
+  background-color: var(--color-boton-principal);
+}
+
+.boton-plan-principal:hover:not(:disabled) {
+  background-color: var(--color-boton-principal-hover);
+}
+
+.boton-plan-secundario {
+  color: var(--color-texto-principal);
+  background: transparent;
+  border-color: var(--color-borde);
+}
+
+.boton-plan-secundario:hover {
+  color: var(--color-boton-principal);
+  border-color: var(--color-boton-principal);
+}
+
+.boton-plan:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nota-plan {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--color-marcador-posicion);
+}
+
+.pie-planes {
+  margin-top: 2rem;
+  font-size: 0.88rem;
+  text-align: center;
+  color: var(--color-texto-cuerpo);
+}
+
+.pie-planes strong {
+  color: var(--color-texto-principal);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 720px) {
+  .rejilla-planes {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-premium {
+    order: -1;
+    margin-top: 0.8rem;
+  }
+
+  .cabecera-planes h1 {
+    font-size: 1.6rem;
+  }
+
+  .descripcion-plan {
+    min-height: 0;
+  }
+}

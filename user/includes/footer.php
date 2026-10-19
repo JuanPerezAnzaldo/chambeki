@@ -17,7 +17,7 @@
                 <ul>
                     <li><a href="<?php echo URL_BASE; ?>?accion=servicios">Oficios Populares</a></li>
                     <li><a href="<?php echo URL_BASE; ?>?accion=cobertura">Mapa de Cobertura</a></li>
-                    <li><a href="<?php echo URL_BASE; ?>?accion=suscripciones">Planes para Socios</a></li>
+                    <li><a href="<?php echo URL_BASE; ?>?accion=planes">Planes para Socios</a></li>
                 </ul>
             </div>
             <div class="columna-pie-pagina">
