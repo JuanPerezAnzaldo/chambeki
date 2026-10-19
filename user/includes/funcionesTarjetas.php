@@ -286,10 +286,10 @@ function obtenerOCrearClienteStripe($usuario)
 function crearSetupIntentTarjeta($usuario)
 {
     $intento = clienteStripe()->setupIntents->create([
-        'customer'             => obtenerOCrearClienteStripe($usuario),
-        'payment_method_types' => ['card'],
-        'usage'                => 'off_session',
-        'metadata'             => ['id_usuario' => (string) (int) $usuario['id_usuario']]
+        'customer'                  => obtenerOCrearClienteStripe($usuario),
+        'automatic_payment_methods' => ['enabled' => true],
+        'usage'                     => 'off_session',
+        'metadata'                  => ['id_usuario' => (string) (int) $usuario['id_usuario']]
     ]);
 
     return $intento->client_secret;
