@@ -267,7 +267,17 @@ function obtenerOCrearClienteStripe($usuario)
 
     if ($idCliente !== null)
     {
-        return $idCliente;
+        try
+        {
+            // Verificamos que el cliente exista en la cuenta actual de Stripe
+            clienteStripe()->customers->retrieve($idCliente);
+            return $idCliente;
+        }
+        catch (\Throwable $excepcion)
+        {
+            // Si el cliente no existe en esta cuenta/entorno, creamos uno nuevo
+            $idCliente = null;
+        }
     }
 
     $cliente = clienteStripe()->customers->create([
