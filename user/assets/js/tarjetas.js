@@ -233,7 +233,7 @@
         stripe = window.Stripe(seccion.dataset.claveStripe, { locale: 'es' });
         elementos = stripe.elements({ locale: 'es' });
 
-        montarCampo('numero', 'cardNumber', 'numeroTarjeta', { showIcon: true, placeholder: '1234 1234 1234 1234' });
+        montarCampo('numero', 'cardNumber', 'numeroTarjeta', { showIcon: true, placeholder: '1234 1234 1234 1234', disableLink: true });
         montarCampo('vencimiento', 'cardExpiry', 'vencimientoTarjeta');
         montarCampo('cvc', 'cardCvc', 'cvcTarjeta');
 
