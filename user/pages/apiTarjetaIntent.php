@@ -60,8 +60,6 @@ try
 }
 catch (\Throwable $excepcion)
 {
-    error_log('Error al crear SetupIntent: ' . $excepcion->getMessage());
-
-    responderJson(500, ['error' => 'No pudimos iniciar el guardado de tu tarjeta. Intenta de nuevo en unos minutos.']);
+    responderJson(500, ['error' => 'ERROR REAL: ' . $excepcion->getMessage()]);
 }
 ?>
