@@ -334,4 +334,83 @@ function guardarCobertura($idUsuario, $datos)
 
     $sentencia->execute($parametros);
 }
+
+//=============================================================
+// Suscripcion (tablas suscripciones y cat_planes)
+// "Suscrito" = tiene una suscripcion Premium activa y vigente.
+// Todavia no se cobra: el boton "Suscribirse" solo activa el
+// estado; el cobro con tarjeta se conecta despues.
+//=============================================================
+
+define('PLAN_PREMIUM', 2);
+define('SUSCRIPCION_ACTIVA', 1);
+define('SUSCRIPCION_CANCELADA', 3);
+define('DIAS_VIGENCIA_SUSCRIPCION', 30);
+
+function usuarioEstaSuscrito($idUsuario)
+{
+    $conexion = conexionBD();
+
+    $sentencia = $conexion->prepare(
+        'SELECT 1
+         FROM suscripciones
+         WHERE id_usuario = :id AND id_plan = :plan AND estado = :estado AND fecha_vencimiento > NOW()
+         LIMIT 1'
+    );
+    $sentencia->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM, ':estado' => SUSCRIPCION_ACTIVA]);
+
+    return $sentencia->fetchColumn() !== false;
+}
+
+//reactiva la suscripcion Premium existente (vencida/cancelada) o crea una nueva
+function activarSuscripcion($idUsuario)
+{
+    $conexion = conexionBD();
+    $dias = (int) DIAS_VIGENCIA_SUSCRIPCION;
+
+    $existe = $conexion->prepare(
+        'SELECT id_suscripcion FROM suscripciones
+         WHERE id_usuario = :id AND id_plan = :plan
+         ORDER BY id_suscripcion DESC
+         LIMIT 1'
+    );
+    $existe->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM]);
+    $fila = $existe->fetch();
+
+    if ($fila !== false)
+    {
+        $sentencia = $conexion->prepare(
+            'UPDATE suscripciones
+             SET estado = :estado, fecha_vencimiento = DATE_ADD(NOW(), INTERVAL ' . $dias . ' DAY)
+             WHERE id_suscripcion = :id_suscripcion'
+        );
+        $sentencia->execute([':estado' => SUSCRIPCION_ACTIVA, ':id_suscripcion' => $fila['id_suscripcion']]);
+    }
+    else
+    {
+        $sentencia = $conexion->prepare(
+            'INSERT INTO suscripciones (id_usuario, id_plan, estado, fecha_vencimiento)
+             VALUES (:id, :plan, :estado, DATE_ADD(NOW(), INTERVAL ' . $dias . ' DAY))'
+        );
+        $sentencia->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM, ':estado' => SUSCRIPCION_ACTIVA]);
+    }
+}
+
+//cancela la suscripcion Premium activa (el usuario vuelve a "No suscrito")
+function cancelarSuscripcion($idUsuario)
+{
+    $conexion = conexionBD();
+
+    $sentencia = $conexion->prepare(
+        'UPDATE suscripciones
+         SET estado = :cancelada
+         WHERE id_usuario = :id AND id_plan = :plan AND estado = :activa'
+    );
+    $sentencia->execute([
+        ':cancelada' => SUSCRIPCION_CANCELADA,
+        ':id'        => $idUsuario,
+        ':plan'      => PLAN_PREMIUM,
+        ':activa'    => SUSCRIPCION_ACTIVA
+    ]);
+}
 ?>

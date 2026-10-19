@@ -270,6 +270,16 @@
   stroke-width: 2;
 }
 
+/* el acceso "Beneficios de Suscriptor" es un <button>: se iguala a los enlaces */
+.acceso-boton {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .acceso-salir {
   color: #C0392B;
 }

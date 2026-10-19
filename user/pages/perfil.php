@@ -35,10 +35,52 @@ $pagosDisponibles = pagosConTarjetaDisponibles();
 //-------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
+    $operacion = $_POST['operacion'] ?? '';
+
     if (!validarCsrf($_POST['token_csrf'] ?? ''))
     {
         guardarMensaje('error', 'La sesion del formulario expiro. Intenta de nuevo.');
-        redirigir($urlTarjetas);
+        redirigir(in_array($operacion, ['suscribirse', 'cancelar_suscripcion'], true) ? $urlPerfil : $urlTarjetas);
+    }
+
+    //Suscripcion: no depende de los pagos con tarjeta
+    if ($operacion === 'suscribirse')
+    {
+        try
+        {
+            if (usuarioEstaSuscrito($idUsuario))
+            {
+                guardarMensaje('exito', 'Ya eres suscriptor.');
+            }
+            else
+            {
+                activarSuscripcion($idUsuario);
+                guardarMensaje('exito', '¡Listo! Ahora eres suscriptor.');
+            }
+        }
+        catch (\Throwable $excepcion)
+        {
+            error_log('Error al suscribir al usuario: ' . $excepcion->getMessage());
+            guardarMensaje('error', 'No pudimos activar tu suscripcion. Intenta de nuevo en unos minutos.');
+        }
+
+        redirigir($urlPerfil);
+    }
+
+    if ($operacion === 'cancelar_suscripcion')
+    {
+        try
+        {
+            cancelarSuscripcion($idUsuario);
+            guardarMensaje('exito', 'Cancelaste tu suscripcion.');
+        }
+        catch (\Throwable $excepcion)
+        {
+            error_log('Error al cancelar la suscripcion: ' . $excepcion->getMessage());
+            guardarMensaje('error', 'No pudimos cancelar tu suscripcion. Intenta de nuevo en unos minutos.');
+        }
+
+        redirigir($urlPerfil);
     }
 
     if (!$pagosDisponibles)
@@ -47,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         redirigir($urlTarjetas);
     }
 
-    $operacion = $_POST['operacion'] ?? '';
     $idTarjeta = (int) ($_POST['id_tarjeta'] ?? 0);
 
     try
@@ -108,6 +149,7 @@ $tarjetas = obtenerTarjetas($idUsuario);
 $limiteTarjetas = count($tarjetas) >= MAXIMO_TARJETAS_USUARIO;
 $anioActual = (int) date('Y');
 $cuentaActiva = (int) $usuario['estatus'] === ESTATUS_ACTIVO;
+$estaSuscrito = usuarioEstaSuscrito($idUsuario);
 $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 ?>
 
@@ -138,6 +180,9 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                         <span class="etiqueta-rol-perfil"><?php echo escaparSalida(nombreRol($usuario['rol'])); ?></span>
                         <span class="etiqueta-estado <?php echo $cuentaActiva ? 'estado-activo' : 'estado-alerta'; ?>">
                             <?php echo $cuentaActiva ? 'Cuenta activa' : 'Cuenta suspendida'; ?>
+                        </span>
+                        <span class="etiqueta-estado <?php echo $estaSuscrito ? 'estado-activo' : 'estado-alerta'; ?>">
+                            <?php echo $estaSuscrito ? 'Suscrito' : 'No suscrito'; ?>
                         </span>
                         <?php if ($esFreelancer): ?>
                             <span class="etiqueta-estado <?php echo !empty($perfilFreelancer['perfil_verificado']) ? 'estado-activo' : 'estado-pendiente'; ?>">
@@ -222,6 +267,20 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                         <span class="texto-acceso">Mis métodos de pago</span>
                         <svg class="flecha-acceso" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
                     </a>
+
+                    <?php if ($estaSuscrito): ?>
+                    <button type="button" class="acceso-perfil acceso-boton" data-abrir-dialogo="dlgCancelarSuscripcion">
+                        <span class="icono-dato" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></span>
+                        <span class="texto-acceso">Cancelar Suscripción</span>
+                        <svg class="flecha-acceso" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+                    </button>
+                    <?php else: ?>
+                    <button type="button" class="acceso-perfil acceso-boton" data-abrir-dialogo="dlgSuscripcion">
+                        <span class="icono-dato" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></span>
+                        <span class="texto-acceso">Beneficios de Suscriptor</span>
+                        <svg class="flecha-acceso" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+                    </button>
+                    <?php endif; ?>
 
                     <a href="<?php echo URL_BASE; ?>?accion=cerrar_sesion" class="acceso-perfil acceso-salir">
                         <span class="icono-dato" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>
@@ -346,6 +405,54 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 
     </div>
 </section>
+
+<!-- ============ Dialog: Beneficios de Suscriptor ============ -->
+<dialog class="dialogo-tarjeta" id="dlgSuscripcion" aria-labelledby="tituloSuscripcion">
+    <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" novalidate>
+        <input type="hidden" name="operacion" value="suscribirse">
+        <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+        <header class="dialogo-cabecera">
+            <h3 id="tituloSuscripcion">Beneficios de Suscriptor</h3>
+            <button type="button" class="dialogo-cerrar" data-cerrar-dialogo aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+        </header>
+
+        <div class="dialogo-cuerpo">
+            <p class="texto-dialogo">Beneficios de suscriptor</p>
+        </div>
+
+        <footer class="dialogo-pie">
+            <button type="button" class="boton-pago boton-pago-secundario" data-cerrar-dialogo>No gracias</button>
+            <button type="submit" class="boton-pago boton-pago-principal">Suscribirse</button>
+        </footer>
+    </form>
+</dialog>
+
+<!-- ============ Dialog: Cancelar suscripción ============ -->
+<dialog class="dialogo-tarjeta dialogo-tarjeta-chico" id="dlgCancelarSuscripcion" aria-labelledby="tituloCancelarSuscripcion">
+    <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" novalidate>
+        <input type="hidden" name="operacion" value="cancelar_suscripcion">
+        <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+        <header class="dialogo-cabecera">
+            <h3 id="tituloCancelarSuscripcion">Cancelar suscripción</h3>
+            <button type="button" class="dialogo-cerrar" data-cerrar-dialogo aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+        </header>
+
+        <div class="dialogo-cuerpo">
+            <p class="texto-dialogo">¿Quieres cancelar tu suscripción? Tu perfil volverá a mostrarse como <strong>No suscrito</strong>.</p>
+        </div>
+
+        <footer class="dialogo-pie">
+            <button type="button" class="boton-pago boton-pago-secundario" data-cerrar-dialogo>Mantener</button>
+            <button type="submit" class="boton-pago boton-pago-peligro-solido">Sí, cancelar</button>
+        </footer>
+    </form>
+</dialog>
 
 <?php if ($pagosDisponibles): ?>
 <!-- ============ Dialogs (Agregar / Editar / Eliminar Tarjeta) ============ -->
