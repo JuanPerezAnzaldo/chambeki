@@ -124,6 +124,25 @@
             include(PAGINAS . 'planes.php');
             break;
         }
+
+        case 'admin_login':
+        {
+            include(PAGINAS . 'admin_login');
+            break;
+        }
+
+        case 'admin_home':
+        {
+            include $_SERVER['DOCUMENT_ROOT'] . '/admin/pages/admin_home.php';
+            break;
+        }
+
+        case 'inicio':
+        default:
+        {
+            include(PAGINAS . 'home.php');
+            break;
+        }
     }
 
     include(FOOTER);

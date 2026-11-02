@@ -1,0 +1,72 @@
+/* Listado de servicios + filtros. Usa las variables CSS ya definidas en CHAMBEKI. */
+
+.barra-resultados { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.titulo-resultados { margin: 0; color: var(--color-texto-principal); }
+.conteo-resultados { margin: .25rem 0 0; font-size: .88rem; color: var(--color-marcador-posicion); }
+
+.acciones-resultados { display: flex; align-items: center; gap: .75rem; }
+.campo-orden { display: flex; align-items: center; gap: .5rem; font-size: .85rem; color: var(--color-texto-cuerpo); }
+.campo-orden select { padding: .5rem .6rem; border: 1px solid var(--color-borde); border-radius: var(--radio-pequeno); background: var(--color-fondo-tarjeta); color: var(--color-texto-principal); }
+
+.boton-abrir-filtros { display: none; padding: .55rem 1rem; border: 1px solid var(--color-borde); border-radius: var(--radio-pequeno); background: var(--color-fondo-tarjeta); color: var(--color-texto-principal); font-weight: 600; cursor: pointer; }
+
+/* Chips de filtros activos */
+.chips-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: 1rem; }
+.chip-filtro { display: inline-flex; gap: .4rem; align-items: center; padding: .3rem .7rem; border-radius: 999px; background: var(--color-borde); color: var(--color-texto-principal); font-size: .82rem; font-weight: 600; text-decoration: none; }
+.chip-filtro:hover { filter: brightness(.95); }
+.enlace-limpiar-todo { font-size: .85rem; color: var(--color-boton-principal); font-weight: 600; text-decoration: none; }
+
+/* Disposicion: sidebar + resultados */
+.disposicion-listado { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; }
+
+.panel-filtros { background: var(--color-fondo-tarjeta); border: 1px solid var(--color-borde); border-radius: var(--radio-mediano); padding: 1rem 1.1rem; position: sticky; top: 1rem; }
+.cabecera-panel-filtros { display: flex; justify-content: space-between; align-items: center; }
+.cabecera-panel-filtros h3 { margin: 0 0 .5rem; font-size: 1rem; color: var(--color-texto-principal); }
+.boton-cerrar-filtros { display: none; background: none; border: 0; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--color-texto-principal); }
+
+.grupo-filtro { border: 0; border-top: 1px solid var(--color-borde); margin: 0; padding: .9rem 0; }
+.grupo-filtro legend { padding: 0; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--color-texto-cuerpo); margin-bottom: .4rem; float: left; width: 100%; }
+.grupo-filtro > *:not(legend) { clear: both; }
+.grupo-filtro select, .fila-precio input { width: 100%; padding: .5rem .6rem; border: 1px solid var(--color-borde); border-radius: var(--radio-pequeno); background: var(--color-fondo-tarjeta); color: var(--color-texto-principal); }
+.opcion-filtro { display: flex; align-items: center; gap: .5rem; padding: .25rem 0; font-size: .9rem; color: var(--color-texto-principal); cursor: pointer; }
+.fila-precio { display: flex; align-items: center; gap: .4rem; }
+.ayuda-filtro { display: block; margin-top: .4rem; font-size: .75rem; color: var(--color-marcador-posicion); }
+
+.pie-panel-filtros { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-borde); padding-top: .8rem; }
+.boton-aplicar-filtros { display: none; padding: .7rem 1rem; border: 0; border-radius: var(--radio-pequeno); background: var(--color-boton-principal); color: #fff; font-weight: 700; cursor: pointer; }
+
+/* Tarjetas */
+.rejilla-servicios { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.tarjeta-servicio { display: flex; flex-direction: column; gap: .7rem; padding: 1.2rem; background: var(--color-fondo-tarjeta); border: 1px solid var(--color-borde); border-radius: var(--radio-mediano); }
+.fila-tarjeta-superior { display: flex; justify-content: space-between; align-items: center; }
+.etiqueta-categoria { font-size: .75rem; font-weight: 600; padding: 3px 8px; border-radius: var(--radio-pequeno); background: var(--color-borde); color: var(--color-texto-principal); }
+.precio-servicio { font-size: 1.1rem; font-weight: 800; color: var(--color-boton-principal); }
+.titulo-servicio { margin: 0; font-size: 1.15rem; color: var(--color-texto-principal); }
+.descripcion-servicio { margin: 0; flex-grow: 1; font-size: .88rem; line-height: 1.4; color: var(--color-texto-cuerpo); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.datos-servicio { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .85rem; color: var(--color-marcador-posicion); }
+.dato-freelancer { display: inline-flex; align-items: center; gap: 5px; }
+.insignia-destacado { padding: 2px 8px; border-radius: 999px; background: #fff4d6; color: #8a5a00; font-size: .72rem; font-weight: 700; }
+.boton-agendar-deshabilitado { width: 100%; margin-top: .4rem; background: #e5e7eb; color: #9ca3af !important; border: 1px solid #d1d5db; cursor: not-allowed; }
+
+.sin-resultados { text-align: center; padding: 3rem 1rem; background: var(--color-fondo-tarjeta); border: 1px dashed var(--color-borde); border-radius: var(--radio-mediano); }
+.sin-resultados h3 { margin: 0 0 .5rem; color: var(--color-texto-principal); }
+.sin-resultados p { margin: 0 0 1rem; color: var(--color-marcador-posicion); }
+
+.paginacion { display: flex; justify-content: center; align-items: center; gap: 1.2rem; margin-top: 1.5rem; font-size: .9rem; }
+.paginacion a { color: var(--color-boton-principal); font-weight: 600; text-decoration: none; }
+
+/* Movil: filtros como hoja inferior */
+@media (max-width: 800px)
+{
+    .disposicion-listado { grid-template-columns: 1fr; }
+    .boton-abrir-filtros, .boton-cerrar-filtros, .boton-aplicar-filtros { display: inline-block; }
+    .campo-orden span { display: none; }
+
+    .panel-filtros { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 85vh; overflow-y: auto; z-index: 1100; border-radius: 16px 16px 0 0; transform: translateY(105%); transition: transform .25s ease; box-shadow: 0 -8px 24px rgba(0, 0, 0, .15); }
+    .panel-filtros.abierto { transform: translateY(0); }
+    .pie-panel-filtros { position: sticky; bottom: 0; background: var(--color-fondo-tarjeta); padding-bottom: .8rem; }
+}
+
+body.sin-scroll { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) { .panel-filtros { transition: none; } }
