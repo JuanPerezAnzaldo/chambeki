@@ -136,13 +136,6 @@
             include $_SERVER['DOCUMENT_ROOT'] . '/admin/pages/admin_home.php';
             break;
         }
-
-        case 'inicio':
-        default:
-        {
-            include(PAGINAS . 'home.php');
-            break;
-        }
     }
 
     include(FOOTER);
