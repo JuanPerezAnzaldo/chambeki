@@ -9,10 +9,21 @@
 
 require_once DOCROOT . 'user/includes/funcionesPerfil.php'; //obtenerModalidades, normalizarTexto, PLAN_PREMIUM
 
-$modalidades = obtenerModalidades();
-$filtros    = leerFiltrosListado($_GET, $modalidades);
-$resultado  = buscarServicios($filtros);
-$categorias = obtenerCategoriasListado();
+$errorTecnico = null;
+$modalidades  = [];
+$categorias   = [];
+$resultado    = ['items' => [], 'total' => 0];
+
+try { $modalidades = obtenerModalidades(); }
+catch (\Throwable $e) { $errorTecnico = 'modalidades: ' . $e->getMessage(); error_log('[listado] ' . $errorTecnico); }
+
+$filtros = leerFiltrosListado($_GET, $modalidades);
+
+try { $categorias = obtenerCategoriasListado(); }
+catch (\Throwable $e) { $errorTecnico = 'categorias: ' . $e->getMessage(); error_log('[listado] ' . $errorTecnico); }
+
+try { $resultado = buscarServicios($filtros); }
+catch (\Throwable $e) { $errorTecnico = 'busqueda: ' . $e->getMessage(); error_log('[listado] ' . $errorTecnico); }
 
 $servicios     = $resultado['items'];
 $total         = $resultado['total'];
@@ -147,6 +158,11 @@ $cantidadFiltros = count($chips);
 </div>
 
 <div class="envoltorio-contenido">
+
+    <?php if ($errorTecnico !== null): ?>
+        <!-- TEMPORAL mientras se prueba: borrar este aviso cuando todo funcione -->
+        <p class="aviso-autenticacion aviso-error" style="margin-bottom:1rem;">ERROR REAL: <?php echo escaparSalida($errorTecnico); ?></p>
+    <?php endif; ?>
 
     <div class="barra-resultados">
         <div>

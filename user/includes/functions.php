@@ -495,8 +495,7 @@ function iniciarSesionUsuario($usuario)
       suscripciones (Premium vigente => prioridad)
     Requiere funcionesPerfil.php (obtenerModalidades, normalizarTexto, constantes PLAN_/SUSCRIPCION_).
 
-    SUPUESTO A CONFIRMAR: servicios tiene la llave id_servicio (se usa solo para "mas recientes").
-    Si se llama distinto, cambia 's.id_servicio' abajo.
+    La llave de `servicios` (para "mas recientes") se detecta sola con SHOW COLUMNS.
 */
 
 const SERVICIOS_POR_PAGINA = 12;
@@ -599,6 +598,36 @@ function obtenerCategoriasListado(): array
                     ->fetchAll(PDO::FETCH_ASSOC);
 }
 
+//llave primaria de `servicios` (se lee de la BD para no suponer su nombre)
+function columnaLlaveServicios()
+{
+    static $columna = null;
+
+    if ($columna !== null)
+    {
+        return $columna;
+    }
+
+    try
+    {
+        $filas = conexionBD()->query('SHOW COLUMNS FROM servicios')->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($filas as $fila)
+        {
+            if (($fila['Key'] ?? '') === 'PRI' && preg_match('/^[A-Za-z0-9_]+$/', $fila['Field']))
+            {
+                return $columna = 's.' . $fila['Field'];
+            }
+        }
+    }
+    catch (\Throwable $excepcion)
+    {
+        //se usa el respaldo de abajo
+    }
+
+    return $columna = 's.id_usuario';
+}
+
 //-------------------------------------------------------------
 // 2) Busqueda con filtros. Devuelve ['items' => [...], 'total' => n]
 //-------------------------------------------------------------
@@ -608,23 +637,29 @@ function buscarServicios(array $f): array
     $where    = ['1 = 1'];
     $params   = [];
 
-    //distancia en km (Haversine) contra la base del freelancer
-    $exprDistancia = 'NULL';
+    //distancia en km (Haversine) contra la base del freelancer.
+    //Cada uso lleva marcadores propios: PDO no permite repetir el mismo nombre.
+    $contadorDistancia = 0;
+    $nuevaDistancia = function () use (&$params, &$contadorDistancia, $f)
+    {
+        $n = ++$contadorDistancia;
+        $params[':lat_a' . $n] = $f['latitud'];
+        $params[':lat_b' . $n] = $f['latitud'];
+        $params[':lng' . $n]   = $f['longitud'];
+
+        return '(6371 * ACOS(LEAST(1, COS(RADIANS(:lat_a' . $n . ')) * COS(RADIANS(cf.latitud_base))
+                * COS(RADIANS(cf.longitud_base) - RADIANS(:lng' . $n . ')) + SIN(RADIANS(:lat_b' . $n . ')) * SIN(RADIANS(cf.latitud_base)))))';
+    };
+
     if ($f['hay_geo'])
     {
-        $exprDistancia = '(6371 * ACOS(LEAST(1, COS(RADIANS(:lat1)) * COS(RADIANS(cf.latitud_base))
-                          * COS(RADIANS(cf.longitud_base) - RADIANS(:lng)) + SIN(RADIANS(:lat2)) * SIN(RADIANS(cf.latitud_base)))))';
-        $params[':lat1'] = $f['latitud'];
-        $params[':lat2'] = $f['latitud'];
-        $params[':lng']  = $f['longitud'];
-
         //con GPS solo aparecen freelancers con base definida y cuyo radio de cobertura llega al cliente
         $where[] = 'cf.latitud_base IS NOT NULL AND cf.longitud_base IS NOT NULL';
-        $where[] = $exprDistancia . ' <= cf.radio_cobertura_km';
+        $where[] = $nuevaDistancia() . ' <= cf.radio_cobertura_km';
 
         if ($f['max_km'] > 0)
         {
-            $where[] = $exprDistancia . ' <= :max_km';
+            $where[] = $nuevaDistancia() . ' <= :max_km';
             $params[':max_km'] = $f['max_km'];
         }
     }
@@ -692,13 +727,15 @@ function buscarServicios(array $f): array
                               AND su.fecha_vencimiento > NOW()))';
 
     //orden: lista blanca, nunca se concatena lo que manda el usuario
+    $llave = columnaLlaveServicios();
+
     switch ($f['orden'])
     {
         case 'precio_asc':  $orden = 's.monto = 0, s.monto ASC';  break;   //"A cotizar" al final
         case 'precio_desc': $orden = 's.monto DESC';              break;
-        case 'reciente':    $orden = 's.id_servicio DESC';        break;
+        case 'reciente':    $orden = $llave . ' DESC';            break;
         case 'cercania':    $orden = 'distancia_km ASC';          break;
-        default:            $orden = 'es_premium DESC, s.id_servicio DESC';
+        default:            $orden = 'es_premium DESC, ' . $llave . ' DESC';
     }
 
     $sqlBase = 'FROM servicios s
@@ -711,6 +748,8 @@ function buscarServicios(array $f): array
     $total = $conexion->prepare('SELECT COUNT(*) ' . $sqlBase);
     $total->execute($params);
     $total = (int) $total->fetchColumn();
+
+    $exprDistancia = $f['hay_geo'] ? $nuevaDistancia() : 'NULL';
 
     $offset = ($f['pagina'] - 1) * SERVICIOS_POR_PAGINA;
 
