@@ -164,6 +164,16 @@
   background: #FBE9E6;
 }
 
+.estado-aviso {
+  color: #8A5A00;
+  background: #FFF3CC;
+}
+
+.estado-info {
+  color: #1D4FA3;
+  background: #E1ECFD;
+}
+
 .boton-editar-perfil {
   margin-top: 0;
   white-space: nowrap;
