@@ -413,23 +413,4 @@ function cancelarSuscripcion($idUsuario)
         ':activa'    => SUSCRIPCION_ACTIVA
     ]);
 }
-
-//=============================================================
-// Cambio de rol: Cliente -> Freelancer
-// Solo cambia el rol; el perfil profesional (descripcion, RFC,
-// formas de cobro) se llena despues desde "Editar mi perfil".
-//=============================================================
-
-function convertirEnFreelancer($idUsuario)
-{
-    $conexion = conexionBD();
-
-    //solo un Cliente puede pasar a Freelancer (un admin no cambia de rol)
-    $sentencia = $conexion->prepare(
-        'UPDATE usuarios SET rol = :nuevo WHERE id_usuario = :id AND rol = :actual'
-    );
-    $sentencia->execute([':nuevo' => ROL_FREELANCER, ':id' => $idUsuario, ':actual' => ROL_CLIENTE]);
-
-    return $sentencia->rowCount() > 0;
-}
 ?>

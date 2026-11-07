@@ -40,32 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     if (!validarCsrf($_POST['token_csrf'] ?? ''))
     {
         guardarMensaje('error', 'La sesion del formulario expiro. Intenta de nuevo.');
-        redirigir(in_array($operacion, ['suscribirse', 'cancelar_suscripcion', 'ser_freelancer'], true) ? $urlPerfil : $urlTarjetas);
-    }
-
-    //Cambio de rol a Freelancer: no depende de los pagos con tarjeta
-    if ($operacion === 'ser_freelancer')
-    {
-        try
-        {
-            if (convertirEnFreelancer($idUsuario))
-            {
-                //mantiene la sesion en sincronia (el header muestra el rol)
-                $_SESSION['rol_usuario'] = ROL_FREELANCER;
-                guardarMensaje('exito', '¡Listo! Ahora eres freelancer. Completa tu perfil profesional desde "Editar mi perfil".');
-            }
-            else
-            {
-                guardarMensaje('error', 'Tu cuenta no puede cambiar a freelancer.');
-            }
-        }
-        catch (\Throwable $excepcion)
-        {
-            error_log('Error al convertir en freelancer: ' . $excepcion->getMessage());
-            guardarMensaje('error', 'No pudimos cambiar tu cuenta a freelancer. Intenta de nuevo en unos minutos.');
-        }
-
-        redirigir($urlPerfil);
+        redirigir(in_array($operacion, ['suscribirse', 'cancelar_suscripcion'], true) ? $urlPerfil : $urlTarjetas);
     }
 
     //Suscripcion: no depende de los pagos con tarjeta
@@ -168,7 +143,6 @@ $mensajeFlash = obtenerMensaje();
 $token = tokenCsrf();
 
 $esFreelancer = (int) $usuario['rol'] === ROL_FREELANCER;
-$esCliente = (int) $usuario['rol'] === ROL_CLIENTE;
 $perfilFreelancer = $esFreelancer ? obtenerPerfilFreelancer($idUsuario) : null;
 
 $tarjetas = obtenerTarjetas($idUsuario);
@@ -209,9 +183,6 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                         </span>
                         <span class="etiqueta-estado <?php echo $estaSuscrito ? 'estado-activo' : 'estado-alerta'; ?>">
                             <?php echo $estaSuscrito ? 'Suscrito' : 'No suscrito'; ?>
-                        </span>
-                        <span class="etiqueta-estado <?php echo $esFreelancer ? 'estado-info' : 'estado-aviso'; ?>">
-                            <?php echo $esFreelancer ? 'Freelancer' : 'No freelancer'; ?>
                         </span>
                         <?php if ($esFreelancer): ?>
                             <span class="etiqueta-estado <?php echo !empty($perfilFreelancer['perfil_verificado']) ? 'estado-activo' : 'estado-pendiente'; ?>">
@@ -296,14 +267,6 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                         <span class="texto-acceso">Mis métodos de pago</span>
                         <svg class="flecha-acceso" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
                     </a>
-
-                    <?php if ($esCliente): ?>
-                    <button type="button" class="acceso-perfil acceso-boton" data-abrir-dialogo="dlgFreelancer">
-                        <span class="icono-dato" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>
-                        <span class="texto-acceso">Comenzar Como Freelancer</span>
-                        <svg class="flecha-acceso" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-                    </button>
-                    <?php endif; ?>
 
                     <?php if ($estaSuscrito): ?>
                     <button type="button" class="acceso-perfil acceso-boton" data-abrir-dialogo="dlgCancelarSuscripcion">
@@ -442,32 +405,6 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 
     </div>
 </section>
-
-<?php if ($esCliente): ?>
-<!-- ============ Dialog: Comenzar como Freelancer ============ -->
-<dialog class="dialogo-tarjeta" id="dlgFreelancer" aria-labelledby="tituloFreelancer">
-    <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" novalidate>
-        <input type="hidden" name="operacion" value="ser_freelancer">
-        <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
-
-        <header class="dialogo-cabecera">
-            <h3 id="tituloFreelancer">Comenzar como Freelancer</h3>
-            <button type="button" class="dialogo-cerrar" data-cerrar-dialogo aria-label="Cerrar">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-            </button>
-        </header>
-
-        <div class="dialogo-cuerpo">
-            <p class="texto-dialogo">Información para comenzar como freelancer</p>
-        </div>
-
-        <footer class="dialogo-pie">
-            <button type="button" class="boton-pago boton-pago-secundario" data-cerrar-dialogo>Mejor no</button>
-            <button type="submit" class="boton-pago boton-pago-principal">Quiero ser freelancer</button>
-        </footer>
-    </form>
-</dialog>
-<?php endif; ?>
 
 <!-- ============ Dialog: Beneficios de Suscriptor ============ -->
 <dialog class="dialogo-tarjeta" id="dlgSuscripcion" aria-labelledby="tituloSuscripcion">
