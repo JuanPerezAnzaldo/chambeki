@@ -1,0 +1,1048 @@
+/* ============================================================
+   CHAMBEKI - Panel de administracion
+   Usa las variables de global.css (claro/oscuro) y reutiliza los
+   campos y botones de autenticacion.css en el login.
+   ============================================================ */
+
+body.admin-login,
+body.admin-panel
+{
+    margin: 0;
+    background-color: var(--color-fondo-principal);
+    color: var(--color-texto-cuerpo);
+    min-height: 100vh;
+}
+
+/* ---------- Login ---------- */
+
+.admin-login-contenedor
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+}
+
+.admin-login-tarjeta
+{
+    width: 100%;
+    max-width: 420px;
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 18px;
+    box-shadow: var(--sombra-general);
+    padding: 34px 32px 28px;
+}
+
+.admin-login-marca,
+.admin-marca
+{
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--color-boton-principal);
+    text-decoration: none;
+}
+
+.admin-login-marca
+{
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.admin-login-marca span,
+.admin-marca span
+{
+    font-weight: 600;
+    color: var(--color-texto-cuerpo);
+    font-size: 0.7em;
+    padding: 2px 8px;
+    border: 1px solid var(--color-borde);
+    border-radius: 999px;
+    vertical-align: middle;
+}
+
+/* ---------- Topbar ---------- */
+
+.admin-topbar
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    background-color: var(--color-fondo-tarjeta);
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.admin-marca
+{
+    font-size: 1.3rem;
+}
+
+.admin-usuario
+{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-usuario-datos
+{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    font-size: 0.9rem;
+    color: var(--color-texto-principal);
+}
+
+.admin-boton-salir
+{
+    background: none;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding: 8px 14px;
+    color: var(--color-texto-principal);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-boton-salir:hover
+{
+    border-color: var(--color-boton-principal);
+    color: var(--color-boton-principal);
+}
+
+/* ---------- Insignias de rol ---------- */
+
+.admin-insignia-rol
+{
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.admin-rol-1
+{
+    color: #6A2C91;
+    background-color: #F0E3F7;
+}
+
+.admin-rol-2
+{
+    color: #0E6B5C;
+    background-color: #DFF6EF;
+}
+
+[data-theme="dark"] .admin-rol-1
+{
+    color: #D9B3EE;
+    background-color: rgba(106, 44, 145, 0.3);
+}
+
+[data-theme="dark"] .admin-rol-2
+{
+    color: #8FE3CB;
+    background-color: rgba(14, 107, 92, 0.3);
+}
+
+/* ---------- Cuerpo: menu + contenido ---------- */
+
+.admin-cuerpo
+{
+    display: flex;
+    min-height: calc(100vh - 58px);
+}
+
+.admin-menu
+{
+    flex: 0 0 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 12px;
+    background-color: var(--color-fondo-tarjeta);
+    border-right: 1px solid var(--color-borde);
+}
+
+.admin-menu-item
+{
+    padding: 10px 14px;
+    border-radius: var(--radio-mediano);
+    color: var(--color-texto-cuerpo);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.93rem;
+}
+
+.admin-menu-item:hover
+{
+    background-color: var(--color-fondo-principal);
+}
+
+.admin-menu-item.activo
+{
+    color: var(--color-boton-principal-texto);
+    background-color: var(--color-boton-principal);
+}
+
+.admin-contenido
+{
+    flex: 1;
+    min-width: 0;
+    padding: 28px 32px 60px;
+}
+
+.admin-titulo
+{
+    color: var(--color-texto-principal);
+    font-size: 1.6rem;
+    margin: 0 0 6px;
+}
+
+.admin-subtitulo
+{
+    margin: 0 0 24px;
+    line-height: 1.55;
+}
+
+/* ---------- Tarjetas y bloques ---------- */
+
+.admin-tarjetas
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.admin-tarjeta
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.admin-numero
+{
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+
+.admin-etiqueta
+{
+    font-size: 0.85rem;
+}
+
+.admin-bloque
+{
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    padding: 20px 24px;
+}
+
+.admin-bloque h2
+{
+    margin: 0 0 10px;
+    font-size: 1.05rem;
+    color: var(--color-texto-principal);
+}
+
+.admin-lista-permisos
+{
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+/* ---------- Tabla ---------- */
+
+.admin-tabla-contenedor
+{
+    overflow-x: auto;
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.admin-tabla
+{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.admin-tabla th,
+.admin-tabla td
+{
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.admin-tabla th
+{
+    color: var(--color-texto-principal);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.admin-tabla tr:last-child td
+{
+    border-bottom: none;
+}
+
+/* ---------- 403 ---------- */
+
+.admin-denegado
+{
+    max-width: 520px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.admin-denegado-codigo
+{
+    display: block;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--color-boton-principal);
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.admin-boton-volver
+{
+    display: inline-block;
+    width: auto;
+    padding: 12px 26px;
+    text-decoration: none;
+}
+
+/* ---------- Movil ---------- */
+
+@media (max-width: 760px)
+{
+    .admin-cuerpo
+    {
+        flex-direction: column;
+    }
+
+    .admin-menu
+    {
+        flex: none;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--color-borde);
+        padding: 10px 12px;
+    }
+
+    .admin-menu-item
+    {
+        white-space: nowrap;
+    }
+
+    .admin-contenido
+    {
+        padding: 20px 16px 48px;
+    }
+
+    .admin-topbar
+    {
+        padding: 10px 14px;
+    }
+
+    .admin-usuario-datos
+    {
+        display: none;
+    }
+}
+
+/* ============================================================
+   Gestion de personal
+   ============================================================ */
+
+.admin-encabezado-pagina
+{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.admin-boton-accion
+{
+    display: inline-block;
+    width: auto;
+    margin-top: 0;
+    padding: 11px 20px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.admin-enlace-cuenta
+{
+    color: var(--color-texto-cuerpo);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-enlace-cuenta:hover
+{
+    color: var(--color-boton-principal);
+}
+
+.migaja-admin
+{
+    margin: 0 0 14px;
+    font-size: 0.88rem;
+}
+
+.migaja-admin a
+{
+    color: var(--color-boton-principal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* credenciales temporales (se ven una sola vez) */
+.admin-credencial
+{
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    border: 2px dashed var(--color-boton-principal);
+    border-radius: var(--radio-grande);
+    background-color: var(--color-fondo-tarjeta);
+}
+
+.admin-credencial p
+{
+    margin: 6px 0 12px;
+    font-size: 0.9rem;
+}
+
+.admin-credencial dl
+{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+    margin: 0;
+}
+
+.admin-credencial dt
+{
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.admin-credencial dd
+{
+    margin: 0;
+}
+
+.admin-credencial code
+{
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: var(--color-fondo-principal);
+    color: var(--color-texto-principal);
+    user-select: all;
+}
+
+/* tabla de personal */
+.admin-tabla small
+{
+    opacity: 0.8;
+}
+
+.admin-fila-suspendida td
+{
+    opacity: 0.6;
+}
+
+.admin-tu
+{
+    font-size: 0.75rem;
+    color: var(--color-boton-principal);
+    font-weight: 700;
+}
+
+.admin-estatus
+{
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.admin-estatus-activo
+{
+    color: #1E6B3A;
+    background-color: #E8F6EC;
+}
+
+.admin-estatus-suspendido
+{
+    color: #A02D1F;
+    background-color: #FBE9E6;
+}
+
+[data-theme="dark"] .admin-estatus-activo
+{
+    color: #A8E6BC;
+    background-color: rgba(46, 125, 75, 0.2);
+}
+
+[data-theme="dark"] .admin-estatus-suspendido
+{
+    color: #FFB3A7;
+    background-color: rgba(192, 57, 43, 0.2);
+}
+
+.admin-insignia-ajuste
+{
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: #9A6B14;
+    background-color: #FBF0D9;
+}
+
+[data-theme="dark"] .admin-insignia-ajuste
+{
+    color: #F5D68A;
+    background-color: rgba(154, 107, 20, 0.25);
+}
+
+.admin-acciones
+{
+    white-space: nowrap;
+}
+
+.admin-form-linea
+{
+    display: inline;
+    margin: 0;
+}
+
+.admin-enlace-accion
+{
+    background: none;
+    border: none;
+    padding: 0;
+    margin-right: 12px;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--color-boton-principal);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.admin-enlace-accion:hover
+{
+    text-decoration: underline;
+}
+
+.admin-peligro
+{
+    color: #C0392B;
+}
+
+[data-theme="dark"] .admin-peligro
+{
+    color: #FF8A7A;
+}
+
+/* formularios del panel */
+.admin-formulario
+{
+    max-width: 680px;
+}
+
+.admin-formulario-angosto
+{
+    max-width: 440px;
+}
+
+.admin-permisos
+{
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding: 0.9rem 1rem;
+    margin: 0.2rem 0 1rem;
+}
+
+.admin-permisos legend
+{
+    padding: 0 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.admin-permisos .opcion-casilla
+{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.admin-permisos .opcion-casilla input
+{
+    width: 17px;
+    height: 17px;
+    accent-color: var(--color-boton-principal);
+}
+
+.admin-permisos[disabled] .opcion-casilla
+{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   Dashboard de metricas y moderacion de cuentas
+   ============================================================ */
+
+/* insignias de verificacion (mismas que usa el sitio en configuracion.css) */
+.insignia-verificacion
+{
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.insignia-verificado
+{
+    color: #1E6B3A;
+    background-color: #E8F6EC;
+}
+
+.insignia-pendiente
+{
+    color: #9A6B14;
+    background-color: #FBF0D9;
+}
+
+[data-theme="dark"] .insignia-verificado
+{
+    color: #A8E6BC;
+    background-color: rgba(46, 125, 75, 0.2);
+}
+
+[data-theme="dark"] .insignia-pendiente
+{
+    color: #F5D68A;
+    background-color: rgba(154, 107, 20, 0.25);
+}
+
+.admin-nota
+{
+    display: block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.admin-bloque
+{
+    margin-bottom: 20px;
+}
+
+.admin-tabla-sin-borde
+{
+    border: none;
+    border-radius: 0;
+    background: none;
+}
+
+/* tarjetas de metricas */
+.admin-tarjeta small
+{
+    font-size: 0.78rem;
+    opacity: 0.85;
+}
+
+.admin-tarjetas-secundarias
+{
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.admin-tarjetas-secundarias .admin-numero
+{
+    font-size: 1.6rem;
+}
+
+.admin-tarjeta-alerta
+{
+    border-color: #E0A93B;
+    background-color: rgba(224, 169, 59, 0.1);
+}
+
+.admin-tendencia-sube
+{
+    color: #1E6B3A;
+    font-weight: 700;
+}
+
+.admin-tendencia-baja
+{
+    color: #C0392B;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .admin-tendencia-sube { color: #A8E6BC; }
+[data-theme="dark"] .admin-tendencia-baja { color: #FF8A7A; }
+
+.admin-buscador-rapido
+{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-buscador-rapido input
+{
+    min-width: 260px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    font-size: 0.92rem;
+}
+
+/* grafica de barras (solo HTML + CSS, sin librerias) */
+.admin-grafica
+{
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 190px;
+    padding-top: 8px;
+}
+
+.admin-grafica-columna
+{
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 3px;
+}
+
+.admin-grafica-barra
+{
+    width: 100%;
+    max-width: 22px;
+    border-radius: 4px 4px 0 0;
+    background-color: var(--color-boton-principal);
+}
+
+.admin-grafica-barra.vacia
+{
+    background-color: var(--color-borde);
+}
+
+.admin-grafica-valor
+{
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+    min-height: 12px;
+}
+
+.admin-grafica-dia
+{
+    font-size: 0.66rem;
+    opacity: 0.7;
+}
+
+/* buscador de cuentas */
+.admin-filtros
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    margin-bottom: 14px;
+    padding: 16px 18px;
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.admin-filtros .campo-formulario
+{
+    flex: 0 1 170px;
+}
+
+.admin-filtros .admin-filtro-texto
+{
+    flex: 1 1 260px;
+}
+
+.admin-filtros-botones
+{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 2px;
+}
+
+.admin-resultados
+{
+    margin: 0 0 10px;
+    font-size: 0.88rem;
+}
+
+.admin-paginacion
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 18px;
+    font-size: 0.9rem;
+}
+
+.admin-paginacion a
+{
+    color: var(--color-boton-principal);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* perfil de cuenta */
+.admin-cuenta-cabecera
+{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.admin-cuenta-titulo
+{
+    flex: 1;
+    min-width: 200px;
+}
+
+.admin-cuenta-titulo .admin-titulo small
+{
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.6;
+}
+
+.admin-cuenta-insignias
+{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.admin-avatar
+{
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-boton-principal);
+    color: var(--color-boton-principal-texto);
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.admin-avatar img
+{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-dos-columnas
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-dos-columnas .admin-bloque
+{
+    margin-bottom: 0;
+}
+
+.admin-datos
+{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 18px;
+    margin: 0;
+    font-size: 0.92rem;
+}
+
+.admin-datos dt
+{
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.admin-datos dd
+{
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-form-revision
+{
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.admin-form-revision select,
+.admin-form-revision input
+{
+    padding: 7px 9px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    font-size: 0.85rem;
+}
+
+.admin-form-revision input[type="text"]
+{
+    width: 190px;
+}
+
+/* acciones de moderacion */
+.admin-acciones-moderacion
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.admin-accion-caja
+{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.admin-accion-caja small
+{
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.admin-accion-caja input[type="text"]
+{
+    padding: 10px 12px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    font-size: 0.92rem;
+}
+
+.admin-etiqueta-corta
+{
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.admin-aviso-chico
+{
+    color: #9A6B14;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .admin-aviso-chico
+{
+    color: #F5D68A;
+}
+
+.admin-accion-caja .admin-boton-accion
+{
+    width: 100%;
+    margin-top: 4px;
+}
+
+.admin-boton-peligro
+{
+    background-color: #C0392B;
+}
+
+.admin-boton-peligro:hover
+{
+    background-color: #A02D1F;
+}
+
+@media (max-width: 760px)
+{
+    .admin-dos-columnas
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-buscador-rapido input
+    {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .admin-buscador-rapido
+    {
+        width: 100%;
+    }
+
+    .admin-form-revision input[type="text"]
+    {
+        width: 100%;
+    }
+}
