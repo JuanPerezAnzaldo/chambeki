@@ -244,7 +244,8 @@ function perfilProfesionalDe($idUsuario)
     $conexion = conexionBD();
 
     $sentencia = $conexion->prepare(
-        'SELECT id_perfil, identificador_fiscal, es_empresa, perfil_verificado, descripcion, acepto_efectivo, acepto_tarjeta
+        'SELECT id_perfil, nombre_negocio, identificador_fiscal, es_empresa, perfil_verificado,
+                descripcion, acepta_efectivo, acepta_tarjeta
          FROM perfil_freelancer
          WHERE id_usuario = :id
          ORDER BY id_perfil ASC

@@ -186,12 +186,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 }
 
 //-------- datos para mostrar --------
-$perfil      = $esFreelancer ? perfilProfesionalDe($idCuenta) : null;
-$cobertura   = $esFreelancer ? coberturaDe($idCuenta) : null;
-$documentos  = $esFreelancer ? documentosDe($idCuenta) : [];
-$suscripcion = $esFreelancer ? suscripcionDe($idCuenta) : null;
-$estadisticas = estadisticasCuenta($cuenta);
-$historial   = historialModeracion($idCuenta);
+/*
+    Cada seccion se consulta por separado: si una tabla o columna de la BD real
+    no coincide con lo esperado, el perfil igual abre, esa seccion queda vacia y
+    arriba aparece un aviso con el nombre de la seccion. El detalle tecnico se
+    guarda en el log del servidor y solo lo ve el Super Administrador.
+*/
+$avisosCarga = [];
+
+function cargarSeccionCuenta($nombre, $consulta, $valorSiFalla, &$avisos, $admin)
+{
+    try
+    {
+        return $consulta();
+    }
+    catch (Throwable $error)
+    {
+        error_log('Perfil de cuenta, seccion "' . $nombre . '": ' . $error->getMessage());
+
+        $avisos[] = [
+            'seccion' => $nombre,
+            'detalle' => adminEsSuper($admin) ? $error->getMessage() : null
+        ];
+
+        return $valorSiFalla;
+    }
+}
+
+$estadisticasVacias = ['servicios' => 0, 'citas' => 0, 'citas_completadas' => 0, 'calificacion' => null, 'evaluaciones' => 0];
+
+$perfil       = $esFreelancer ? cargarSeccionCuenta('Perfil profesional', function () use ($idCuenta) { return perfilProfesionalDe($idCuenta); }, null, $avisosCarga, $admin) : null;
+$cobertura    = $esFreelancer ? cargarSeccionCuenta('Cobertura', function () use ($idCuenta) { return coberturaDe($idCuenta); }, null, $avisosCarga, $admin) : null;
+$documentos   = $esFreelancer ? cargarSeccionCuenta('Documentos de verificacion', function () use ($idCuenta) { return documentosDe($idCuenta); }, [], $avisosCarga, $admin) : [];
+$suscripcion  = $esFreelancer ? cargarSeccionCuenta('Suscripcion', function () use ($idCuenta) { return suscripcionDe($idCuenta); }, null, $avisosCarga, $admin) : null;
+$estadisticas = cargarSeccionCuenta('Actividad', function () use ($cuenta) { return estadisticasCuenta($cuenta); }, $estadisticasVacias, $avisosCarga, $admin);
+$historial    = cargarSeccionCuenta('Historial de moderacion', function () use ($idCuenta) { return historialModeracion($idCuenta); }, [], $avisosCarga, $admin);
 
 $activa      = (int) $cuenta['estatus'] === ESTATUS_ACTIVO;
 $verificado  = $perfil !== null && (int) $perfil['perfil_verificado'] === 1;
@@ -222,6 +251,23 @@ $mensajeFlash = obtenerMensaje();
 
 <?php if ($mensajeFlash !== null): ?>
     <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
+<?php endif; ?>
+
+<?php if (!empty($avisosCarga)): ?>
+    <div class="aviso-autenticacion aviso-error">
+        <strong>Algunas secciones no se pudieron cargar:</strong>
+        <ul>
+            <?php foreach ($avisosCarga as $aviso): ?>
+                <li>
+                    <?php echo escaparSalida($aviso['seccion']); ?>
+                    <?php if ($aviso['detalle'] !== null): ?>
+                        <br><small>Detalle tecnico (solo Super Administrador): <code><?php echo escaparSalida($aviso['detalle']); ?></code></small>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        La tabla o columna de la base de datos no coincide con lo esperado. Quedo registrado en el log del servidor.
+    </div>
 <?php endif; ?>
 
 <!-- ===== Encabezado de la cuenta ===== -->
@@ -298,6 +344,9 @@ $mensajeFlash = obtenerMensaje();
         <p>Este freelancer todavia no ha completado su perfil profesional.</p>
     <?php else: ?>
         <dl class="admin-datos">
+            <?php if (!empty($perfil['nombre_negocio'])): ?>
+                <dt>Nombre del negocio</dt><dd><?php echo escaparSalida($perfil['nombre_negocio']); ?></dd>
+            <?php endif; ?>
             <dt>Descripcion</dt>
             <dd><?php echo $perfil['descripcion'] !== null && $perfil['descripcion'] !== '' ? nl2br(escaparSalida($perfil['descripcion'])) : 'Sin descripcion'; ?></dd>
             <dt>Como ofrece sus servicios</dt><dd><?php echo (int) $perfil['es_empresa'] === 1 ? 'Empresa' : 'Persona fisica'; ?></dd>
@@ -305,8 +354,8 @@ $mensajeFlash = obtenerMensaje();
             <dd>
                 <?php
                     $formasPago = [];
-                    if (!empty($perfil['acepto_efectivo'])) { $formasPago[] = 'Efectivo'; }
-                    if (!empty($perfil['acepto_tarjeta']))  { $formasPago[] = 'Tarjeta'; }
+                    if (!empty($perfil['acepta_efectivo'])) { $formasPago[] = 'Efectivo'; }
+                    if (!empty($perfil['acepta_tarjeta']))  { $formasPago[] = 'Tarjeta'; }
                     echo escaparSalida(!empty($formasPago) ? implode(' y ', $formasPago) : 'Sin definir');
                 ?>
             </dd>
