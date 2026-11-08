@@ -136,6 +136,12 @@
             include $_SERVER['DOCUMENT_ROOT'] . '/admin/pages/admin_home.php';
             break;
         }
+
+        case 'registro_socio':
+        {
+            include(PAGINAS . 'registroSocio.php');
+            break;
+        }
     }
 
     include(FOOTER);
