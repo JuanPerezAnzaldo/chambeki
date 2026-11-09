@@ -146,8 +146,7 @@ function obtenerPerfilFreelancer($idUsuario)
     $conexion = conexionBD();
 
     $sentencia = $conexion->prepare(
-        'SELECT descripcion, identificador_fiscal, perfil_verificado,
-                acepta_efectivo AS acepto_efectivo, acepta_tarjeta AS acepto_tarjeta
+        'SELECT descripcion, identificador_fiscal, perfil_verificado, acepto_efectivo, acepto_tarjeta
          FROM perfil_freelancer
          WHERE id_usuario = :id
          LIMIT 1'
@@ -173,19 +172,10 @@ function obtenerPerfilFreelancer($idUsuario)
     return $perfil;
 }
 
+//la descripcion/biografia ya no se edita aqui: vive en "Identidad comercial" (funcionesIdentidad.php)
 function validarPerfilFreelancer($datos)
 {
     $errores = [];
-    $largo = mb_strlen($datos['descripcion']);
-
-    if ($largo < 20 || $largo > 600)
-    {
-        $errores['descripcion'] = 'Describe tu servicio en 20 a 600 caracteres.';
-    }
-    elseif (($palabra = buscarPalabraProhibida($datos['descripcion'])) !== null)
-    {
-        $errores['descripcion'] = 'Tu descripcion contiene contenido no permitido ("' . $palabra . '"). Quitalo para publicar tu perfil.';
-    }
 
     if ($datos['identificador_fiscal'] !== '' && !preg_match('/^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$/u', $datos['identificador_fiscal']))
     {
@@ -208,27 +198,25 @@ function guardarPerfilFreelancer($idUsuario, $datos)
     $existe->execute([':id' => $idUsuario]);
 
     $parametros = [
-        ':descripcion' => $datos['descripcion'],
-        ':rfc'         => $datos['identificador_fiscal'] !== '' ? $datos['identificador_fiscal'] : null,
-        ':efectivo'    => $datos['acepto_efectivo'] ? 1 : 0,
-        ':tarjeta'     => $datos['acepto_tarjeta'] ? 1 : 0,
-        ':id'          => $idUsuario
+        ':rfc'      => $datos['identificador_fiscal'] !== '' ? $datos['identificador_fiscal'] : null,
+        ':efectivo' => $datos['acepto_efectivo'] ? 1 : 0,
+        ':tarjeta'  => $datos['acepto_tarjeta'] ? 1 : 0,
+        ':id'       => $idUsuario
     ];
 
     if ($existe->fetch() !== false)
     {
         $sentencia = $conexion->prepare(
             'UPDATE perfil_freelancer
-             SET descripcion = :descripcion, identificador_fiscal = :rfc,
-                 acepta_efectivo = :efectivo, acepta_tarjeta = :tarjeta
+             SET identificador_fiscal = :rfc, acepto_efectivo = :efectivo, acepto_tarjeta = :tarjeta
              WHERE id_usuario = :id'
         );
     }
     else
     {
         $sentencia = $conexion->prepare(
-            'INSERT INTO perfil_freelancer (id_usuario, descripcion, identificador_fiscal, acepta_efectivo, acepta_tarjeta)
-             VALUES (:id, :descripcion, :rfc, :efectivo, :tarjeta)'
+            'INSERT INTO perfil_freelancer (id_usuario, identificador_fiscal, acepto_efectivo, acepto_tarjeta)
+             VALUES (:id, :rfc, :efectivo, :tarjeta)'
         );
     }
 
@@ -237,8 +225,9 @@ function guardarPerfilFreelancer($idUsuario, $datos)
 
 //=============================================================
 // Cobertura (tabla cobertura_freelancer, RUS-02, RSIS-02)
-// latitud_base / longitud_base no se tocan aqui: los llena el
-// mapa interactivo (Avance 4) y se conservan al guardar.
+// latitud_base / longitud_base las fija el mapa interactivo de
+// configuracion.php. Si el formulario no las trae (cobertura "En
+// linea"), se conservan las que ya estaban guardadas.
 //=============================================================
 
 function obtenerModalidades()
@@ -253,7 +242,7 @@ function obtenerCoberturaFreelancer($idUsuario)
     $conexion = conexionBD();
 
     $sentencia = $conexion->prepare(
-        'SELECT id_modalidad, direccion_texto, ciudad_limite, radio_cobertura_km
+        'SELECT id_modalidad, direccion_texto, ciudad_limite, radio_cobertura_km, latitud_base, longitud_base
          FROM cobertura_freelancer
          WHERE id_usuario = :id
          LIMIT 1'
@@ -264,11 +253,20 @@ function obtenerCoberturaFreelancer($idUsuario)
 
     if ($cobertura === false)
     {
-        return ['id_modalidad' => 0, 'direccion_texto' => '', 'ciudad_limite' => '', 'radio_cobertura_km' => 10];
+        return [
+            'id_modalidad'       => 0,
+            'direccion_texto'    => '',
+            'ciudad_limite'      => '',
+            'radio_cobertura_km' => 10,
+            'latitud_base'       => null,
+            'longitud_base'      => null
+        ];
     }
 
     $cobertura['direccion_texto'] = (string) $cobertura['direccion_texto'];
     $cobertura['ciudad_limite'] = (string) $cobertura['ciudad_limite'];
+    $cobertura['latitud_base'] = $cobertura['latitud_base'] !== null ? (float) $cobertura['latitud_base'] : null;
+    $cobertura['longitud_base'] = $cobertura['longitud_base'] !== null ? (float) $cobertura['longitud_base'] : null;
 
     return $cobertura;
 }
@@ -308,11 +306,23 @@ function guardarCobertura($idUsuario, $datos)
     $existe = $conexion->prepare('SELECT id_cobertura FROM cobertura_freelancer WHERE id_usuario = :id LIMIT 1');
     $existe->execute([':id' => $idUsuario]);
 
+    //solo se guardan coordenadas completas y validas; si no, se conservan las anteriores
+    $latitud = null;
+    $longitud = null;
+
+    if (isset($datos['latitud_base'], $datos['longitud_base']) && is_float($datos['latitud_base']) && is_float($datos['longitud_base']))
+    {
+        $latitud = round($datos['latitud_base'], 8);
+        $longitud = round($datos['longitud_base'], 8);
+    }
+
     $parametros = [
         ':modalidad' => (int) $datos['id_modalidad'],
         ':direccion' => $datos['direccion_texto'],
         ':ciudad'    => $datos['ciudad_limite'],
         ':radio'     => (int) $datos['radio_cobertura_km'],
+        ':latitud'   => $latitud,
+        ':longitud'  => $longitud,
         ':id'        => $idUsuario
     ];
 
@@ -321,15 +331,17 @@ function guardarCobertura($idUsuario, $datos)
         $sentencia = $conexion->prepare(
             'UPDATE cobertura_freelancer
              SET id_modalidad = :modalidad, direccion_texto = :direccion,
-                 ciudad_limite = :ciudad, radio_cobertura_km = :radio
+                 ciudad_limite = :ciudad, radio_cobertura_km = :radio,
+                 latitud_base = COALESCE(:latitud, latitud_base),
+                 longitud_base = COALESCE(:longitud, longitud_base)
              WHERE id_usuario = :id'
         );
     }
     else
     {
         $sentencia = $conexion->prepare(
-            'INSERT INTO cobertura_freelancer (id_usuario, id_modalidad, direccion_texto, ciudad_limite, radio_cobertura_km)
-             VALUES (:id, :modalidad, :direccion, :ciudad, :radio)'
+            'INSERT INTO cobertura_freelancer (id_usuario, id_modalidad, direccion_texto, ciudad_limite, radio_cobertura_km, latitud_base, longitud_base)
+             VALUES (:id, :modalidad, :direccion, :ciudad, :radio, :latitud, :longitud)'
         );
     }
 
@@ -413,24 +425,5 @@ function cancelarSuscripcion($idUsuario)
         ':plan'      => PLAN_PREMIUM,
         ':activa'    => SUSCRIPCION_ACTIVA
     ]);
-}
-
-//=============================================================
-// Cambio de rol: Cliente -> Freelancer
-// Solo cambia el rol; el perfil profesional (descripcion, RFC,
-// formas de cobro) se llena despues desde "Editar mi perfil".
-//=============================================================
-
-function convertirEnFreelancer($idUsuario)
-{
-    $conexion = conexionBD();
-
-    //solo un Cliente puede pasar a Freelancer (un admin no cambia de rol)
-    $sentencia = $conexion->prepare(
-        'UPDATE usuarios SET rol = :nuevo WHERE id_usuario = :id AND rol = :actual'
-    );
-    $sentencia->execute([':nuevo' => ROL_FREELANCER, ':id' => $idUsuario, ':actual' => ROL_CLIENTE]);
-
-    return $sentencia->rowCount() > 0;
 }
 ?>

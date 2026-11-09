@@ -4,6 +4,10 @@
     Requerimientos: RSIS-01, RS-01, RS-02, RS-05, RNF-01, RNF-05, RUS-02,
                     RU-01, RU-02, RU-03, RU-04, RF-06, RLN-03, RLN-07
 
+    Secciones solo para freelancers (identidad comercial, banner, redes
+    sociales, perfil profesional, cobertura con mapa y horarios): ni el
+    HTML ni las operaciones existen para un usuario que no lo sea.
+
     Todo se hace con el id_usuario de la sesion, nunca con uno que
     venga de la URL o del formulario. Cada seccion es un formulario
     independiente identificado por el campo oculto "operacion".
@@ -12,6 +16,7 @@
 */
 
 require_once DOCROOT . 'user/includes/funcionesPerfil.php';
+require_once DOCROOT . 'user/includes/funcionesIdentidad.php';
 
 if (!hayUsuarioEnSesion())
 {
@@ -38,9 +43,18 @@ $urlConfig = URL_BASE . '?accion=configuracion';
 $perfilFreelancer = $esFreelancer ? obtenerPerfilFreelancer($idUsuario) : null;
 $cobertura = $esFreelancer ? obtenerCoberturaFreelancer($idUsuario) : null;
 $modalidades = $esFreelancer ? obtenerModalidades() : [];
+$identidad = $esFreelancer ? obtenerIdentidadComercial($idUsuario) : null;
+$bannerActual = $esFreelancer ? obtenerBannerFreelancer($idUsuario) : null;
+$redesActuales = $esFreelancer ? obtenerRedesFreelancer($idUsuario) : [];
+$horarioActual = $esFreelancer ? obtenerHorarioFreelancer($idUsuario) : [];
+$redesDisponibles = redesSocialesDisponibles();
+$diasSemana = nombresDiasSemana();
 
 //errores por seccion y valores conservados por si algo falla (RU-02)
-$errores = ['datos' => [], 'foto' => [], 'contrasena' => [], 'freelancer' => [], 'cobertura' => []];
+$errores = [
+    'datos' => [], 'foto' => [], 'contrasena' => [], 'freelancer' => [], 'cobertura' => [],
+    'identidad' => [], 'banner' => [], 'redes' => [], 'horarios' => []
+];
 
 $valoresDatos = [
     'nombre'      => $usuario['nombre'],
@@ -50,6 +64,9 @@ $valoresDatos = [
 
 $valoresFreelancer = $perfilFreelancer;
 $valoresCobertura = $cobertura;
+$valoresIdentidad = $identidad;
+$valoresRedes = $redesActuales;
+$valoresHorario = $horarioActual;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
@@ -171,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 }
 
                 $datos = [
-                    'descripcion'          => limpiarEntrada($_POST['descripcion'] ?? ''),
                     'identificador_fiscal' => mb_strtoupper(preg_replace('/\s+/', '', limpiarEntrada($_POST['identificador_fiscal'] ?? ''))),
                     'acepto_efectivo'      => isset($_POST['acepto_efectivo']),
                     'acepto_tarjeta'       => isset($_POST['acepto_tarjeta'])
@@ -207,11 +223,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                     'id_modalidad'       => (int) ($_POST['id_modalidad'] ?? 0),
                     'ciudad_limite'      => limpiarEntrada($_POST['ciudad_limite'] ?? ''),
                     'direccion_texto'    => limpiarEntrada($_POST['direccion_texto'] ?? ''),
-                    'radio_cobertura_km' => (int) ($_POST['radio_cobertura_km'] ?? 0)
+                    'radio_cobertura_km' => (int) ($_POST['radio_cobertura_km'] ?? 0),
+                    'latitud_base'       => leerCoordenada($_POST['latitud_base'] ?? ''),
+                    'longitud_base'      => leerCoordenada($_POST['longitud_base'] ?? '')
                 ];
 
                 $valoresCobertura = $datos;
-                $errores['cobertura'] = validarCobertura($datos, $modalidades);
+                $errores['cobertura'] = array_merge(
+                    validarCobertura($datos, $modalidades),
+                    validarCoordenadasCobertura($datos)
+                );
 
                 if (empty($errores['cobertura']))
                 {
@@ -220,6 +241,144 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
                     guardarMensaje('exito', 'Tu zona de cobertura se guardo.');
                     redirigir($urlConfig . '#cobertura');
+                }
+
+                break;
+            }
+
+            //-----------------------------------------------------
+            // Identidad comercial: nombre y biografia (solo freelancers)
+            //-----------------------------------------------------
+            case 'guardar_identidad':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $datos = [
+                    'nombre_negocio' => limpiarEntrada($_POST['nombre_negocio'] ?? ''),
+                    'descripcion'    => limpiarEntrada($_POST['descripcion'] ?? '')
+                ];
+
+                $valoresIdentidad = array_merge($identidad, $datos);
+                $errores['identidad'] = validarIdentidadComercial($datos);
+
+                if (empty($errores['identidad']))
+                {
+                    guardarIdentidadComercial($idUsuario, $datos);
+                    registrarEnBitacora($usuario['correo'], 'identidad_comercial_actualizada');
+
+                    guardarMensaje('exito', 'Tu identidad comercial se actualizo.');
+                    redirigir($urlConfig . '#identidad');
+                }
+
+                break;
+            }
+
+            //-----------------------------------------------------
+            // Banner de portada (solo freelancers, maximo 3MB)
+            //-----------------------------------------------------
+            case 'cambiar_banner':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $resultadoBanner = guardarImagenBanner($_FILES['banner_portada'] ?? null);
+
+                if (!$resultadoBanner['exito'])
+                {
+                    $errores['banner']['banner_portada'] = $resultadoBanner['error'];
+                    break;
+                }
+
+                actualizarBannerFreelancer($idUsuario, $resultadoBanner['ruta']);
+                eliminarArchivoBanner($bannerActual);
+                registrarEnBitacora($usuario['correo'], 'banner_actualizado');
+
+                guardarMensaje('exito', 'Tu banner de portada se actualizo.');
+                redirigir($urlConfig . '#banner');
+            }
+
+            case 'quitar_banner':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                actualizarBannerFreelancer($idUsuario, null);
+                eliminarArchivoBanner($bannerActual);
+                registrarEnBitacora($usuario['correo'], 'banner_eliminado');
+
+                guardarMensaje('exito', 'Quitaste tu banner de portada.');
+                redirigir($urlConfig . '#banner');
+            }
+
+            //-----------------------------------------------------
+            // Redes sociales (solo freelancers)
+            //-----------------------------------------------------
+            case 'guardar_redes':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $entradaRedes = isset($_POST['redes']) && is_array($_POST['redes']) ? $_POST['redes'] : [];
+                $resultadoRedes = validarRedesSociales($entradaRedes);
+
+                //se conserva lo escrito aunque haya errores (RU-02)
+                $valoresRedes = [];
+
+                foreach ($redesDisponibles as $clave => $datosRed)
+                {
+                    $valoresRedes[$clave] = isset($entradaRedes[$clave]) && is_string($entradaRedes[$clave]) ? limpiarEntrada($entradaRedes[$clave]) : '';
+                }
+
+                $errores['redes'] = $resultadoRedes['errores'];
+
+                if (empty($errores['redes']))
+                {
+                    guardarRedesFreelancer($idUsuario, $resultadoRedes['redes']);
+                    registrarEnBitacora($usuario['correo'], 'redes_actualizadas');
+
+                    guardarMensaje('exito', 'Tus redes sociales se guardaron.');
+                    redirigir($urlConfig . '#redes');
+                }
+
+                break;
+            }
+
+            //-----------------------------------------------------
+            // Horarios semanales (solo freelancers)
+            //-----------------------------------------------------
+            case 'guardar_horarios':
+            {
+                if (!$esFreelancer)
+                {
+                    guardarMensaje('error', 'Esta seccion es solo para freelancers.');
+                    redirigir($urlConfig);
+                }
+
+                $resultadoHorario = validarHorarios($_POST['horario'] ?? []);
+
+                $valoresHorario = $resultadoHorario['horario'];
+                $errores['horarios'] = $resultadoHorario['errores'];
+
+                if (empty($errores['horarios']))
+                {
+                    guardarHorariosFreelancer($idUsuario, $resultadoHorario['horario']);
+                    registrarEnBitacora($usuario['correo'], 'horarios_actualizados');
+
+                    guardarMensaje('exito', 'Tus horarios se guardaron.');
+                    redirigir($urlConfig . '#horarios');
                 }
 
                 break;
@@ -248,8 +407,12 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
           <a href="#datos" class="enlace-menu-config">Datos personales</a>
           <a href="#foto" class="enlace-menu-config">Foto de perfil</a>
           <?php if ($esFreelancer): ?>
+              <a href="#identidad" class="enlace-menu-config">Identidad comercial</a>
+              <a href="#banner" class="enlace-menu-config">Banner de portada</a>
+              <a href="#redes" class="enlace-menu-config">Redes sociales</a>
               <a href="#profesional" class="enlace-menu-config">Perfil profesional</a>
               <a href="#cobertura" class="enlace-menu-config">Zona de cobertura</a>
+              <a href="#horarios" class="enlace-menu-config">Horarios</a>
           <?php endif; ?>
           <a href="#seguridad" class="enlace-menu-config">Seguridad</a>
       </aside>
@@ -330,7 +493,7 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
           <!-- ============ Foto de perfil ============ -->
           <section class="tarjeta-config" id="foto">
               <h2>Foto de perfil</h2>
-              <p class="descripcion-config">JPG, PNG o WEBP de maximo 2MB. En cuentas personales debe verse tu rostro; las empresariales pueden usar su logotipo.</p>
+              <p class="descripcion-config">JPG, PNG o WEBP. Podras recortarla antes de subirla (maximo 2MB). En cuentas personales debe verse tu rostro; las empresariales pueden usar su logotipo.</p>
 
               <form action="<?php echo $urlConfig; ?>" method="POST" enctype="multipart/form-data" class="formulario-autenticacion" novalidate>
                   <input type="hidden" name="operacion" value="cambiar_foto">
@@ -345,7 +508,7 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 
                       <div class="campo-formulario">
                           <label for="cfgFoto">Elegir nueva foto</label>
-                          <input type="file" id="cfgFoto" name="foto_perfil" accept="image/jpeg,image/png,image/webp" required>
+                          <input type="file" id="cfgFoto" name="foto_perfil" accept="image/jpeg,image/png,image/webp" data-recorte="foto" required>
                           <span class="error-campo" id="errorFotoCliente" hidden></span>
                           <?php if (isset($errores['foto']['foto_perfil'])): ?><span class="error-campo"><?php echo escaparSalida($errores['foto']['foto_perfil']); ?></span><?php endif; ?>
                       </div>
@@ -356,21 +519,96 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
           </section>
 
           <?php if ($esFreelancer): ?>
+          <!-- ============ Identidad comercial (freelancer) ============ -->
+          <section class="tarjeta-config" id="identidad">
+              <h2>Identidad comercial</h2>
+              <p class="descripcion-config">Asi se presenta tu negocio ante los clientes. El nombre y la descripcion pasan por un filtro automatico antes de publicarse.</p>
+
+              <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" novalidate>
+                  <input type="hidden" name="operacion" value="guardar_identidad">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+                  <div class="campo-formulario">
+                      <label for="cfgNombreNegocio">Nombre comercial</label>
+                      <input type="text" id="cfgNombreNegocio" name="nombre_negocio" maxlength="150" value="<?php echo escaparSalida($valoresIdentidad['nombre_negocio']); ?>" placeholder="Plomeria Lopez" required>
+                      <?php if (isset($errores['identidad']['nombre_negocio'])): ?><span class="error-campo"><?php echo escaparSalida($errores['identidad']['nombre_negocio']); ?></span><?php endif; ?>
+                  </div>
+
+                  <div class="campo-formulario">
+                      <label for="cfgDescripcion">Descripcion o biografia</label>
+                      <textarea id="cfgDescripcion" name="descripcion" class="area-texto-config" rows="5" maxlength="600" placeholder="Cuenta que haces, cuantos anos de experiencia tienes, con que materiales trabajas, garantias..." required><?php echo escaparSalida($valoresIdentidad['descripcion']); ?></textarea>
+                      <small class="ayuda-campo"><span id="contadorDescripcion">0</span>/600 caracteres (minimo 20)</small>
+                      <?php if (isset($errores['identidad']['descripcion'])): ?><span class="error-campo"><?php echo escaparSalida($errores['identidad']['descripcion']); ?></span><?php endif; ?>
+                  </div>
+
+                  <button type="submit" class="boton-autenticacion boton-config">Guardar identidad</button>
+              </form>
+          </section>
+
+          <!-- ============ Banner de portada (freelancer) ============ -->
+          <section class="tarjeta-config" id="banner">
+              <h2>Banner de portada</h2>
+              <p class="descripcion-config">Imagen panoramica que aparece arriba de tu perfil publico. JPG, PNG o WEBP; podras recortarla antes de subirla (proporcion 3:1, maximo 3MB).</p>
+
+              <div class="vista-banner-config">
+                  <img id="vistaPreviaBanner" class="vista-banner" src="<?php echo escaparSalida(urlBanner($bannerActual)); ?>" alt="Tu banner de portada actual" <?php echo $bannerActual === null ? 'hidden' : ''; ?>>
+                  <div id="vistaBannerVacia" class="vista-banner vista-banner-vacia" <?php echo $bannerActual !== null ? 'hidden' : ''; ?>>Aun no tienes banner de portada</div>
+              </div>
+
+              <form action="<?php echo $urlConfig; ?>" method="POST" enctype="multipart/form-data" class="formulario-autenticacion" novalidate>
+                  <input type="hidden" name="operacion" value="cambiar_banner">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+                  <div class="campo-formulario">
+                      <label for="cfgBanner">Elegir imagen</label>
+                      <input type="file" id="cfgBanner" name="banner_portada" accept="image/jpeg,image/png,image/webp" data-recorte="banner" required>
+                      <span class="error-campo" id="errorBannerCliente" hidden></span>
+                      <?php if (isset($errores['banner']['banner_portada'])): ?><span class="error-campo"><?php echo escaparSalida($errores['banner']['banner_portada']); ?></span><?php endif; ?>
+                  </div>
+
+                  <button type="submit" class="boton-autenticacion boton-config">Actualizar banner</button>
+              </form>
+
+              <?php if ($bannerActual !== null): ?>
+              <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-quitar-banner">
+                  <input type="hidden" name="operacion" value="quitar_banner">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+                  <button type="submit" class="boton-enlace">Quitar banner</button>
+              </form>
+              <?php endif; ?>
+          </section>
+
+          <!-- ============ Redes sociales (freelancer) ============ -->
+          <section class="tarjeta-config" id="redes">
+              <h2>Redes sociales</h2>
+              <p class="descripcion-config">Opcional. Deja vacio lo que no uses. Se muestran como enlaces en tu perfil publico.</p>
+
+              <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" novalidate>
+                  <input type="hidden" name="operacion" value="guardar_redes">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+                  <div class="rejilla-redes-config">
+                      <?php foreach ($redesDisponibles as $claveRed => $datosRed): ?>
+                          <div class="campo-formulario">
+                              <label for="cfgRed_<?php echo escaparSalida($claveRed); ?>"><?php echo escaparSalida($datosRed['etiqueta']); ?></label>
+                              <input type="text" id="cfgRed_<?php echo escaparSalida($claveRed); ?>" name="redes[<?php echo escaparSalida($claveRed); ?>]" inputmode="url" maxlength="255" autocomplete="off" value="<?php echo escaparSalida($valoresRedes[$claveRed] ?? ''); ?>" placeholder="<?php echo escaparSalida($datosRed['ejemplo']); ?>">
+                              <?php if (isset($errores['redes'][$claveRed])): ?><span class="error-campo"><?php echo escaparSalida($errores['redes'][$claveRed]); ?></span><?php endif; ?>
+                          </div>
+                      <?php endforeach; ?>
+                  </div>
+
+                  <button type="submit" class="boton-autenticacion boton-config">Guardar redes sociales</button>
+              </form>
+          </section>
+
           <!-- ============ Perfil profesional (freelancer) ============ -->
           <section class="tarjeta-config" id="profesional">
               <h2>Perfil profesional</h2>
-              <p class="descripcion-config">Esta informacion aparece cuando los clientes comparan servicios. La descripcion pasa por un filtro automatico antes de publicarse.</p>
+              <p class="descripcion-config">Formas de cobro que aceptas y RFC para verificar tu perfil. Tu nombre y descripcion se editan en "Identidad comercial".</p>
 
               <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" novalidate>
                   <input type="hidden" name="operacion" value="actualizar_freelancer">
                   <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
-
-                  <div class="campo-formulario">
-                      <label for="cfgDescripcion">Sobre ti y tu trabajo</label>
-                      <textarea id="cfgDescripcion" name="descripcion" class="area-texto-config" rows="5" maxlength="600" placeholder="Cuenta que haces, con que materiales trabajas, garantias..." required><?php echo escaparSalida($valoresFreelancer['descripcion']); ?></textarea>
-                      <small class="ayuda-campo"><span id="contadorDescripcion">0</span>/600 caracteres (minimo 20)</small>
-                      <?php if (isset($errores['freelancer']['descripcion'])): ?><span class="error-campo"><?php echo escaparSalida($errores['freelancer']['descripcion']); ?></span><?php endif; ?>
-                  </div>
 
                   <div class="campo-formulario">
                       <label for="cfgRfc">RFC (opcional)</label>
@@ -413,7 +651,7 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                   <div class="fila-campos">
                       <div class="campo-formulario">
                           <label for="cfgModalidad">Como ofreces tu servicio</label>
-                          <select id="cfgModalidad" name="id_modalidad" required>
+                          <select id="cfgModalidad" name="id_modalidad" data-en-linea="<?php echo (int) MODALIDAD_EN_LINEA; ?>" required>
                               <option value="0">Elige una opcion</option>
                               <?php foreach ($modalidades as $modalidad): ?>
                                   <option value="<?php echo (int) $modalidad['id_modalidad']; ?>" <?php echo (int) $valoresCobertura['id_modalidad'] === (int) $modalidad['id_modalidad'] ? 'selected' : ''; ?>><?php echo escaparSalida($modalidad['nombre']); ?></option>
@@ -436,6 +674,36 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                       <?php if (isset($errores['cobertura']['direccion_texto'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['direccion_texto']); ?></span><?php endif; ?>
                   </div>
 
+                  <div class="campo-formulario bloque-mapa-config" id="bloqueMapa">
+                      <label for="cfgBuscarMapa">Ubicacion exacta en el mapa</label>
+
+                      <div class="barra-mapa-config">
+                          <input type="search" id="cfgBuscarMapa" placeholder="Busca tu direccion, colonia o negocio" autocomplete="off">
+                          <button type="button" class="boton-mapa-config" id="btnBuscarMapa">Buscar</button>
+                          <button type="button" class="boton-mapa-config" id="btnGpsMapa">Usar mi ubicacion</button>
+                      </div>
+
+                      <ul class="resultados-mapa-config" id="resultadosMapa" hidden></ul>
+
+                      <div class="mapa-config" id="cfgMapa" role="application" aria-label="Mapa para fijar la ubicacion de tu negocio"></div>
+                      <p class="aviso-mapa-config" id="avisoMapa" hidden></p>
+
+                      <div class="fila-campos">
+                          <div class="campo-formulario">
+                              <label for="cfgLat">Latitud</label>
+                              <input type="text" id="cfgLat" name="latitud_base" inputmode="decimal" autocomplete="off" value="<?php echo escaparSalida(textoCoordenada($valoresCobertura['latitud_base'] ?? null)); ?>" placeholder="32.514900">
+                          </div>
+
+                          <div class="campo-formulario">
+                              <label for="cfgLon">Longitud</label>
+                              <input type="text" id="cfgLon" name="longitud_base" inputmode="decimal" autocomplete="off" value="<?php echo escaparSalida(textoCoordenada($valoresCobertura['longitud_base'] ?? null)); ?>" placeholder="-117.038200">
+                          </div>
+                      </div>
+
+                      <small class="ayuda-campo">Haz clic en el mapa o arrastra el marcador. Tambien puedes escribir las coordenadas exactas. El circulo muestra tu radio de cobertura.</small>
+                      <?php if (isset($errores['cobertura']['ubicacion'])): ?><span class="error-campo"><?php echo escaparSalida($errores['cobertura']['ubicacion']); ?></span><?php endif; ?>
+                  </div>
+
                   <div class="campo-formulario">
                       <label for="cfgRadio">Radio de cobertura: <output id="valorRadio" for="cfgRadio"><?php echo (int) $valoresCobertura['radio_cobertura_km']; ?></output> km</label>
                       <input type="range" id="cfgRadio" name="radio_cobertura_km" class="control-radio-config" min="1" max="100" step="1" value="<?php echo (int) $valoresCobertura['radio_cobertura_km']; ?>">
@@ -443,6 +711,49 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
                   </div>
 
                   <button type="submit" class="boton-autenticacion boton-config">Guardar cobertura</button>
+              </form>
+          </section>
+
+          <!-- ============ Horarios semanales (freelancer) ============ -->
+          <section class="tarjeta-config" id="horarios">
+              <h2>Horarios de atencion</h2>
+              <p class="descripcion-config">Elige la hora de apertura y de cierre de cada dia, o marcalo como no laborable. Con esto se calcula el aviso "Abierto ahora" de tu perfil.</p>
+
+              <form action="<?php echo $urlConfig; ?>" method="POST" class="formulario-autenticacion" id="formHorarios" novalidate>
+                  <input type="hidden" name="operacion" value="guardar_horarios">
+                  <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
+
+                  <?php if (isset($errores['horarios']['general'])): ?>
+                      <p class="aviso-autenticacion aviso-error" role="alert"><?php echo escaparSalida($errores['horarios']['general']); ?></p>
+                  <?php endif; ?>
+
+                  <div class="matriz-horario-config">
+                      <?php foreach ($diasSemana as $numeroDia => $nombreDia): ?>
+                          <?php $filaHorario = $valoresHorario[$numeroDia]; ?>
+                          <div class="fila-horario-config<?php echo !empty($filaHorario['cerrado']) ? ' cerrada' : ''; ?>" data-fila-horario>
+                              <span class="dia-horario-config"><?php echo escaparSalida($nombreDia); ?></span>
+
+                              <label class="interruptor-config interruptor-horario">
+                                  <input type="checkbox" name="horario[<?php echo (int) $numeroDia; ?>][cerrado]" value="1" data-cerrado <?php echo !empty($filaHorario['cerrado']) ? 'checked' : ''; ?>>
+                                  <span class="pista-interruptor" aria-hidden="true"></span>
+                                  <span>No laborable</span>
+                              </label>
+
+                              <div class="horas-horario-config">
+                                  <input type="time" name="horario[<?php echo (int) $numeroDia; ?>][abre]" step="900" value="<?php echo escaparSalida($filaHorario['abre']); ?>" aria-label="<?php echo escaparSalida($nombreDia); ?>: hora de apertura" data-abre>
+                                  <span aria-hidden="true">a</span>
+                                  <input type="time" name="horario[<?php echo (int) $numeroDia; ?>][cierra]" step="900" value="<?php echo escaparSalida($filaHorario['cierra']); ?>" aria-label="<?php echo escaparSalida($nombreDia); ?>: hora de cierre" data-cierra>
+                              </div>
+
+                              <span class="error-campo error-horario-config" data-error-horario <?php echo isset($errores['horarios'][$numeroDia]) ? '' : 'hidden'; ?>><?php echo isset($errores['horarios'][$numeroDia]) ? escaparSalida($errores['horarios'][$numeroDia]) : ''; ?></span>
+                          </div>
+                      <?php endforeach; ?>
+                  </div>
+
+                  <div class="acciones-horario-config">
+                      <button type="submit" class="boton-autenticacion boton-config">Guardar horarios</button>
+                      <button type="button" class="boton-enlace" id="btnCopiarLunes">Copiar el horario del lunes a toda la semana</button>
+                  </div>
               </form>
           </section>
           <?php else: ?>
@@ -494,4 +805,5 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 </section>
 
 <script src="<?php echo JS_RUTA; ?>autenticacion.js"></script>
-<script src="<?php echo JS_RUTA; ?>configuracion.js?v=1"></script>
+<script src="<?php echo JS_RUTA; ?>configuracion.js?v=2"></script>
+<script src="<?php echo JS_RUTA; ?>configuracionNegocio.js?v=1"></script>

@@ -616,7 +616,8 @@ function obtenerNegocioPublico($slug, $idUsuario)
 
     $sql = 'SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.foto_perfil_url, u.fecha_registro,
                    p.nombre_negocio, p.slug, p.es_empresa, p.perfil_verificado, p.descripcion, p.whatsapp_contacto,
-                   cf.id_modalidad, cf.direccion_texto, cf.ciudad_limite, cf.latitud_base, cf.longitud_base, cf.radio_cobertura_km
+                   cf.id_modalidad, cf.direccion_texto, cf.ciudad_limite, cf.latitud_base, cf.longitud_base, cf.radio_cobertura_km,
+                   (SELECT cp.banner_url FROM config_premium cp WHERE cp.id_usuario = u.id_usuario ORDER BY cp.id_config DESC LIMIT 1) AS banner_url
             FROM usuarios u
             LEFT JOIN perfil_freelancer p ON p.id_usuario = u.id_usuario
             LEFT JOIN cobertura_freelancer cf ON cf.id_usuario = u.id_usuario

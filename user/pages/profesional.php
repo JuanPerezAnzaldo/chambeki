@@ -43,7 +43,7 @@ $urlListado = URL_BASE . '?accion=servicios';
 ?>
 
 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
-<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=1">
+<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=2">
 
 <section class="seccion-negocio">
     <div class="contenedor-negocio">
@@ -78,6 +78,14 @@ $urlListado = URL_BASE . '?accion=servicios';
 
         <article class="perfil-negocio"
             <?php if ($horario !== null): ?>data-horario="<?php echo escaparSalida(horarioEnJson($horario)); ?>" data-zona="<?php echo escaparSalida(ZONA_HORARIA_NEGOCIOS); ?>"<?php endif; ?>>
+
+            <!-- Banner de portada (lo sube el freelancer en Configuracion) -->
+            <?php $banner = urlImagen($negocio['banner_url'] ?? ''); ?>
+            <?php if ($banner !== null): ?>
+                <div class="banner-negocio">
+                    <img src="<?php echo escaparSalida($banner); ?>" alt="" onerror="this.parentNode.hidden=true;">
+                </div>
+            <?php endif; ?>
 
             <!-- Cabecera -->
             <header class="cabecera-negocio">

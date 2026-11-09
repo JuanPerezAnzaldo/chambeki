@@ -1,0 +1,303 @@
+/* ============================================================
+   CHAMBEKI - Configuracion: identidad comercial del freelancer
+   Banner, redes sociales, mapa, horarios y recorte de imagenes.
+   Se carga despues de configuracion.css y usa sus variables.
+   ============================================================ */
+
+/* ---------- Banner de portada ---------- */
+
+.vista-banner-config {
+    margin-bottom: 1.2rem;
+}
+
+.vista-banner {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    object-fit: cover;
+    border-radius: var(--radio-grande);
+    border: 1px solid var(--color-borde);
+    background: var(--color-fondo-input);
+}
+
+.vista-banner[hidden] {
+    display: none;
+}
+
+.vista-banner-vacia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: dashed;
+    font-size: 0.9rem;
+    color: var(--color-marcador-posicion);
+}
+
+.formulario-quitar-banner {
+    margin-top: 0.8rem;
+}
+
+/* ---------- Redes sociales ---------- */
+
+.rejilla-redes-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+}
+
+/* ---------- Mapa ---------- */
+
+.barra-mapa-config {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.barra-mapa-config input[type="search"] {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+.boton-mapa-config {
+    padding: 0 16px;
+    min-height: 46px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-boton-principal);
+    background: transparent;
+    border: 1.5px solid var(--color-boton-principal);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.boton-mapa-config:hover:not(:disabled) {
+    background: rgba(232, 97, 45, 0.1);
+}
+
+.boton-mapa-config:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.resultados-mapa-config {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.resultados-mapa-config[hidden] {
+    display: none;
+}
+
+.resultados-mapa-config button {
+    width: 100%;
+    padding: 9px 10px;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--color-texto-principal);
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.resultados-mapa-config button:hover,
+.resultados-mapa-config button:focus-visible {
+    background: rgba(232, 97, 45, 0.1);
+    outline: none;
+}
+
+.mapa-config {
+    width: 100%;
+    height: 340px;
+    margin-bottom: 8px;
+    border-radius: var(--radio-grande);
+    border: 1px solid var(--color-borde);
+    overflow: hidden;
+    z-index: 0;
+}
+
+.aviso-mapa-config {
+    margin: 0 0 8px;
+    font-size: 0.85rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.aviso-mapa-config[hidden],
+.bloque-mapa-config[hidden] {
+    display: none;
+}
+
+/* ---------- Matriz de horarios ---------- */
+
+.matriz-horario-config {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+}
+
+.fila-horario-config {
+    display: grid;
+    grid-template-columns: 110px 170px 1fr;
+    align-items: center;
+    gap: 6px 14px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.fila-horario-config:last-child {
+    border-bottom: none;
+}
+
+.fila-horario-config.cerrada {
+    background: rgba(0, 0, 0, 0.035);
+}
+
+[data-theme="dark"] .fila-horario-config.cerrada {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.dia-horario-config {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+}
+
+.interruptor-horario {
+    font-size: 0.85rem;
+}
+
+.horas-horario-config {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-texto-cuerpo);
+}
+
+.horas-horario-config input[type="time"] {
+    width: 130px;
+    padding: 9px 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.horas-horario-config input[type="time"]:focus {
+    outline: none;
+    border-color: var(--color-boton-principal);
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+.horas-horario-config input[type="time"]:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.error-horario-config {
+    grid-column: 1 / -1;
+}
+
+.error-horario-config[hidden] {
+    display: none;
+}
+
+.acciones-horario-config {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* ---------- Dialogo de recorte (Cropper.js) ---------- */
+
+.dialogo-recorte {
+    width: min(720px, 94vw);
+    max-height: 92vh;
+    padding: 1.2rem;
+    color: var(--color-texto-principal);
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.dialogo-recorte::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.recorte-cabecera h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+}
+
+.recorte-lienzo {
+    width: 100%;
+    height: min(55vh, 460px);
+    background: #1b1b1b;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.recorte-lienzo img {
+    display: block;
+    max-width: 100%;
+}
+
+.recorte-error {
+    margin-top: 0.6rem;
+}
+
+.recorte-error[hidden] {
+    display: none;
+}
+
+.recorte-acciones {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.recorte-espacio {
+    flex: 1;
+}
+
+.recorte-acciones .boton-config {
+    align-self: auto;
+}
+
+@media (max-width: 800px) {
+    .fila-horario-config {
+        grid-template-columns: 1fr;
+    }
+
+    .rejilla-redes-config {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .mapa-config {
+        height: 280px;
+    }
+
+    .horas-horario-config input[type="time"] {
+        width: 100%;
+        flex: 1;
+    }
+}

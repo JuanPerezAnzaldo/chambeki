@@ -5,56 +5,7 @@
 */
 (function()
 {
-    const PESO_MAXIMO_FOTO = 2 * 1024 * 1024; //2MB (RNF-05)
-
-    //--- vista previa de la foto y aviso de peso antes de subirla ---
-    const entradaFoto = document.getElementById('cfgFoto');
-    const errorFoto = document.getElementById('errorFotoCliente');
-
-    if (entradaFoto)
-    {
-        entradaFoto.addEventListener('change', function()
-        {
-            const archivo = entradaFoto.files[0];
-            let vistaPrevia = document.getElementById('vistaPreviaFoto');
-
-            errorFoto.hidden = true;
-
-            if (!archivo)
-            {
-                return;
-            }
-
-            if (!archivo.type.startsWith('image/') || archivo.size > PESO_MAXIMO_FOTO)
-            {
-                errorFoto.textContent = archivo.size > PESO_MAXIMO_FOTO
-                    ? 'La imagen pesa mas de 2MB. Usa una mas ligera.'
-                    : 'El archivo no es una imagen valida.';
-                errorFoto.hidden = false;
-                entradaFoto.value = '';
-                return;
-            }
-
-            const lector = new FileReader();
-
-            lector.onload = function(e)
-            {
-                if (vistaPrevia.tagName !== 'IMG')
-                {
-                    const imagen = document.createElement('img');
-                    imagen.className = 'foto-perfil-grande';
-                    imagen.id = 'vistaPreviaFoto';
-                    imagen.alt = 'Vista previa de la nueva foto';
-                    vistaPrevia.replaceWith(imagen);
-                    vistaPrevia = imagen;
-                }
-
-                vistaPrevia.src = e.target.result;
-            };
-
-            lector.readAsDataURL(archivo);
-        });
-    }
+    //la vista previa y el recorte de la foto de perfil y del banner viven en configuracionNegocio.js (Cropper.js)
 
     //--- contador de caracteres de la descripcion ---
     const area = document.getElementById('cfgDescripcion');
@@ -100,15 +51,21 @@
     //--- retroalimentacion mientras se guarda y evita doble envio (RU-01) ---
     document.querySelectorAll('.tarjeta-config form').forEach(function(formulario)
     {
-        formulario.addEventListener('submit', function()
+        formulario.addEventListener('submit', function(evento)
         {
             const boton = formulario.querySelector('button[type="submit"]');
 
-            if (boton)
+            //se espera un instante: si otra validacion (p. ej. la de horarios) cancela el envio, el boton no se bloquea
+            setTimeout(function()
             {
+                if (evento.defaultPrevented || !boton)
+                {
+                    return;
+                }
+
                 boton.disabled = true;
                 boton.textContent = 'Guardando...';
-            }
+            }, 0);
         });
     });
 
