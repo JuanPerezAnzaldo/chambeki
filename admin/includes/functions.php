@@ -428,6 +428,9 @@ function rutasAdmin()
         'equipo'    => ['archivo' => 'equipo.php',    'permiso' => 'admins.gestionar', 'titulo' => 'Gestion de personal',    'menu' => 'Gestion de personal'],
         'equipo-nuevo'  => ['archivo' => 'equipo-formulario.php', 'permiso' => 'admins.gestionar', 'titulo' => 'Nuevo empleado',   'padre' => 'equipo', 'modo' => 'nuevo'],
         'equipo-editar' => ['archivo' => 'equipo-formulario.php', 'permiso' => 'admins.gestionar', 'titulo' => 'Editar empleado', 'padre' => 'equipo', 'modo' => 'editar'],
+        'enviar-correo'   => ['archivo' => 'enviar-correo.php',   'permiso' => 'usuarios.editar', 'titulo' => 'Enviar correo oficial', 'padre' => 'cuentas'],
+        'reportes'        => ['archivo' => 'reportes.php',        'permiso' => 'reportes.ver',    'titulo' => 'Reportes e Incidencias', 'menu' => 'Reportes'],
+        'reporte-detalle' => ['archivo' => 'reporte-detalle.php', 'permiso' => 'reportes.ver',    'titulo' => 'Detalle de Reporte', 'padre' => 'reportes'],
         //cualquier administrador autenticado (tambien la abre quien tiene contrasena temporal)
         'cambiar-contrasena' => ['archivo' => 'cambiar-contrasena.php', 'permiso' => null, 'titulo' => 'Cambiar contrasena']
     ];
