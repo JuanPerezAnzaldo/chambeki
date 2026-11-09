@@ -7,6 +7,10 @@
     (ubicacion.js llama a window.abrirMapaBusqueda) o con cualquier
     boton que tenga el atributo data-abrir-mapa.
 */
+
+//las constantes del radio (RADIO_BUSQUEDA_*) viven en funcionesNegocios.php;
+//en el home esa libreria no se cargaba y el include fallaba
+require_once DOCROOT . 'user/includes/funcionesNegocios.php';
 ?>
 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>mapaBusqueda.css?v=1">
 
