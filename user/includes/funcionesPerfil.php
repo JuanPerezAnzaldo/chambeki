@@ -146,7 +146,8 @@ function obtenerPerfilFreelancer($idUsuario)
     $conexion = conexionBD();
 
     $sentencia = $conexion->prepare(
-        'SELECT descripcion, identificador_fiscal, perfil_verificado, acepto_efectivo, acepto_tarjeta
+        'SELECT descripcion, identificador_fiscal, perfil_verificado,
+                acepta_efectivo AS acepto_efectivo, acepta_tarjeta AS acepto_tarjeta
          FROM perfil_freelancer
          WHERE id_usuario = :id
          LIMIT 1'
@@ -219,14 +220,14 @@ function guardarPerfilFreelancer($idUsuario, $datos)
         $sentencia = $conexion->prepare(
             'UPDATE perfil_freelancer
              SET descripcion = :descripcion, identificador_fiscal = :rfc,
-                 acepto_efectivo = :efectivo, acepto_tarjeta = :tarjeta
+                 acepta_efectivo = :efectivo, acepta_tarjeta = :tarjeta
              WHERE id_usuario = :id'
         );
     }
     else
     {
         $sentencia = $conexion->prepare(
-            'INSERT INTO perfil_freelancer (id_usuario, descripcion, identificador_fiscal, acepto_efectivo, acepto_tarjeta)
+            'INSERT INTO perfil_freelancer (id_usuario, descripcion, identificador_fiscal, acepta_efectivo, acepta_tarjeta)
              VALUES (:id, :descripcion, :rfc, :efectivo, :tarjeta)'
         );
     }
@@ -412,5 +413,24 @@ function cancelarSuscripcion($idUsuario)
         ':plan'      => PLAN_PREMIUM,
         ':activa'    => SUSCRIPCION_ACTIVA
     ]);
+}
+
+//=============================================================
+// Cambio de rol: Cliente -> Freelancer
+// Solo cambia el rol; el perfil profesional (descripcion, RFC,
+// formas de cobro) se llena despues desde "Editar mi perfil".
+//=============================================================
+
+function convertirEnFreelancer($idUsuario)
+{
+    $conexion = conexionBD();
+
+    //solo un Cliente puede pasar a Freelancer (un admin no cambia de rol)
+    $sentencia = $conexion->prepare(
+        'UPDATE usuarios SET rol = :nuevo WHERE id_usuario = :id AND rol = :actual'
+    );
+    $sentencia->execute([':nuevo' => ROL_FREELANCER, ':id' => $idUsuario, ':actual' => ROL_CLIENTE]);
+
+    return $sentencia->rowCount() > 0;
 }
 ?>
