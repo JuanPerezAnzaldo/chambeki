@@ -1046,3 +1046,151 @@ body.admin-panel
         width: 100%;
     }
 }
+
+/* modulo de correos institucionales */
+.correo-filtros
+{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.correo-filtros input
+{
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.correo-acciones-lista
+{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.correo-acciones-lista .ayuda-campo
+{
+    margin-left: auto;
+}
+
+.correo-acciones-lista button
+{
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.correo-lista
+{
+    max-height: 340px;
+    overflow-y: auto;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    background-color: var(--color-fondo-principal);
+    margin-bottom: 8px;
+}
+
+.correo-destino
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--color-borde);
+    cursor: pointer;
+}
+
+.correo-destino[hidden]
+{
+    display: none;
+}
+
+.correo-destino:last-of-type
+{
+    border-bottom: 0;
+}
+
+.correo-destino input
+{
+    flex: 0 0 auto;
+    width: auto;
+}
+
+.correo-destino span
+{
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.correo-destino small
+{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.correo-etiqueta
+{
+    flex: 0 0 auto;
+    font-style: normal;
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+
+.correo-detalle summary
+{
+    cursor: pointer;
+}
+
+.correo-detalle div
+{
+    margin-top: 8px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    background-color: var(--color-fondo-principal);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+}
+
+/* pestañas de estado en reportes */
+.reportes-pestanas
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.reportes-pestanas a
+{
+    padding: 7px 14px;
+    border: 1px solid var(--color-borde);
+    border-radius: 999px;
+    background-color: var(--color-fondo-tarjeta);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+}
+
+.reportes-pestanas a span
+{
+    margin-left: 4px;
+    opacity: 0.65;
+}
+
+.reportes-pestanas a.activo
+{
+    background-color: var(--color-boton-principal);
+    border-color: var(--color-boton-principal);
+    color: #ffffff;
+}
+
+.admin-paginacion a.activo
+{
+    text-decoration: underline;
+}
