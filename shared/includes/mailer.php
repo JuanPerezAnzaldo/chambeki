@@ -145,10 +145,10 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
             //correo redactado por el personal desde /admin/correos
             //datosExtra: plantilla (aclaracion|suspension|aviso|reporte), asunto, mensaje (texto plano)
             $plantillasOficiales = [
-                'aclaracion' => ['etiqueta' => 'Solicitud de aclaración', 'color' => '#2B6CB0', 'icono' => '&#128196;'],
-                'suspension' => ['etiqueta' => 'Aviso de suspensión',     'color' => '#C0392B', 'icono' => '&#9888;&#65039;'],
-                'aviso'      => ['etiqueta' => 'Aviso del sistema',       'color' => '#E8612D', 'icono' => '&#128276;'],
-                'reporte'    => ['etiqueta' => 'Resolución de reporte',   'color' => '#2F855A', 'icono' => '&#9989;']
+                'aclaracion' => ['etiqueta' => 'Solicitud de aclaración', 'color' => '#2B6CB0'],
+                'suspension' => ['etiqueta' => 'Aviso de suspensión',     'color' => '#C0392B'],
+                'aviso'      => ['etiqueta' => 'Aviso del sistema',       'color' => '#E8612D'],
+                'reporte'    => ['etiqueta' => 'Resolución de reporte',   'color' => '#2F855A']
             ];
 
             $clavePlantilla = strtolower($datosExtra['plantilla'] ?? 'aviso');
@@ -164,7 +164,6 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
             $nombreSeguro  = htmlspecialchars((string) $nombreUsuario, ENT_QUOTES, 'UTF-8');
             $etiqueta      = $plantilla['etiqueta'];
             $colorEtiqueta = $plantilla['color'];
-            $icono         = $plantilla['icono'];
             $anio          = date('Y');
 
             $cuerpoHtml = "
@@ -177,12 +176,12 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
                 </div>
 
                 <div style='background-color: #ffffff; padding: 34px 34px 28px; color: {$colorTexto}; font-size: 16px; line-height: 1.65; border-left: 1px solid #f0d7cc; border-right: 1px solid #f0d7cc;'>
-                    <div style='display: inline-block; background-color: {$colorEtiqueta}; color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 6px 14px; border-radius: 20px;'>{$icono}&nbsp; {$etiqueta}</div>
+                    <div style='display: inline-block; background-color: {$colorEtiqueta}; color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 6px 14px; border-radius: 20px;'>{$etiqueta}</div>
 
                     <h2 style='margin: 18px 0 6px; font-size: 21px; line-height: 1.3; color: #2B2320;'>{$asuntoSeguro}</h2>
                     <p style='margin: 0 0 20px; color: #8a7a73; font-size: 14px;'>Para: <strong style='color: {$colorTexto};'>{$nombreSeguro}</strong></p>
 
-                    <div style='padding: 20px 22px; background-color: {$colorFondo}; border-left: 4px solid {$colorEtiqueta}; border-radius: 6px; font-size: 15.5px;'>
+                    <div style='padding: 20px 22px; background-color: {$colorFondo}; border-radius: 8px; font-size: 15.5px;'>
                         {$mensajeSeguro}
                     </div>
 

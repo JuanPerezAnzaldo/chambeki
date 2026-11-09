@@ -1421,8 +1421,7 @@ body.admin-panel
 {
     padding: 12px 14px;
     background-color: #FDFBF7;
-    border-left: 4px solid var(--acento);
-    border-radius: 6px;
+    border-radius: 8px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
