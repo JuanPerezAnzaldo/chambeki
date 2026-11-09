@@ -1,17 +1,40 @@
 <?php
-// Recibir parámetros del método GET
-$oficio_buscado = isset($_GET['oficio']) ? limpiarEntrada($_GET['oficio']) : '';
-$ubicacion_buscada = isset($_GET['ubicacion']) ? limpiarEntrada($_GET['ubicacion']) : '';
+/*
+    Listado de resultados: una tarjeta por negocio.
+    Ruta: ?accion=servicios (index.php incluye este archivo).
+    Recibe del buscador: oficio, ubicacion, latitud, longitud, tipo_ubicacion.
+*/
 
-// Usar la función que agregaste en functions.php
-$resultados = buscarServicios($oficio_buscado, $ubicacion_buscada);
+require_once DOCROOT . 'user/includes/funcionesNegocios.php';
+
+$oficio_buscado = leerTextoGet($_GET, 'oficio');
+$filtroUbicacion = leerFiltroUbicacion($_GET);
+$negocios = [];
+$errorBusqueda = false;
+
+try
+{
+    $negocios = buscarNegocios($oficio_buscado, $filtroUbicacion);
+}
+catch (\PDOException $excepcion)
+{
+    error_log('buscarNegocios: ' . $excepcion->getMessage());
+    $errorBusqueda = true;
+}
+
+$hayCoordenadas = $filtroUbicacion['lat'] !== null;
 ?>
+
+<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=1">
 
 <!-- Buscador en la parte superior del listado -->
 <div class="franja-buscador" style="background: var(--color-fondo-hero); padding: 2rem 1rem;">
     <div class="contenedor-buscador" style="margin-bottom: 0;">
         <form action="/" method="GET" class="caja-busqueda" id="formularioBusqueda" autocomplete="off">
             <input type="hidden" name="accion" value="servicios">
+            <input type="hidden" name="latitud" id="campoLatitudListado" value="<?php echo $hayCoordenadas ? escaparSalida((string) $filtroUbicacion['lat']) : ''; ?>">
+            <input type="hidden" name="longitud" id="campoLongitudListado" value="<?php echo $hayCoordenadas ? escaparSalida((string) $filtroUbicacion['lon']) : ''; ?>">
+            <input type="hidden" name="tipo_ubicacion" id="campoTipoListado" value="<?php echo escaparSalida($filtroUbicacion['tipo']); ?>">
 
             <div class="campo-busqueda campo-oficio">
                 <input type="text" name="oficio" id="inputOficio" class="input-busqueda" value="<?php echo escaparSalida($oficio_buscado); ?>" placeholder="Oficio, especialidad o técnico..." role="combobox" aria-expanded="false" aria-controls="menuOficios" aria-autocomplete="list">
@@ -24,64 +47,117 @@ $resultados = buscarServicios($oficio_buscado, $ubicacion_buscada);
             <div class="divisor-vertical-campos"></div>
 
             <div class="campo-busqueda campo-zona">
-                <input type="text" name="ubicacion" class="input-busqueda" value="<?php echo escaparSalida($ubicacion_buscada); ?>" placeholder="Ubicación">
+                <input type="text" name="ubicacion" id="campoUbicacionListado" class="input-busqueda" value="<?php echo escaparSalida($filtroUbicacion['texto']); ?>" placeholder="Ubicación">
             </div>
 
-            <button type="submit" class="boton-buscar">
+            <button type="submit" class="boton-buscar" aria-label="Buscar profesional">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
             </button>
         </form>
     </div>
 </div>
 
-<!-- Contenedor Principal de Resultados -->
 <div class="envoltorio-contenido">
     <div class="cabecera-seccion">
-        <h2><?php echo $oficio_buscado ? 'Resultados para: "' . escaparSalida($oficio_buscado) . '"' : 'Todos los servicios disponibles'; ?></h2>
-    </div>
-
-    <!-- Rejilla de tarjetas de resultados -->
-    <div class="rejilla-especialistas" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-
-        <?php if (count($resultados) > 0): ?>
-            <?php foreach ($resultados as $servicio): ?>
-                <div class="tarjeta-especialista" style="flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.2rem;">
-
-                    <!-- Categoría y Precio -->
-                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                        <span style="font-size: 0.75rem; background: var(--color-borde); padding: 3px 8px; border-radius: var(--radio-pequeno); color: var(--color-texto-principal); font-weight: 600;">
-                            <?php echo escaparSalida($servicio['nombre_categoria']); ?>
-                        </span>
-                        <span style="font-size: 1.1rem; font-weight: 800; color: var(--color-boton-principal);">
-                            <?php echo $servicio['monto'] > 0 ? '$' . number_format($servicio['monto'], 2) : 'A cotizar'; ?>
-                        </span>
-                    </div>
-
-                    <!-- Título y Descripción -->
-                    <h3 style="font-size: 1.15rem; color: var(--color-texto-principal); margin: 0;"><?php echo escaparSalida($servicio['titulo']); ?></h3>
-                    <p style="font-size: 0.88rem; color: var(--color-texto-cuerpo); line-height: 1.4; margin: 0; flex-grow: 1;">
-                        <?php echo escaparSalida($servicio['descripcion']); ?>
-                    </p>
-
-                    <!-- Nombre del Profesional -->
-                    <div style="font-size: 0.85rem; color: var(--color-marcador-posicion); display: flex; align-items: center; gap: 5px; margin-top: 5px;">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        <?php echo escaparSalida($servicio['freelancer']); ?>
-                    </div>
-
-                    <!-- Botón de Agendar Deshabilitado -->
-                    <button class="boton-nav-sesion" style="width: 100%; margin-top: 10px; background: #e5e7eb; color: #9ca3af !important; border: 1px solid #d1d5db; cursor: not-allowed;" disabled title="Disponible en futuras actualizaciones">
-                        Agendar Cita
-                    </button>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <!-- Mensaje de no hay resultados -->
-            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--color-fondo-tarjeta); border-radius: var(--radio-mediano); border: 1px dashed var(--color-borde);">
-                <h3 style="color: var(--color-texto-principal); margin-bottom: 0.5rem;">No encontramos profesionales</h3>
-                <p style="color: var(--color-marcador-posicion);">Intenta utilizar términos más generales o revisar la ortografía.</p>
-            </div>
+        <h2><?php echo $oficio_buscado !== '' ? 'Resultados para: "' . escaparSalida($oficio_buscado) . '"' : 'Profesionales disponibles'; ?></h2>
+        <?php if (!$errorBusqueda): ?>
+            <span class="conteo-negocios"><?php echo count($negocios); ?> <?php echo count($negocios) === 1 ? 'profesional' : 'profesionales'; ?></span>
         <?php endif; ?>
-
     </div>
+
+    <?php if ($errorBusqueda): ?>
+
+        <div class="sin-resultados-negocios">
+            <h3>No pudimos cargar los resultados</h3>
+            <p>Intenta de nuevo en un momento.</p>
+        </div>
+
+    <?php elseif (count($negocios) === 0): ?>
+
+        <div class="sin-resultados-negocios">
+            <h3>No encontramos profesionales</h3>
+            <p>Intenta utilizar términos más generales o revisar la ortografía.</p>
+        </div>
+
+    <?php else: ?>
+
+        <div class="rejilla-negocios">
+            <?php foreach ($negocios as $negocio): ?>
+                <?php
+                    $nombre = nombreNegocio($negocio);
+                    $foto = urlImagen($negocio['foto_perfil_url']);
+                    $estado = estadoNegocio($negocio['horario']);
+                    $esEnLinea = (int) $negocio['id_modalidad'] === MODALIDAD_EN_LINEA;
+                    $textoKm = $esEnLinea ? '' : textoDistancia($negocio['distancia_km']);
+                    $totalOpiniones = (int) $negocio['total_opiniones'];
+                    $categoriasVisibles = array_slice($negocio['categorias'], 0, 3);
+                    $claseEstado = $estado['abierto'] === null ? 'estado-sin-horario' : ($estado['abierto'] ? 'estado-abierto' : 'estado-cerrado');
+                ?>
+                <a href="<?php echo escaparSalida(enlaceNegocio($negocio)); ?>" class="tarjeta-negocio"
+                   <?php if ($negocio['horario'] !== null): ?>data-horario="<?php echo escaparSalida(horarioEnJson($negocio['horario'])); ?>" data-zona="<?php echo escaparSalida(ZONA_HORARIA_NEGOCIOS); ?>"<?php endif; ?>>
+
+                    <div class="avatar-negocio">
+                        <?php if ($foto !== null): ?>
+                            <img src="<?php echo escaparSalida($foto); ?>" alt="" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                            <span class="avatar-iniciales" hidden><?php echo escaparSalida(inicialesNegocio($nombre)); ?></span>
+                        <?php else: ?>
+                            <span class="avatar-iniciales"><?php echo escaparSalida(inicialesNegocio($nombre)); ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="cuerpo-negocio">
+                        <div class="fila-nombre-negocio">
+                            <h3 class="nombre-negocio"><?php echo escaparSalida($nombre); ?></h3>
+                            <?php if ((int) $negocio['es_premium'] === 1): ?><span class="insignia-negocio insignia-destacado">Destacado</span><?php endif; ?>
+                            <?php if ((int) $negocio['perfil_verificado'] === 1): ?><span class="insignia-negocio insignia-verificado">Verificado</span><?php endif; ?>
+                        </div>
+
+                        <div class="meta-negocio">
+                            <?php if ($totalOpiniones > 0): ?>
+                                <span class="bloque-valoracion">
+                                    <?php echo htmlEstrellas($negocio['promedio']); ?>
+                                    <strong><?php echo number_format((float) $negocio['promedio'], 1); ?></strong>
+                                    <span class="total-opiniones">(<?php echo $totalOpiniones; ?>)</span>
+                                </span>
+                            <?php else: ?>
+                                <span class="sin-opiniones">Sin opiniones</span>
+                            <?php endif; ?>
+
+                            <?php if ($esEnLinea): ?>
+                                <span class="distancia-negocio">En línea</span>
+                            <?php elseif ($textoKm !== ''): ?>
+                                <span class="distancia-negocio"><?php echo escaparSalida($textoKm); ?></span>
+                            <?php elseif (!empty($negocio['ciudad_limite'])): ?>
+                                <span class="distancia-negocio"><?php echo escaparSalida($negocio['ciudad_limite']); ?></span>
+                            <?php endif; ?>
+
+                            <span class="etiqueta-estado-negocio <?php echo $claseEstado; ?>" data-estado-texto><?php echo escaparSalida($estado['texto']); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="pie-tarjeta-negocio">
+                        <?php if (!empty($categoriasVisibles)): ?>
+                            <div class="categorias-negocio">
+                                <?php foreach ($categoriasVisibles as $categoria): ?>
+                                    <span class="chip-categoria"><?php echo escaparSalida($categoria); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <p class="resumen-negocio">
+                            <?php if ($negocio['precio_desde'] !== null): ?>
+                                Desde <strong>$<?php echo number_format((float) $negocio['precio_desde'], fmod((float) $negocio['precio_desde'], 1) == 0 ? 0 : 2); ?></strong> ·
+                            <?php endif; ?>
+                            <?php $totalServicios = (int) $negocio['total_servicios']; ?>
+                            <?php echo $totalServicios; ?> <?php echo $totalServicios === 1 ? 'servicio' : 'servicios'; ?>
+                            <?php if (etiquetaModalidad($negocio['id_modalidad']) !== ''): ?> · <?php echo escaparSalida(etiquetaModalidad($negocio['id_modalidad'])); ?><?php endif; ?>
+                        </p>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+
+    <?php endif; ?>
 </div>
+
+<script src="<?php echo JS_RUTA; ?>negocios.js?v=1"></script>

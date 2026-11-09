@@ -1,0 +1,900 @@
+/* ============================================================
+   CHAMBEKI - Tarjetas de negocios y perfil publico
+   Usa las variables de global.css, asi respeta el modo oscuro.
+   ============================================================ */
+
+/* ---------- Listado ---------- */
+
+.conteo-negocios
+{
+    font-size: 0.85rem;
+    color: var(--color-marcador-posicion);
+}
+
+.rejilla-negocios
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.tarjeta-negocio
+{
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 0.9rem;
+    padding: 1.1rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-negocio:hover,
+.tarjeta-negocio:focus-visible
+{
+    transform: translateY(-2px);
+    border-color: var(--color-boton-principal);
+    box-shadow: var(--sombra-general);
+    outline: none;
+}
+
+.pie-tarjeta-negocio
+{
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--color-borde);
+}
+
+/* ---------- Foto o logo ---------- */
+
+.avatar-negocio
+{
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radio-grande);
+    overflow: hidden;
+    background: var(--color-boton-principal);
+    border: 1px solid var(--color-borde);
+}
+
+.avatar-negocio img
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-iniciales
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-boton-principal-texto);
+}
+
+.avatar-iniciales[hidden]
+{
+    display: none;
+}
+
+/* ---------- Textos de la tarjeta ---------- */
+
+.cuerpo-negocio
+{
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.fila-nombre-negocio
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.5rem;
+}
+
+.nombre-negocio
+{
+    font-size: 1.05rem;
+    color: var(--color-texto-principal);
+    overflow-wrap: anywhere;
+}
+
+.insignia-negocio
+{
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.insignia-destacado
+{
+    color: #8A5A00;
+    background: #FFF3CC;
+}
+
+.insignia-verificado
+{
+    color: #1D4FA3;
+    background: #E1ECFD;
+}
+
+[data-theme="dark"] .insignia-destacado
+{
+    color: #F5C97A;
+    background: rgba(245, 201, 122, 0.15);
+}
+
+[data-theme="dark"] .insignia-verificado
+{
+    color: #9CC2FF;
+    background: rgba(29, 79, 163, 0.28);
+}
+
+.meta-negocio
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.7rem;
+    font-size: 0.84rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.bloque-valoracion
+{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.bloque-valoracion strong
+{
+    color: var(--color-texto-principal);
+}
+
+.total-opiniones,
+.sin-opiniones,
+.distancia-negocio,
+.detalle-estado
+{
+    color: var(--color-marcador-posicion);
+}
+
+.distancia-negocio::before
+{
+    content: "\00B7";
+    margin-right: 0.55rem;
+}
+
+/* ---------- Estrellas (relleno parcial con --valor) ---------- */
+
+.estrellas
+{
+    --valor: 0;
+    display: inline-block;
+    font-size: 0.95rem;
+    line-height: 1;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.estrellas::before
+{
+    content: "\2605\2605\2605\2605\2605";
+    background: linear-gradient(90deg, #F5A623 calc(var(--valor) / 5 * 100%), var(--color-borde) calc(var(--valor) / 5 * 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* ---------- Etiqueta Abierto / Cerrado ---------- */
+
+.etiqueta-estado-negocio
+{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.etiqueta-estado-negocio::before
+{
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.estado-abierto
+{
+    color: #14725C;
+    background: #DFF6EF;
+}
+
+.estado-cerrado
+{
+    color: #A02D1F;
+    background: #FBE9E6;
+}
+
+.estado-sin-horario
+{
+    color: var(--color-marcador-posicion);
+    background: var(--color-borde);
+}
+
+[data-theme="dark"] .estado-abierto
+{
+    color: #8FE3CB;
+    background: rgba(20, 114, 92, 0.22);
+}
+
+[data-theme="dark"] .estado-cerrado
+{
+    color: #FFB3A7;
+    background: rgba(192, 57, 43, 0.22);
+}
+
+/* ---------- Chips y resumen ---------- */
+
+.categorias-negocio
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip-categoria
+{
+    padding: 3px 9px;
+    border-radius: var(--radio-pequeno);
+    background: var(--color-borde);
+    color: var(--color-texto-principal);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.resumen-negocio
+{
+    font-size: 0.84rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.resumen-negocio strong
+{
+    color: var(--color-boton-principal);
+}
+
+.sin-resultados-negocios
+{
+    padding: 3rem 1rem;
+    text-align: center;
+    background: var(--color-fondo-tarjeta);
+    border: 1px dashed var(--color-borde);
+    border-radius: var(--radio-mediano);
+}
+
+.sin-resultados-negocios h3
+{
+    margin-bottom: 0.5rem;
+    color: var(--color-texto-principal);
+}
+
+.sin-resultados-negocios p
+{
+    margin-bottom: 1rem;
+    color: var(--color-marcador-posicion);
+}
+
+.boton-negocio-enlace
+{
+    display: inline-block;
+    width: auto;
+    padding-left: 1.6rem;
+    padding-right: 1.6rem;
+}
+
+/* ---------- Perfil publico ---------- */
+
+.seccion-negocio
+{
+    padding: 2rem 1.2rem 4rem;
+}
+
+.contenedor-negocio
+{
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.enlace-volver
+{
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--color-boton-principal);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.perfil-negocio
+{
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.cabecera-negocio,
+.tarjeta-negocio-detalle,
+.contenedor-pestanas
+{
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+}
+
+.cabecera-negocio
+{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.2rem;
+    padding: 1.6rem;
+}
+
+.avatar-negocio-grande
+{
+    width: 112px;
+    height: 112px;
+}
+
+.avatar-negocio-grande .avatar-iniciales
+{
+    font-size: 2.2rem;
+}
+
+.identidad-negocio
+{
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-width: 0;
+}
+
+.titulo-negocio
+{
+    font-size: 1.6rem;
+    line-height: 1.2;
+    color: var(--color-texto-principal);
+    overflow-wrap: anywhere;
+}
+
+.subtitulo-negocio
+{
+    font-size: 0.9rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.acciones-contacto
+{
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--color-borde);
+}
+
+.boton-contacto
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 140px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.boton-contacto svg
+{
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.contacto-llamar
+{
+    color: var(--color-boton-principal-texto);
+    background: var(--color-boton-principal);
+}
+
+.contacto-llamar:hover
+{
+    background: var(--color-boton-principal-hover);
+}
+
+.contacto-whatsapp
+{
+    color: #FFFFFF;
+    background: #1FA855;
+}
+
+.contacto-whatsapp:hover
+{
+    background: #178F47;
+}
+
+.contacto-correo
+{
+    color: var(--color-texto-principal);
+    background: transparent;
+    border-color: var(--color-borde);
+}
+
+.contacto-correo:hover
+{
+    color: var(--color-boton-principal);
+    border-color: var(--color-boton-principal);
+}
+
+.boton-contacto:focus-visible,
+.pestana-perfil:focus-visible,
+.enlace-volver:focus-visible
+{
+    outline: 2px solid var(--color-boton-principal);
+    outline-offset: 2px;
+}
+
+.bloque-acerca
+{
+    padding: 1.5rem 1.6rem;
+}
+
+.bloque-acerca h2,
+.titulo-panel
+{
+    margin-bottom: 0.7rem;
+    font-size: 1.1rem;
+    color: var(--color-texto-principal);
+}
+
+.bloque-acerca p
+{
+    line-height: 1.6;
+    color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Pestanas ---------- */
+
+.contenedor-pestanas
+{
+    overflow: hidden;
+}
+
+.pestanas-perfil
+{
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.pestana-perfil,
+.pestanas-perfil button
+{
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--color-marcador-posicion);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pestanas-perfil button:hover
+{
+    color: var(--color-texto-principal);
+}
+
+.pestanas-perfil button[aria-selected="true"]
+{
+    color: var(--color-boton-principal);
+    border-bottom-color: var(--color-boton-principal);
+}
+
+.contador-pestana
+{
+    display: inline-block;
+    min-width: 1.4em;
+    padding: 0 6px;
+    margin-left: 4px;
+    border-radius: 999px;
+    background: var(--color-borde);
+    color: var(--color-texto-principal);
+    font-size: 0.72rem;
+    text-align: center;
+}
+
+.panel-perfil
+{
+    padding: 1.5rem 1.6rem;
+}
+
+.panel-perfil[hidden]
+{
+    display: none;
+}
+
+/* sin JavaScript se ven todos los paneles uno tras otro */
+.contenedor-pestanas:not(.pestanas-activas) .panel-perfil + .panel-perfil
+{
+    border-top: 1px solid var(--color-borde);
+}
+
+.estado-vacio-negocio
+{
+    padding: 1.4rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-marcador-posicion);
+    border: 1px dashed var(--color-borde);
+    border-radius: var(--radio-mediano);
+}
+
+/* ---------- Servicios ---------- */
+
+.lista-servicios-negocio,
+.lista-opiniones,
+.tabla-horario,
+.lista-redes
+{
+    list-style: none;
+}
+
+.servicio-item
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.servicio-item:first-child
+{
+    padding-top: 0;
+}
+
+.servicio-item:last-child
+{
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.servicio-datos
+{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.servicio-datos h3
+{
+    font-size: 1rem;
+    color: var(--color-texto-principal);
+}
+
+.servicio-datos p
+{
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--color-texto-cuerpo);
+}
+
+.servicio-duracion
+{
+    color: var(--color-marcador-posicion);
+}
+
+.servicio-precio
+{
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-boton-principal);
+    text-align: right;
+}
+
+/* ---------- Ubicacion ---------- */
+
+.texto-ubicacion
+{
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+    color: var(--color-texto-cuerpo);
+}
+
+.mapa-negocio iframe
+{
+    display: block;
+    width: 100%;
+    height: 340px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+}
+
+.enlace-mapa
+{
+    display: inline-block;
+    margin-top: 0.8rem;
+    color: var(--color-boton-principal);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* ---------- Horario ---------- */
+
+.fila-horario
+{
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 10px 12px;
+    border-radius: var(--radio-mediano);
+    font-size: 0.92rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.fila-horario.hoy
+{
+    background: rgba(232, 97, 45, 0.12);
+    color: var(--color-texto-principal);
+    font-weight: 700;
+}
+
+.fila-horario em
+{
+    font-style: normal;
+    color: var(--color-boton-principal);
+}
+
+.horas-horario.dia-cerrado
+{
+    color: var(--color-marcador-posicion);
+}
+
+.nota-horario
+{
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--color-marcador-posicion);
+}
+
+/* ---------- Opiniones ---------- */
+
+.resumen-opiniones
+{
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.resumen-promedio
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.numero-promedio
+{
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-texto-principal);
+}
+
+.resumen-promedio small
+{
+    color: var(--color-marcador-posicion);
+}
+
+.fila-distribucion
+{
+    display: grid;
+    grid-template-columns: 34px 1fr 28px;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.barra-distribucion
+{
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-borde);
+}
+
+.barra-distribucion span
+{
+    display: block;
+    height: 100%;
+    background: #F5A623;
+}
+
+.cantidad-distribucion
+{
+    text-align: right;
+}
+
+.opinion-item
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.opinion-item:last-child
+{
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.opinion-cabecera
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.7rem;
+    color: var(--color-texto-principal);
+}
+
+.opinion-fecha,
+.opinion-servicio
+{
+    font-size: 0.78rem;
+    color: var(--color-marcador-posicion);
+}
+
+.opinion-item p
+{
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Redes ---------- */
+
+.lista-redes
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.lista-redes a
+{
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 999px;
+    color: var(--color-texto-principal);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lista-redes a:hover
+{
+    color: var(--color-boton-principal);
+    border-color: var(--color-boton-principal);
+}
+
+/* ---------- Movil ---------- */
+
+@media (max-width: 640px)
+{
+    .rejilla-negocios
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .cabecera-negocio
+    {
+        grid-template-columns: 1fr;
+        padding: 1.2rem;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .identidad-negocio,
+    .fila-nombre-negocio,
+    .meta-negocio,
+    .categorias-negocio
+    {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .resumen-opiniones
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-perfil
+    {
+        padding: 1.2rem;
+    }
+
+    .servicio-item
+    {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .servicio-precio
+    {
+        text-align: left;
+    }
+
+    .mapa-negocio iframe
+    {
+        height: 260px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce)
+{
+    .tarjeta-negocio,
+    .boton-contacto
+    {
+        transition: none;
+    }
+}
