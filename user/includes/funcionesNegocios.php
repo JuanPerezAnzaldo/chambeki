@@ -12,6 +12,12 @@ require_once DOCROOT . 'user/includes/funcionesPerfil.php';
 define('ZONA_HORARIA_NEGOCIOS', 'America/Tijuana');
 define('MAXIMO_NEGOCIOS_LISTADO', 60);
 
+//busqueda por radio (slider del mapa del buscador)
+define('RADIO_BUSQUEDA_MIN_KM', 1);
+define('RADIO_BUSQUEDA_MAX_KM', 50);
+define('RADIO_BUSQUEDA_PREDETERMINADO_KM', 25);
+define('RADIO_TIERRA_KM', 6371);
+
 if (!defined('MODALIDAD_LOCAL'))     { define('MODALIDAD_LOCAL', 1); }
 if (!defined('MODALIDAD_DOMICILIO')) { define('MODALIDAD_DOMICILIO', 2); }
 if (!defined('MODALIDAD_EN_LINEA'))  { define('MODALIDAD_EN_LINEA', 3); }
@@ -370,7 +376,17 @@ function leerFiltroUbicacion($origen)
         $tipo = 'texto';
     }
 
-    return ['tipo' => $tipo, 'lat' => $lat, 'lon' => $lon, 'texto' => leerTextoGet($origen, 'ubicacion')];
+    //con coordenadas siempre hay radio: el elegido en el slider o el predeterminado
+    $radio = null;
+
+    if ($lat !== null)
+    {
+        $radioCrudo = leerTextoGet($origen, 'radio_km');
+        $radio = is_numeric($radioCrudo) ? (int) round((float) $radioCrudo) : RADIO_BUSQUEDA_PREDETERMINADO_KM;
+        $radio = max(RADIO_BUSQUEDA_MIN_KM, min(RADIO_BUSQUEDA_MAX_KM, $radio));
+    }
+
+    return ['tipo' => $tipo, 'lat' => $lat, 'lon' => $lon, 'radio' => $radio, 'texto' => leerTextoGet($origen, 'ubicacion')];
 }
 
 //mismos "trucos" de buscarServicios: espacios como comodin y raiz sin la ultima letra
@@ -391,6 +407,44 @@ function patronesDeBusqueda($oficio)
 }
 
 /*
+    Distancia en km entre cobertura_freelancer (cf.latitud_base/longitud_base) y un punto.
+    Formula de Haversine: a = sin^2(dLat/2) + cos(lat1) * cos(lat2) * sin^2(dLon/2); d = 2R * asin(sqrt(a)).
+    LEAST(1, ...) evita que un error de redondeo saque el valor de ASIN del dominio.
+    Cada uso lleva un sufijo distinto porque con sentencias preparadas nativas
+    un mismo marcador no puede repetirse en la consulta.
+*/
+function sqlHaversine($sufijo, $lat, $lon, array &$parametros)
+{
+    $marcadorLat1 = ':hlat1_' . $sufijo;
+    $marcadorLat2 = ':hlat2_' . $sufijo;
+    $marcadorLon  = ':hlon_' . $sufijo;
+
+    $parametros[$marcadorLat1] = $lat;
+    $parametros[$marcadorLat2] = $lat;
+    $parametros[$marcadorLon]  = $lon;
+
+    return '(2 * ' . RADIO_TIERRA_KM . ' * ASIN(SQRT(LEAST(1, '
+        . 'POW(SIN(RADIANS(cf.latitud_base - ' . $marcadorLat1 . ') / 2), 2) '
+        . '+ COS(RADIANS(' . $marcadorLat2 . ')) * COS(RADIANS(cf.latitud_base)) '
+        . '* POW(SIN(RADIANS(cf.longitud_base - ' . $marcadorLon . ') / 2), 2)))))';
+}
+
+//cuadro que contiene al circulo de busqueda: permite usar el indice antes de calcular Haversine
+function cajaDelimitadora($lat, $lon, $radioKm)
+{
+    $kmPorGrado = 111.045;
+    $deltaLat = $radioKm / $kmPorGrado;
+    $deltaLon = $radioKm / ($kmPorGrado * max(0.01, cos(deg2rad($lat))));
+
+    return [
+        'min_lat' => max(-90, $lat - $deltaLat),
+        'max_lat' => min(90, $lat + $deltaLat),
+        'min_lon' => max(-180, $lon - $deltaLon),
+        'max_lon' => min(180, $lon + $deltaLon)
+    ];
+}
+
+/*
     Negocios (freelancers activos) que coinciden con la busqueda.
     Aparece quien tenga un servicio activo o una categoria elegida
     en el wizard "Ofrece tu servicio". Orden: Premium primero, luego
@@ -403,12 +457,8 @@ function buscarNegocios($oficio, $ubicacion)
 
     if ($ubicacion['lat'] !== null)
     {
-        $distancia = 'CASE WHEN cf.latitud_base IS NULL OR cf.longitud_base IS NULL THEN NULL ELSE
-            6371 * ACOS(LEAST(1, COS(RADIANS(:lat1)) * COS(RADIANS(cf.latitud_base)) * COS(RADIANS(cf.longitud_base) - RADIANS(:lon)) + SIN(RADIANS(:lat2)) * SIN(RADIANS(cf.latitud_base)))) END';
-
-        $parametros[':lat1'] = $ubicacion['lat'];
-        $parametros[':lat2'] = $ubicacion['lat'];
-        $parametros[':lon']  = $ubicacion['lon'];
+        $distancia = 'CASE WHEN cf.latitud_base IS NULL OR cf.longitud_base IS NULL THEN NULL ELSE '
+            . sqlHaversine('d', $ubicacion['lat'], $ubicacion['lon'], $parametros) . ' END';
     }
     else
     {
@@ -472,6 +522,22 @@ function buscarNegocios($oficio, $ubicacion)
         //quien trabaja en linea atiende en cualquier ciudad
         $sql .= ' AND (cf.id_modalidad = ' . (int) MODALIDAD_EN_LINEA . ' OR cf.ciudad_limite LIKE :ciudad)';
         $parametros[':ciudad'] = '%' . addcslashes($ubicacion['texto'], '%_\\') . '%';
+    }
+
+    //solo negocios dentro del radio: caja (usa el indice) y despues Haversine exacta
+    if ($ubicacion['lat'] !== null)
+    {
+        $caja = cajaDelimitadora($ubicacion['lat'], $ubicacion['lon'], $ubicacion['radio']);
+
+        $sql .= ' AND cf.latitud_base BETWEEN :min_lat AND :max_lat'
+              . ' AND cf.longitud_base BETWEEN :min_lon AND :max_lon'
+              . ' AND ' . sqlHaversine('w', $ubicacion['lat'], $ubicacion['lon'], $parametros) . ' <= :radio_km';
+
+        $parametros[':min_lat']  = $caja['min_lat'];
+        $parametros[':max_lat']  = $caja['max_lat'];
+        $parametros[':min_lon']  = $caja['min_lon'];
+        $parametros[':max_lon']  = $caja['max_lon'];
+        $parametros[':radio_km'] = $ubicacion['radio'];
     }
 
     $sql .= ' ORDER BY es_premium DESC, (distancia_km IS NULL), distancia_km ASC, promedio DESC, u.nombre ASC

@@ -11,6 +11,7 @@
                 <input type="hidden" name="latitud" id="campoLatitud" value="">
                 <input type="hidden" name="longitud" id="campoLongitud" value="">
                 <input type="hidden" name="tipo_ubicacion" id="campoTipoUbicacion" value="texto">
+                <input type="hidden" name="radio_km" id="campoRadio" value="">
  
                 <!-- Campo de oficio-->
                 <div class="campo-busqueda campo-oficio">
@@ -42,6 +43,12 @@
                                     <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
                                 </span>
                                 <span class="texto-opcion textoGpsEtiqueta">Cerca de mí</span>
+                            </button>
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="mapa">
+                                <span class="icono-opcion">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                </span>
+                                <span class="texto-opcion">Elegir en el mapa</span>
                             </button>
                         </div>
 
@@ -99,6 +106,12 @@
                 </span>
                 <span class="texto-opcion textoGpsEtiqueta">Cerca de mí</span>
             </button>
+                            <button type="button" class="item-opcion-ubicacion" data-tipo="mapa">
+                                <span class="icono-opcion">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                </span>
+                                <span class="texto-opcion">Elegir en el mapa</span>
+                            </button>
         </div>
 
         <div class="divisor-opciones"></div>
@@ -168,3 +181,6 @@
         </div>
     </section>
 </div>
+
+<!-- Mapa interactivo del buscador (ventana con mapa, GPS y slider de radio) -->
+<?php include DOCROOT . 'user/includes/mapaBusqueda.php'; ?>

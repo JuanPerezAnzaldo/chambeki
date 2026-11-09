@@ -30,11 +30,12 @@ $hayCoordenadas = $filtroUbicacion['lat'] !== null;
 <!-- Buscador en la parte superior del listado -->
 <div class="franja-buscador" style="background: var(--color-fondo-hero); padding: 2rem 1rem;">
     <div class="contenedor-buscador" style="margin-bottom: 0;">
-        <form action="/" method="GET" class="caja-busqueda" id="formularioBusqueda" autocomplete="off">
+        <form action="/" method="GET" class="caja-busqueda" id="formularioBusqueda" data-autoenviar-mapa="1" autocomplete="off">
             <input type="hidden" name="accion" value="servicios">
             <input type="hidden" name="latitud" id="campoLatitudListado" value="<?php echo $hayCoordenadas ? escaparSalida((string) $filtroUbicacion['lat']) : ''; ?>">
             <input type="hidden" name="longitud" id="campoLongitudListado" value="<?php echo $hayCoordenadas ? escaparSalida((string) $filtroUbicacion['lon']) : ''; ?>">
             <input type="hidden" name="tipo_ubicacion" id="campoTipoListado" value="<?php echo escaparSalida($filtroUbicacion['tipo']); ?>">
+            <input type="hidden" name="radio_km" id="campoRadioListado" value="<?php echo $hayCoordenadas ? (int) $filtroUbicacion['radio'] : ''; ?>">
 
             <div class="campo-busqueda campo-oficio">
                 <input type="text" name="oficio" id="inputOficio" class="input-busqueda" value="<?php echo escaparSalida($oficio_buscado); ?>" placeholder="Oficio, especialidad o técnico..." role="combobox" aria-expanded="false" aria-controls="menuOficios" aria-autocomplete="list">
@@ -58,6 +59,16 @@ $hayCoordenadas = $filtroUbicacion['lat'] !== null;
 </div>
 
 <div class="envoltorio-contenido">
+    <?php if ($hayCoordenadas): ?>
+        <div class="barra-radio-listado">
+            <div class="control-radio-listado">
+                <label for="radioListado">Radio de búsqueda: <output id="radioListadoValor"><?php echo (int) $filtroUbicacion['radio']; ?></output> km</label>
+                <input type="range" id="radioListado" min="<?php echo RADIO_BUSQUEDA_MIN_KM; ?>" max="<?php echo RADIO_BUSQUEDA_MAX_KM; ?>" step="1" value="<?php echo (int) $filtroUbicacion['radio']; ?>">
+            </div>
+            <button type="button" class="boton-mapa-listado" data-abrir-mapa>Cambiar en el mapa</button>
+        </div>
+    <?php endif; ?>
+
     <div class="cabecera-seccion">
         <h2><?php echo $oficio_buscado !== '' ? 'Resultados para: "' . escaparSalida($oficio_buscado) . '"' : 'Profesionales disponibles'; ?></h2>
         <?php if (!$errorBusqueda): ?>
@@ -75,8 +86,13 @@ $hayCoordenadas = $filtroUbicacion['lat'] !== null;
     <?php elseif (count($negocios) === 0): ?>
 
         <div class="sin-resultados-negocios">
-            <h3>No encontramos profesionales</h3>
-            <p>Intenta utilizar términos más generales o revisar la ortografía.</p>
+            <?php if ($hayCoordenadas): ?>
+                <h3>No hay profesionales a menos de <?php echo (int) $filtroUbicacion['radio']; ?> km</h3>
+                <p>Amplía el radio con el control de arriba, mueve el punto en el mapa o prueba con otro oficio.</p>
+            <?php else: ?>
+                <h3>No encontramos profesionales</h3>
+                <p>Intenta utilizar términos más generales o revisar la ortografía.</p>
+            <?php endif; ?>
         </div>
 
     <?php else: ?>
@@ -161,3 +177,4 @@ $hayCoordenadas = $filtroUbicacion['lat'] !== null;
 </div>
 
 <script src="<?php echo JS_RUTA; ?>negocios.js?v=1"></script>
+<?php include DOCROOT . 'user/includes/mapaBusqueda.php'; ?>

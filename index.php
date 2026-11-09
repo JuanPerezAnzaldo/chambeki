@@ -142,6 +142,12 @@
             include(PAGINAS . 'registroSocio.php');
             break;
         }
+
+        case 'profesional':
+        {
+            include(PAGINAS . 'profesional.php');
+            break;
+        }
     }
 
     include(FOOTER);

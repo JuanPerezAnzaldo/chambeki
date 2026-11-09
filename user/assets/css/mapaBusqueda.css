@@ -1,0 +1,335 @@
+/* ============================================================
+   CHAMBEKI - Mapa interactivo del buscador
+   Usa las variables de global.css, asi respeta el modo oscuro.
+   ============================================================ */
+
+.dialogo-mapa
+{
+    margin: auto;
+    width: min(720px, calc(100% - 1.5rem));
+    max-height: calc(100dvh - 1.5rem);
+    padding: 0;
+    overflow: auto;
+    color: var(--color-texto-cuerpo);
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dialogo-mapa::backdrop
+{
+    background: rgba(30, 20, 16, 0.6);
+    backdrop-filter: blur(3px);
+}
+
+.dialogo-mapa-cabecera
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.3rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.dialogo-mapa-cabecera h3
+{
+    font-size: 1.1rem;
+    color: var(--color-texto-principal);
+}
+
+.dialogo-mapa-cerrar
+{
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-marcador-posicion);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.dialogo-mapa-cerrar:hover
+{
+    color: var(--color-texto-principal);
+    background: rgba(232, 97, 45, 0.1);
+}
+
+.dialogo-mapa-cuerpo
+{
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.1rem 1.3rem;
+}
+
+.dialogo-mapa-pie
+{
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding: 0.9rem 1.3rem 1.2rem;
+    border-top: 1px solid var(--color-borde);
+}
+
+/* ---------- Busqueda de direccion ---------- */
+
+.fila-busqueda-mapa
+{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.fila-busqueda-mapa input[type="search"]
+{
+    flex: 1 1 220px;
+    min-width: 0;
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    background: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.fila-busqueda-mapa input[type="search"]:focus
+{
+    outline: none;
+    border-color: var(--color-boton-principal);
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+.boton-mapa
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.boton-mapa svg
+{
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+}
+
+.boton-mapa:disabled
+{
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.boton-mapa-principal
+{
+    color: var(--color-boton-principal-texto);
+    background: var(--color-boton-principal);
+}
+
+.boton-mapa-principal:hover:not(:disabled)
+{
+    background: var(--color-boton-principal-hover);
+}
+
+.boton-mapa-secundario
+{
+    color: var(--color-texto-principal);
+    background: transparent;
+    border-color: var(--color-borde);
+}
+
+.boton-mapa-secundario:hover:not(:disabled)
+{
+    color: var(--color-boton-principal);
+    border-color: var(--color-boton-principal);
+}
+
+.boton-mapa:focus-visible,
+.dialogo-mapa-cerrar:focus-visible,
+.lista-resultados-mapa button:focus-visible
+{
+    outline: 2px solid var(--color-boton-principal);
+    outline-offset: 2px;
+}
+
+.lista-resultados-mapa
+{
+    list-style: none;
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    background: var(--color-fondo-input);
+}
+
+.lista-resultados-mapa[hidden]
+{
+    display: none;
+}
+
+.lista-resultados-mapa button
+{
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 1px solid var(--color-borde);
+    background: none;
+    color: var(--color-texto-principal);
+    font: inherit;
+    font-size: 0.88rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.lista-resultados-mapa li:last-child button
+{
+    border-bottom: none;
+}
+
+.lista-resultados-mapa button:hover
+{
+    background: rgba(232, 97, 45, 0.08);
+}
+
+/* ---------- Mapa ---------- */
+
+.mapa-interactivo
+{
+    width: 100%;
+    height: 340px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    background: var(--color-borde);
+    z-index: 0;
+}
+
+/* marcador propio: no depende de imagenes externas */
+.pin-mapa span
+{
+    display: block;
+    width: 28px;
+    height: 28px;
+    background: var(--color-boton-principal);
+    border: 3px solid #FFFFFF;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.direccion-elegida-mapa
+{
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Radio ---------- */
+
+.control-radio-mapa,
+.control-radio-listado
+{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-radio-mapa label,
+.control-radio-listado label
+{
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+}
+
+.control-radio-mapa input[type="range"],
+.control-radio-listado input[type="range"]
+{
+    width: 100%;
+    accent-color: var(--color-boton-principal);
+    cursor: pointer;
+}
+
+.mensaje-mapa
+{
+    min-height: 1.2em;
+    font-size: 0.84rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.mensaje-mapa.con-error
+{
+    color: #C0392B;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .mensaje-mapa.con-error
+{
+    color: #FF8A7A;
+}
+
+/* ---------- Barra del slider en la pagina de resultados ---------- */
+
+.barra-radio-listado
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    padding: 1rem 1.2rem;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+
+.control-radio-listado
+{
+    flex: 1 1 260px;
+}
+
+.boton-mapa-listado
+{
+    padding: 10px 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--color-boton-principal);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.boton-mapa-listado:hover
+{
+    border-color: var(--color-boton-principal);
+}
+
+@media (max-width: 560px)
+{
+    .mapa-interactivo
+    {
+        height: 280px;
+    }
+
+    .dialogo-mapa-pie .boton-mapa
+    {
+        flex: 1;
+    }
+}

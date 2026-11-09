@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () =>
     const campoLatitud = document.getElementById('campoLatitud');
     const campoLongitud = document.getElementById('campoLongitud');
     const campoTipoUbicacion = document.getElementById('campoTipoUbicacion');
+    const campoRadio = document.getElementById('campoRadio');
     const etiquetasGps = document.querySelectorAll('.textoGpsEtiqueta');
 
     let temporizadorEscritura = null;
@@ -282,6 +283,22 @@ document.addEventListener('DOMContentLoaded', () =>
 
         const tipo = botonOpcion.getAttribute('data-tipo');
 
+        //abre la ventana del mapa interactivo (mapaBusqueda.js)
+        if (tipo === 'mapa')
+        {
+            if (menuUbicaciones)
+            {
+                menuUbicaciones.classList.add('oculto');
+            }
+
+            if (typeof window.abrirMapaBusqueda === 'function')
+            {
+                window.abrirMapaBusqueda(document.getElementById('formularioBusqueda'));
+            }
+
+            return;
+        }
+
         if (tipo === 'online')
         {
             seleccionarOpcion('En línea', '', '', 'online');
@@ -324,6 +341,11 @@ document.addEventListener('DOMContentLoaded', () =>
         if (campoTipoUbicacion)
         {
             campoTipoUbicacion.value = tipo;
+        }
+
+        if (campoRadio)
+        {
+            campoRadio.value = '';
         }
 
         if (btnLimpiarUbicacion)
@@ -369,6 +391,11 @@ document.addEventListener('DOMContentLoaded', () =>
             campoTipoUbicacion.value = 'texto';
         }
 
+        if (campoRadio)
+        {
+            campoRadio.value = '';
+        }
+
         if (btnLimpiarUbicacion)
         {
             btnLimpiarUbicacion.classList.add('oculto');
@@ -395,6 +422,11 @@ document.addEventListener('DOMContentLoaded', () =>
         if (campoTipoUbicacion)
         {
             campoTipoUbicacion.value = 'texto';
+        }
+
+        if (campoRadio)
+        {
+            campoRadio.value = '';
         }
 
         clearTimeout(temporizadorEscritura);
