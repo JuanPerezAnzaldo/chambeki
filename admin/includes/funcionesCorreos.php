@@ -15,22 +15,30 @@ function plantillasCorreo()
 {
     return [
         'aclaracion' => [
-            'etiqueta' => 'Solicitud de aclaración de documentos',
+            'etiqueta' => 'Aclaración de documentos',
+            'color'    => '#2B6CB0',
+            'descripcion' => 'Pide corregir o aclarar documentos de verificación',
             'asunto'   => 'Aclaración sobre tus documentos de verificación',
             'mensaje'  => "Revisamos los documentos que cargaste para verificar tu perfil y necesitamos una aclaración.\n\nDetalle: [describe qué documento y qué falta o no es legible]\n\nPor favor vuelve a cargarlo desde tu perfil o responde a este correo en un plazo de 5 días hábiles.\n\nGracias por tu apoyo."
         ],
         'suspension' => [
-            'etiqueta' => 'Aviso de suspensión preventiva',
+            'etiqueta' => 'Suspensión preventiva',
+            'color'    => '#C0392B',
+            'descripcion' => 'Notifica la suspensión temporal de una cuenta',
             'asunto'   => 'Aviso: suspensión preventiva de tu cuenta',
             'mensaje'  => "Tu cuenta ha sido suspendida de forma preventiva mientras revisamos una incidencia relacionada con tu actividad en la plataforma.\n\nMotivo: [describe el motivo]\n\nDurante la revisión no podrás recibir nuevas solicitudes. Si consideras que se trata de un error, responde a este correo con tus comentarios y evidencia."
         ],
         'aviso' => [
-            'etiqueta' => 'Aviso general del sistema',
+            'etiqueta' => 'Aviso general',
+            'color'    => '#E8612D',
+            'descripcion' => 'Comunicado informativo de la plataforma',
             'asunto'   => 'Aviso importante de CHAMBEKI',
             'mensaje'  => "Queremos informarte lo siguiente:\n\n[escribe aquí el aviso]\n\nGracias por ser parte de CHAMBEKI."
         ],
         'reporte' => [
             'etiqueta' => 'Resolución de reporte',
+            'color'    => '#2F855A',
+            'descripcion' => 'Informa el resultado de un reporte o incidencia',
             'asunto'   => 'Resolución de tu reporte en CHAMBEKI',
             'mensaje'  => "Hemos concluido la revisión del reporte relacionado con tu cuenta.\n\nResolución: [resume la resolución y las acciones tomadas]\n\nSi tienes preguntas sobre esta decisión, responde a este correo."
         ]
@@ -153,6 +161,7 @@ function enviarCorreoOficial($admin, $destinatarios, $plantilla, $asunto, $mensa
         else
         {
             $fallidos[] = ['nombre' => $destino['nombre'], 'error' => $resultado['error'] ?? 'Error desconocido'];
+            error_log('Correo oficial fallido a ' . $destino['correo'] . ': ' . ($resultado['error'] ?? ''));
         }
     }
 

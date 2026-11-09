@@ -294,7 +294,7 @@ $mensajeFlash = obtenerMensaje();
 <div style="display: flex; gap: 10px;">
         <?php if ($puedeEditar): ?>
             <a href="<?php echo URL_ADMIN; ?>cuenta-editar?id=<?php echo $idCuenta; ?>" class="boton-autenticacion admin-boton-accion">Editar datos basicos</a>
-            <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo $idCuenta; ?>" class="boton-autenticacion admin-boton-accion" style="background-color: #4A5568;">✉️ Enviar correo</a>
+            <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo $idCuenta; ?>" class="boton-autenticacion admin-boton-accion" style="background-color: #4A5568;">Enviar correo</a>
         <?php endif; ?>
     </div>
 </section>
