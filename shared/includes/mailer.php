@@ -14,6 +14,7 @@ require_once DOCROOT . 'shared/libs/PHPMailer/src/SMTP.php';
       'registro'            -> bienvenida despues de crear la cuenta
       'codigo'              -> codigo temporal de verificacion o recuperacion
       'contrasena_cambiada' -> aviso de que la contrasena fue actualizada
+      'oficial'             -> comunicado del personal de soporte (admin/correos)
 */
 function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra = [])
 {
@@ -136,6 +137,66 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
             ";
 
             $cuerpoHtml = $encabezadoHtml . $cuerpoPrincipal . $pieHtml;
+            break;
+        }
+
+        case 'oficial':
+        {
+            //correo redactado por el personal desde /admin/correos
+            //datosExtra: plantilla (aclaracion|suspension|aviso|reporte), asunto, mensaje (texto plano)
+            $plantillasOficiales = [
+                'aclaracion' => ['etiqueta' => 'Solicitud de aclaración', 'color' => '#2B6CB0', 'icono' => '&#128196;'],
+                'suspension' => ['etiqueta' => 'Aviso de suspensión',     'color' => '#C0392B', 'icono' => '&#9888;&#65039;'],
+                'aviso'      => ['etiqueta' => 'Aviso del sistema',       'color' => '#E8612D', 'icono' => '&#128276;'],
+                'reporte'    => ['etiqueta' => 'Resolución de reporte',   'color' => '#2F855A', 'icono' => '&#9989;']
+            ];
+
+            $clavePlantilla = strtolower($datosExtra['plantilla'] ?? 'aviso');
+            $plantilla = $plantillasOficiales[$clavePlantilla] ?? $plantillasOficiales['aviso'];
+
+            $asunto = trim((string) ($datosExtra['asunto'] ?? ''));
+            $asunto = str_replace(["\r", "\n"], ' ', $asunto);   //sin saltos: evita inyeccion de cabeceras
+            if ($asunto === '') { $asunto = 'Comunicado oficial de CHAMBEKI'; }
+
+            //el texto se escapa y luego se convierten los saltos de linea (sin HTML libre = sin XSS)
+            $mensajeSeguro = nl2br(htmlspecialchars((string) ($datosExtra['mensaje'] ?? ''), ENT_QUOTES, 'UTF-8'));
+            $asuntoSeguro  = htmlspecialchars($asunto, ENT_QUOTES, 'UTF-8');
+            $nombreSeguro  = htmlspecialchars((string) $nombreUsuario, ENT_QUOTES, 'UTF-8');
+            $etiqueta      = $plantilla['etiqueta'];
+            $colorEtiqueta = $plantilla['color'];
+            $icono         = $plantilla['icono'];
+            $anio          = date('Y');
+
+            $cuerpoHtml = "
+            <div style='font-family: system-ui, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif; background-color: {$colorFondo}; padding: 32px 14px; margin: 0;'>
+              <div style='max-width: 620px; margin: 0 auto;'>
+
+                <div style='background-color: {$colorHero}; border-radius: 14px 14px 0 0; padding: 28px 30px; text-align: center;'>
+                    <div style='color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: 3px;'>CHAMBEKI</div>
+                    <div style='color: #ffe4d6; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px;'>Comunicado oficial</div>
+                </div>
+
+                <div style='background-color: #ffffff; padding: 34px 34px 28px; color: {$colorTexto}; font-size: 16px; line-height: 1.65; border-left: 1px solid #f0d7cc; border-right: 1px solid #f0d7cc;'>
+                    <div style='display: inline-block; background-color: {$colorEtiqueta}; color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 6px 14px; border-radius: 20px;'>{$icono}&nbsp; {$etiqueta}</div>
+
+                    <h2 style='margin: 18px 0 6px; font-size: 21px; line-height: 1.3; color: #2B2320;'>{$asuntoSeguro}</h2>
+                    <p style='margin: 0 0 20px; color: #8a7a73; font-size: 14px;'>Para: <strong style='color: {$colorTexto};'>{$nombreSeguro}</strong></p>
+
+                    <div style='padding: 20px 22px; background-color: {$colorFondo}; border-left: 4px solid {$colorEtiqueta}; border-radius: 6px; font-size: 15.5px;'>
+                        {$mensajeSeguro}
+                    </div>
+
+                    <p style='margin: 26px 0 0; font-size: 15px;'>Atentamente,<br><strong>Equipo de Soporte CHAMBEKI</strong></p>
+                </div>
+
+                <div style='background-color: #f7f1ec; border: 1px solid #f0d7cc; border-top: 0; border-radius: 0 0 14px 14px; padding: 20px 30px; text-align: center;'>
+                    <p style='margin: 0 0 6px; color: #6b5d57; font-size: 13px;'>¿Tienes dudas? Responde a este correo o escríbenos a <a href='mailto:admin@chambeki.com' style='color: {$colorBoton}; text-decoration: none; font-weight: 600;'>admin@chambeki.com</a></p>
+                    <p style='margin: 0; color: #a09089; font-size: 12px;'>&copy; {$anio} CHAMBEKI. Todos los derechos reservados.</p>
+                </div>
+
+              </div>
+            </div>
+            ";
             break;
         }
 

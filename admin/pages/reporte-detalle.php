@@ -142,12 +142,12 @@ $mensajeFlash = obtenerMensaje();
             <dt>Denunciante</dt>
             <dd>
                 <a href="<?php echo URL_ADMIN; ?>cuenta?id=<?php echo (int) $reporte['id_denunciante']; ?>"><?php echo escaparSalida($reporte['denunciante']); ?></a>
-                <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo (int) $reporte['id_denunciante']; ?>&amp;plantilla=reporte" class="admin-enlace-accion" style="margin-left:10px;">✉️ Contactar</a>
+                <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo (int) $reporte['id_denunciante']; ?>&amp;plantilla=reporte" class="admin-enlace-accion" style="margin-left:10px;">Contactar</a>
             </dd>
             <dt>Reportado</dt>
             <dd>
                 <a href="<?php echo URL_ADMIN; ?>cuenta?id=<?php echo (int) $reporte['id_reportado']; ?>"><?php echo escaparSalida($reporte['reportado']); ?></a>
-                <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo (int) $reporte['id_reportado']; ?>&amp;plantilla=reporte" class="admin-enlace-accion" style="margin-left:10px; color:#C0392B;">✉️ Notificar</a>
+                <a href="<?php echo URL_ADMIN; ?>enviar-correo?id=<?php echo (int) $reporte['id_reportado']; ?>&amp;plantilla=reporte" class="admin-enlace-accion" style="margin-left:10px; color:#C0392B;">Notificar</a>
                 <?php if ($otrosReportes > 0): ?><br><small><?php echo $otrosReportes; ?> reporte(s) más contra esta cuenta</small><?php endif; ?>
             </dd>
             <dt>Fecha</dt><dd><?php echo date('d/m/Y H:i', strtotime($reporte['fecha_creacion'])); ?></dd>
