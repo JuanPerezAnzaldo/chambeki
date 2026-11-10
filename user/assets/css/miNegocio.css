@@ -1,0 +1,410 @@
+/* ============================================================
+   CHAMBEKI - Panel "Mi Negocio" del freelancer
+   ============================================================ */
+
+.seccion-negocio-panel {
+    padding: 2.2rem 1.2rem 4rem;
+}
+
+.contenedor-negocio-panel {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.contenedor-negocio-panel .aviso-autenticacion {
+    margin-bottom: 0;
+}
+
+.tarjeta-panel {
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+    padding: 1.6rem;
+}
+
+.subtitulo-panel {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+
+.subtitulo-modulos {
+    margin-bottom: 0.9rem;
+}
+
+.texto-panel {
+    margin-top: 0.3rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Encabezado ---------- */
+
+.cabecera-panel {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.3rem;
+}
+
+.foto-panel {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-boton-principal);
+}
+
+.foto-panel-iniciales {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-fondo-hero);
+    color: #FFFFFF;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.etiqueta-panel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-boton-principal);
+}
+
+.titulo-panel {
+    margin: 2px 0 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-texto-principal);
+    overflow-wrap: anywhere;
+}
+
+.estados-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.insignia-panel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border-radius: 999px;
+}
+
+.insignia-ok {
+    color: #1B6B4A;
+    background: #DDF4E8;
+}
+
+.insignia-alerta {
+    color: #A02D1F;
+    background: #FBE9E6;
+}
+
+.insignia-aviso {
+    color: #8A5A00;
+    background: #FFF3CC;
+}
+
+.insignia-neutra {
+    color: #5C5149;
+    background: #EEE8E1;
+}
+
+[data-theme="dark"] .insignia-ok { color: #7BE0AE; background: rgba(46, 160, 110, 0.2); }
+[data-theme="dark"] .insignia-alerta { color: #FF9B8F; background: rgba(214, 69, 50, 0.22); }
+[data-theme="dark"] .insignia-aviso { color: #F5CC66; background: rgba(214, 160, 30, 0.2); }
+[data-theme="dark"] .insignia-neutra { color: #CFC6BD; background: rgba(255, 255, 255, 0.1); }
+
+.acciones-cabecera-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    max-width: 210px;
+    text-align: right;
+}
+
+.acciones-cabecera-panel small {
+    font-size: 0.76rem;
+    color: var(--color-marcador-posicion);
+}
+
+.boton-panel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 22px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.boton-panel svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.boton-panel-principal {
+    color: #FFFFFF;
+    background: var(--color-boton-principal);
+}
+
+.boton-panel-principal:hover {
+    background: var(--color-boton-principal-hover, #CF4E1E);
+    transform: translateY(-1px);
+}
+
+.boton-panel-desactivado {
+    color: var(--color-marcador-posicion);
+    background: rgba(0, 0, 0, 0.07);
+    cursor: not-allowed;
+}
+
+/* ---------- Completitud ---------- */
+
+.cabecera-completitud {
+    display: flex;
+    align-items: center;
+    gap: 1.3rem;
+    margin-bottom: 1.2rem;
+}
+
+.anillo-completitud {
+    --porcentaje: 0;
+    position: relative;
+    flex: 0 0 auto;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: conic-gradient(var(--color-boton-principal) calc(var(--porcentaje) * 1%), var(--color-borde) 0);
+}
+
+.anillo-completitud::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    background: var(--color-fondo-tarjeta);
+}
+
+.anillo-completitud span {
+    position: relative;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+
+.lista-completitud {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+}
+
+.punto-completitud {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+}
+
+.marca-completitud {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--color-borde);
+}
+
+.punto-completitud.completo .marca-completitud {
+    border-color: #2EA06E;
+    background: #2EA06E;
+}
+
+.marca-completitud svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.texto-punto {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.texto-punto strong {
+    font-size: 0.9rem;
+    color: var(--color-texto-principal);
+}
+
+.texto-punto small {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--color-marcador-posicion);
+}
+
+.enlace-completar {
+    flex: 0 0 auto;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--color-boton-principal);
+    text-decoration: underline;
+}
+
+/* ---------- Submodulos ---------- */
+
+.rejilla-modulos-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.modulo-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 1.3rem;
+    color: inherit;
+    text-decoration: none;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+    transition: transform 0.15s, border-color 0.2s;
+}
+
+a.modulo-panel:hover,
+a.modulo-panel:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--color-boton-principal);
+    outline: none;
+}
+
+.icono-modulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(232, 97, 45, 0.12);
+}
+
+.icono-modulo svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--color-boton-principal);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cuerpo-modulo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cuerpo-modulo strong {
+    font-size: 1rem;
+    color: var(--color-texto-principal);
+}
+
+.cuerpo-modulo small {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--color-texto-cuerpo);
+}
+
+.accion-modulo {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-boton-principal);
+}
+
+.modulo-desactivado {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.accion-proximamente {
+    color: var(--color-marcador-posicion);
+}
+
+@media (max-width: 760px) {
+    .cabecera-panel {
+        grid-template-columns: auto 1fr;
+    }
+
+    .acciones-cabecera-panel {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        max-width: none;
+        text-align: left;
+    }
+
+    .lista-completitud {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .cabecera-panel {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .estados-panel {
+        justify-content: center;
+    }
+
+    .cabecera-completitud {
+        flex-direction: column;
+        text-align: center;
+    }
+}

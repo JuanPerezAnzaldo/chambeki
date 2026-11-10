@@ -92,6 +92,13 @@
             break;
         }
 
+        //Panel del freelancer: estado, completitud del perfil y submodulos
+        case 'mi_negocio':
+        {
+            include(PAGINAS . 'miNegocio.php');
+            break;
+        }
+
         case 'terminos':
         {
             include(PAGINAS . 'terminos.php');

@@ -236,6 +236,38 @@ main
     transform: translateY(-1px);
 }
 
+/* acceso al panel Mi Negocio (solo freelancers) */
+.boton-mi-negocio
+{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    color: #FFFFFF !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.boton-mi-negocio svg
+{
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.boton-mi-negocio:hover,
+.boton-mi-negocio.activo
+{
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
 .tarjeta-usuario-sesion
 {
     display: flex;
@@ -423,6 +455,21 @@ main
     {
         font-size: 0.78rem;
         padding: 5px 10px;
+    }
+
+    .boton-mi-negocio
+    {
+        flex: 0 0 32px;
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .boton-mi-negocio span
+    {
+        display: none;
     }
 
     .boton-tema-flotante
