@@ -457,21 +457,6 @@ main
         padding: 5px 10px;
     }
 
-    .boton-mi-negocio
-    {
-        flex: 0 0 32px;
-        width: 32px;
-        min-width: 32px;
-        height: 32px;
-        padding: 0;
-        justify-content: center;
-    }
-
-    .boton-mi-negocio span
-    {
-        display: none;
-    }
-
     .boton-tema-flotante
     {
         bottom: 68px;

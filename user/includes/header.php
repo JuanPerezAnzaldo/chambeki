@@ -104,7 +104,6 @@
                                                                                     <?php if ((int) ($_SESSION['rol_usuario'] ?? 0) === ROL_FREELANCER): ?>
                                                             <!-- Panel del freelancer (solo con rol Freelancer) -->
                                                             <a href="<?php echo URL_BASE; ?>?accion=mi_negocio" class="boton-mi-negocio<?php echo (isset($accion) && $accion === 'mi_negocio') ? ' activo' : ''; ?>" title="Mi Negocio">
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                                             <path d="M3 9.5 4.5 4h15L21 9.5"></path>
                                                             <path d="M4 9.5V20h16V9.5"></path>
                                                             <path d="M9 20v-5h6v5"></path>
