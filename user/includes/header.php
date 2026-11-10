@@ -11,7 +11,7 @@
                                                                     <meta name="theme-color" content="#ff682e">
 
                                                                     <!-- aqui pal css (se sube a v=11 para que el navegador/service worker no sirvan la hoja vieja) -->
-                                                                    <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css?v=11">
+                                                                    <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>global.css?v=12">
                                                                     <?php if (!isset($accion) || $accion === 'inicio' || $accion === 'home' || $accion === 'servicios'): ?>
                                                                         <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>home.css?v=10">
                                                                     <?php endif; ?>
