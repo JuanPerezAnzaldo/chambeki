@@ -1,0 +1,462 @@
+/* ============================================================
+   CHAMBEKI - Catalogo de servicios del freelancer
+   ============================================================ */
+
+.seccion-catalogo {
+    padding: 2.2rem 1.2rem 4rem;
+}
+
+.contenedor-catalogo {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.contenedor-catalogo .aviso-autenticacion {
+    margin-bottom: 0;
+}
+
+.cabecera-catalogo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.enlace-volver-catalogo {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-boton-principal);
+    text-decoration: none;
+}
+
+.enlace-volver-catalogo:hover {
+    text-decoration: underline;
+}
+
+.titulo-catalogo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+
+.subtitulo-catalogo {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.tarjeta-catalogo {
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+    padding: 1.6rem;
+}
+
+/* ---------- Botones ---------- */
+
+.boton-catalogo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.boton-catalogo-principal {
+    color: #FFFFFF;
+    background: var(--color-boton-principal);
+}
+
+.boton-catalogo-principal:hover {
+    background: var(--color-boton-principal-hover, #CF4E1E);
+    transform: translateY(-1px);
+}
+
+.boton-catalogo-secundario {
+    color: var(--color-boton-principal);
+    background: transparent;
+    border-color: var(--color-boton-principal);
+    padding: 7px 16px;
+}
+
+.boton-catalogo-secundario:hover {
+    background: rgba(232, 97, 45, 0.1);
+}
+
+.boton-catalogo-peligro {
+    color: #FFFFFF;
+    background: #C0392B;
+}
+
+.boton-catalogo-peligro:hover {
+    background: #A02D1F;
+}
+
+/* ---------- Lista ---------- */
+
+.estado-vacio-catalogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 2.4rem 1.6rem;
+    text-align: center;
+    color: var(--color-texto-cuerpo);
+}
+
+.lista-catalogo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.item-catalogo {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem;
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-general);
+}
+
+.item-catalogo.oculto {
+    opacity: 0.72;
+}
+
+.miniatura-catalogo {
+    width: 96px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    color: var(--color-marcador-posicion);
+    background: var(--color-fondo-input);
+    border: 1px dashed var(--color-borde);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.miniatura-catalogo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.datos-catalogo {
+    min-width: 0;
+}
+
+.datos-catalogo h2 {
+    margin: 4px 0 2px;
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+    overflow-wrap: anywhere;
+}
+
+.meta-catalogo {
+    font-size: 0.84rem;
+    color: var(--color-texto-cuerpo);
+}
+
+.chips-catalogo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip-catalogo {
+    padding: 2px 9px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-boton-principal);
+    background: rgba(232, 97, 45, 0.12);
+    border-radius: 999px;
+}
+
+.chip-visible {
+    color: #1B6B4A;
+    background: #DDF4E8;
+}
+
+.chip-oculto {
+    color: #5C5149;
+    background: #EEE8E1;
+}
+
+[data-theme="dark"] .chip-visible { color: #7BE0AE; background: rgba(46, 160, 110, 0.2); }
+[data-theme="dark"] .chip-oculto { color: #CFC6BD; background: rgba(255, 255, 255, 0.1); }
+
+.acciones-catalogo {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.orden-catalogo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.boton-orden {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    padding: 0;
+    color: var(--color-texto-principal);
+    background: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.boton-orden svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.boton-orden:hover:not(:disabled) {
+    border-color: var(--color-boton-principal);
+    color: var(--color-boton-principal);
+}
+
+.boton-orden:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* interruptor Visible / Oculto */
+.conmutador-visibilidad {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-texto-cuerpo);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.pista-conmutador {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    flex-shrink: 0;
+    background: #CFC6BD;
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+
+.pista-conmutador::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.conmutador-visibilidad.activo .pista-conmutador {
+    background: #2EA06E;
+}
+
+.conmutador-visibilidad.activo .pista-conmutador::after {
+    transform: translateX(16px);
+}
+
+.conmutador-visibilidad:focus-visible,
+.boton-orden:focus-visible {
+    outline: 2px solid var(--color-boton-principal);
+    outline-offset: 2px;
+}
+
+/* ---------- Formulario ---------- */
+
+.fila-duracion {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 10px;
+}
+
+.campo-formulario [hidden],
+#grupoMontoServicio[hidden] {
+    display: none;
+}
+
+.galeria-actual-catalogo,
+.galeria-nueva-catalogo {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.galeria-nueva-catalogo {
+    margin: 10px 0 0;
+}
+
+.galeria-nueva-catalogo[hidden] {
+    display: none;
+}
+
+.galeria-actual-catalogo img,
+.galeria-nueva-catalogo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+/* el area de texto de la descripcion (igual que en Configuracion) */
+.campo-formulario textarea {
+    width: 100%;
+    padding: 13px 14px;
+    font-size: 0.98rem;
+    line-height: 1.5;
+    font-family: inherit;
+    resize: vertical;
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.campo-formulario textarea:focus {
+    outline: none;
+    border-color: var(--color-boton-principal);
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+/* las casillas "Quitar" no deben heredar el estilo de los campos de texto */
+.campo-formulario .quitar-imagen input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: none;
+    accent-color: #C0392B;
+}
+
+.quitar-imagen {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #A02D1F;
+    cursor: pointer;
+}
+
+[data-theme="dark"] .quitar-imagen { color: #FF9B8F; }
+
+.casilla-visible-catalogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0.4rem 0 1rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+    cursor: pointer;
+}
+
+.casilla-visible-catalogo input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-boton-principal);
+}
+
+.acciones-formulario-catalogo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+}
+
+.boton-catalogo-guardar {
+    width: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.zona-peligro-catalogo {
+    border-color: rgba(192, 57, 43, 0.4);
+}
+
+.zona-peligro-catalogo h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.05rem;
+    color: #A02D1F;
+}
+
+[data-theme="dark"] .zona-peligro-catalogo h2 { color: #FF9B8F; }
+
+.zona-peligro-catalogo p {
+    margin-bottom: 0.9rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-texto-cuerpo);
+}
+
+@media (max-width: 720px) {
+    .item-catalogo {
+        grid-template-columns: 84px 1fr;
+    }
+
+    .miniatura-catalogo {
+        width: 84px;
+        height: 64px;
+    }
+
+    .acciones-catalogo {
+        grid-column: 1 / -1;
+        justify-content: space-between;
+    }
+
+    .orden-catalogo {
+        flex-direction: row;
+    }
+}

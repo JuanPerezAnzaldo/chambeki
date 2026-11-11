@@ -92,6 +92,13 @@
             break;
         }
 
+        //Catalogo de servicios del freelancer (alta, edicion, visibilidad y orden)
+        case 'catalogo':
+        {
+            include(PAGINAS . 'catalogo.php');
+            break;
+        }
+
         //Panel del freelancer: estado, completitud del perfil y submodulos
         case 'mi_negocio':
         {

@@ -43,7 +43,7 @@ $urlListado = URL_BASE . '?accion=servicios';
 ?>
 
 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
-<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=2">
+<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=3">
 
 <section class="seccion-negocio">
     <div class="contenedor-negocio">
@@ -190,7 +190,17 @@ $urlListado = URL_BASE . '?accion=servicios';
                                             <p><?php echo escaparSalida($servicio['descripcion']); ?></p>
                                         <?php endif; ?>
                                         <?php if ((int) $servicio['duracion_minutos'] > 0): ?>
-                                            <small class="servicio-duracion">Duración aproximada: <?php echo (int) $servicio['duracion_minutos']; ?> min</small>
+                                            <small class="servicio-duracion">Duración aproximada: <?php echo escaparSalida(duracionLegible($servicio['duracion_minutos'])); ?></small>
+                                        <?php endif; ?>
+                                        <?php if (!empty($servicio['imagenes'])): ?>
+                                            <ul class="servicio-galeria">
+                                                <?php foreach ($servicio['imagenes'] as $rutaImagen): ?>
+                                                    <?php $urlImagenServicio = urlImagen($rutaImagen); ?>
+                                                    <?php if ($urlImagenServicio !== null): ?>
+                                                        <li><a href="<?php echo escaparSalida($urlImagenServicio); ?>" target="_blank" rel="noopener"><img src="<?php echo escaparSalida($urlImagenServicio); ?>" alt="Imagen de <?php echo escaparSalida($servicio['titulo']); ?>" loading="lazy"></a></li>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            </ul>
                                         <?php endif; ?>
                                     </div>
                                     <span class="servicio-precio"><?php echo escaparSalida(textoPrecio($servicio['monto'], $servicio['id_tipo_precio'])); ?></span>

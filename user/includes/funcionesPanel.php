@@ -8,13 +8,13 @@
 require_once DOCROOT . 'user/includes/funcionesIdentidad.php';
 
 /*
-    El catalogo de servicios (alta, edicion, orden) todavia no existe.
-    Mientras sea false: la tarjeta del catalogo sale como "Proximamente"
-    y los servicios NO cuentan para el porcentaje de completitud (si
-    contaran, nadie podria llegar al 100%).
-    Cuando exista la pantalla ?accion=catalogo, cambiar a true.
+    El catalogo de servicios (?accion=catalogo) ya existe, asi que esta en
+    true: su tarjeta del panel es un enlace y tener al menos un servicio
+    publicado cuenta para el porcentaje de completitud. Si se pusiera en
+    false, la tarjeta saldria como "Proximamente" y los servicios no
+    contarian para el porcentaje.
 */
-define('CATALOGO_DISPONIBLE', false);
+define('CATALOGO_DISPONIBLE', true);
 
 //url de la pagina publica del negocio (la usa el boton "Vista previa")
 function urlPaginaPublica($idUsuario, $slug)

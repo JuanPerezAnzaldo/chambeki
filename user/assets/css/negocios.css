@@ -656,6 +656,26 @@
     color: var(--color-marcador-posicion);
 }
 
+.servicio-galeria
+{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0.4rem 0 0;
+    padding: 0;
+}
+
+.servicio-galeria img
+{
+    display: block;
+    width: 92px;
+    height: 70px;
+    object-fit: cover;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
 .servicio-precio
 {
     flex-shrink: 0;

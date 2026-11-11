@@ -652,7 +652,53 @@ function obtenerServiciosNegocio($idUsuario)
     );
     $sentencia->execute([':id' => $idUsuario]);
 
-    return $sentencia->fetchAll();
+    $servicios = $sentencia->fetchAll();
+
+    if (empty($servicios))
+    {
+        return $servicios;
+    }
+
+    //imagenes promocionales de cada servicio (galeria_freelancer), en una sola consulta
+    $ids = array_map('intval', array_column($servicios, 'id_servicio'));
+    $marcadores = implode(',', array_fill(0, count($ids), '?'));
+
+    $consultaImagenes = $conexion->prepare(
+        'SELECT id_servicio, url_imagen
+         FROM galeria_freelancer
+         WHERE id_usuario = ? AND id_servicio IN (' . $marcadores . ')
+         ORDER BY id_imagen'
+    );
+    $consultaImagenes->execute(array_merge([(int) $idUsuario], $ids));
+
+    $imagenesPorServicio = [];
+
+    foreach ($consultaImagenes->fetchAll() as $fila)
+    {
+        $imagenesPorServicio[(int) $fila['id_servicio']][] = $fila['url_imagen'];
+    }
+
+    foreach ($servicios as $indice => $servicio)
+    {
+        $servicios[$indice]['imagenes'] = $imagenesPorServicio[(int) $servicio['id_servicio']] ?? [];
+    }
+
+    return $servicios;
+}
+
+//90 -> "1 h 30 min", 45 -> "45 min", 120 -> "2 h"
+function duracionLegible($minutos)
+{
+    $minutos = (int) $minutos;
+
+    if ($minutos < 60)
+    {
+        return $minutos . ' min';
+    }
+
+    $resto = $minutos % 60;
+
+    return intdiv($minutos, 60) . ' h' . ($resto > 0 ? ' ' . $resto . ' min' : '');
 }
 
 function obtenerCategoriasNegocio($idUsuario)
