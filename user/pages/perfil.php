@@ -432,7 +432,6 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
     </div>
 </section>
 
-<!-- ============ Dialog: Suscripcion y pago (MODO PRUEBA: no se cobra) ============ -->
 <dialog class="dialogo-tarjeta dialogo-suscripcion" id="dlgSuscripcion" aria-labelledby="tituloSuscripcion">
     <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" id="formSuscripcion" novalidate>
         <input type="hidden" name="operacion" value="suscribirse">
@@ -474,10 +473,6 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 
             <section class="pago-suscripcion" aria-labelledby="tituloPagoSuscripcion">
                 <h4 id="tituloPagoSuscripcion">Método de pago</h4>
-
-                <?php if (PAGOS_EN_MODO_PRUEBA): ?>
-                    <p class="aviso-prueba-pago">Modo de prueba: no se realiza ningún cargo. Pulsa <strong>Pagar</strong> para activar tu suscripción.</p>
-                <?php endif; ?>
 
                 <!-- Campos demostrativos: sin atributo name, nunca se envian al servidor -->
                 <div class="campo-pago-demo">
