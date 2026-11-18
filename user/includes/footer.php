@@ -63,7 +63,7 @@
 
 <script src="<?php echo JS_RUTA; ?>theme.js"></script>
 <script src="<?php echo JS_RUTA; ?>app.js?v=2"></script>
-<script src="<?php echo JS_RUTA; ?>ubicacion.js?v=5"></script>
+<script src="<?php echo JS_RUTA; ?>ubicacion.js?v=6"></script>
 <script src="<?php echo JS_RUTA; ?>busqueda.js?v=1"></script>
 <script>
     /*if ('serviceWorker' in navigator)

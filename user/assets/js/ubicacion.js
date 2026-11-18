@@ -31,11 +31,15 @@ document.addEventListener('DOMContentLoaded', () =>
         { nombre: 'Puebla', lat: '19.0414', lon: '-98.2063' }
     ];
 
+    //mismo corte que home.css (max-width: 640px): ahi se oculta el menu de
+    //escritorio y se muestra el modal. Ya no se usa la deteccion tactil,
+    //porque una laptop tactil o una ventana de 641-768 px abrian un modal
+    //que el CSS mantiene oculto.
+    const consultaMovil = window.matchMedia('(max-width: 640px)');
+
     function esDispositivoMovil()
     {
-        const pantallaChica = window.innerWidth <= 768;
-        const pantallaTactil = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        return pantallaChica || pantallaTactil;
+        return consultaMovil.matches;
     }
 
     // Bloquea el teclado en el input de telefonoss
@@ -59,7 +63,16 @@ document.addEventListener('DOMContentLoaded', () =>
     }
 
     configurarModoInputPrincipal();
-    window.addEventListener('resize', configurarModoInputPrincipal);
+    consultaMovil.addEventListener('change', () =>
+    {
+        configurarModoInputPrincipal();
+
+        //si la ventana se agranda con el modal abierto, se cierra para no dejar la pagina sin scroll
+        if (!consultaMovil.matches)
+        {
+            cerrarModalMovil();
+        }
+    });
 
 
     function renderizarCiudadesIniciales(contenedor)
