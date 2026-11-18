@@ -1,0 +1,206 @@
+/* ============================================================
+   CHAMBEKI - Reportar a un usuario (perfil publico del profesional)
+   Usa las variables de global.css, asi respeta el modo oscuro.
+   ============================================================ */
+
+.contacto-reportar
+{
+    flex: 0 1 auto;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--color-texto-cuerpo);
+    background: transparent;
+    border-color: var(--color-borde);
+}
+
+.contacto-reportar:hover
+{
+    color: #C0392B;
+    border-color: #C0392B;
+}
+
+.dialogo-reporte
+{
+    margin: auto;
+    width: min(500px, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: 0;
+    overflow: auto;
+    color: var(--color-texto-cuerpo);
+    background: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dialogo-reporte::backdrop
+{
+    background: rgba(30, 20, 16, 0.58);
+    backdrop-filter: blur(3px);
+}
+
+.reporte-cabecera
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.reporte-cabecera h3
+{
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-texto-principal);
+}
+
+.reporte-cerrar
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--color-marcador-posicion);
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.reporte-cerrar:hover
+{
+    color: var(--color-texto-principal);
+    background: rgba(232, 97, 45, 0.1);
+}
+
+.reporte-cerrar svg
+{
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+}
+
+.reporte-cuerpo
+{
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: 1.3rem 1.4rem;
+}
+
+.reporte-intro
+{
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.reporte-campo
+{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.reporte-campo label
+{
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+}
+
+.reporte-campo select,
+.reporte-campo textarea
+{
+    width: 100%;
+    padding: 12px 14px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+.reporte-campo textarea
+{
+    resize: vertical;
+    min-height: 130px;
+}
+
+.reporte-campo select:focus,
+.reporte-campo textarea:focus
+{
+    outline: none;
+    border-color: var(--color-boton-principal);
+    box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+.reporte-contador
+{
+    align-self: flex-end;
+    font-size: 0.78rem;
+    color: var(--color-marcador-posicion);
+}
+
+.reporte-pie
+{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 1rem 1.4rem 1.3rem;
+}
+
+.reporte-boton
+{
+    padding: 11px 20px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.92rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.reporte-boton:disabled
+{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.reporte-boton-principal
+{
+    color: var(--color-boton-principal-texto);
+    background: var(--color-boton-principal);
+}
+
+.reporte-boton-principal:hover:not(:disabled)
+{
+    background: var(--color-boton-principal-hover);
+}
+
+.reporte-boton-secundario
+{
+    color: var(--color-texto-principal);
+    background: transparent;
+    border-color: var(--color-borde);
+}
+
+@media (max-width: 480px)
+{
+    .reporte-pie
+    {
+        flex-direction: column-reverse;
+    }
+
+    .reporte-boton
+    {
+        width: 100%;
+    }
+}

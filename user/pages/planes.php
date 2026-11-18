@@ -1,11 +1,15 @@
 <?php
 /*
     Planes de CHAMBEKI: Basico y Premium.
-    Pagina informativa. Todavia no cobra ni activa beneficios:
-    el boton de Premium queda deshabilitado hasta implementarlo.
+    El boton de Premium lleva al perfil, donde se abre la ventana de pago
+    (MODO PRUEBA: no se cobra; ver user/includes/funcionesPerfil.php).
 */
 
+require_once DOCROOT . 'user/includes/funcionesPerfil.php';
+
 $haySesion = hayUsuarioEnSesion();
+$periodosPlan = periodosSuscripcion();
+$estaSuscritoPlan = $haySesion && usuarioEstaSuscrito((int) $_SESSION['id_usuario']);
 ?>
 
 <section class="seccion-planes">
@@ -48,8 +52,12 @@ $haySesion = hayUsuarioEnSesion();
                 <p class="descripcion-plan">Todo lo del plan Básico, más herramientas para conseguir más clientes.</p>
 
                 <p class="precio-plan">
-                    <strong>$39</strong>
+                    <strong>$<?php echo (int) $periodosPlan['mensual']['precio']; ?></strong>
                     <span>MXN al mes</span>
+                </p>
+                <p class="promo-plan">
+                    O <strong>$<?php echo (int) $periodosPlan['anual']['precio']; ?> MXN al año</strong>
+                    <span>Promo: ahorras $<?php echo ahorroPlanAnual(); ?></span>
                 </p>
 
                 <ul class="lista-beneficios">
@@ -63,8 +71,14 @@ $haySesion = hayUsuarioEnSesion();
                     </li>
                 </ul>
 
-                <button type="button" class="boton-plan boton-plan-principal" disabled>Próximamente</button>
-                <p class="nota-plan">Premium es exclusivo para cuentas de freelancer.</p>
+                <?php if ($estaSuscritoPlan): ?>
+                    <a href="<?php echo URL_BASE; ?>?accion=perfil" class="boton-plan boton-plan-secundario">Ya eres suscriptor</a>
+                <?php elseif ($haySesion): ?>
+                    <a href="<?php echo URL_BASE; ?>?accion=perfil&amp;abrir=suscripcion" class="boton-plan boton-plan-principal">Suscribirme</a>
+                <?php else: ?>
+                    <a href="<?php echo URL_BASE; ?>?accion=login" class="boton-plan boton-plan-principal">Inicia sesión para suscribirte</a>
+                <?php endif; ?>
+                <p class="nota-plan">Puedes cancelar cuando quieras desde tu perfil.</p>
             </article>
 
         </div>

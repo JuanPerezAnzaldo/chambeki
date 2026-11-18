@@ -1535,3 +1535,19 @@ body.admin-panel
 {
     text-decoration: underline;
 }
+
+/* globo de reportes pendientes en el menu */
+.admin-menu-contador
+{
+    display: inline-block;
+    min-width: 20px;
+    margin-left: 8px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background-color: #C0392B;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.5;
+}

@@ -354,19 +354,44 @@ function guardarCobertura($idUsuario, $datos)
 //=============================================================
 // Suscripcion (tablas suscripciones y cat_planes)
 // "Suscrito" = tiene una suscripcion Premium activa y vigente.
-// Todavia no se cobra: el boton "Suscribirse" solo activa el
-// estado; el cobro con tarjeta se conecta despues.
+//
+// MODO PRUEBA: mientras PAGOS_EN_MODO_PRUEBA sea true no se cobra nada.
+// La ventana de pago es solo demostrativa y el boton "Pagar" activa la
+// suscripcion directamente. Para cobrar de verdad hay que conectar aqui
+// el cobro (Stripe) antes de llamar a activarSuscripcion().
 //=============================================================
- 
+
 define('PLAN_PREMIUM', 2);
 define('SUSCRIPCION_ACTIVA', 1);
 define('SUSCRIPCION_CANCELADA', 3);
-define('DIAS_VIGENCIA_SUSCRIPCION', 30);
- 
+define('PAGOS_EN_MODO_PRUEBA', true);
+
+//periodos que se pueden comprar (clave => datos). La clave es la que llega por POST.
+function periodosSuscripcion()
+{
+    return [
+        'mensual' => ['etiqueta' => 'Mensual', 'precio' => 29,  'dias' => 30,  'unidad' => 'al mes'],
+        'anual'   => ['etiqueta' => 'Anual',   'precio' => 299, 'dias' => 365, 'unidad' => 'al año']
+    ];
+}
+
+//lo que se ahorra pagando el año completo frente a 12 meses sueltos (348 - 299 = 49)
+function ahorroPlanAnual()
+{
+    $p = periodosSuscripcion();
+    return ($p['mensual']['precio'] * 12) - $p['anual']['precio'];
+}
+
+//cualquier valor raro cae en el plan mensual
+function periodoSuscripcionValido($clave)
+{
+    return isset(periodosSuscripcion()[$clave]) ? $clave : 'mensual';
+}
+
 function usuarioEstaSuscrito($idUsuario)
 {
     $conexion = conexionBD();
- 
+
     $sentencia = $conexion->prepare(
         'SELECT 1
          FROM suscripciones
@@ -374,16 +399,33 @@ function usuarioEstaSuscrito($idUsuario)
          LIMIT 1'
     );
     $sentencia->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM, ':estado' => SUSCRIPCION_ACTIVA]);
- 
+
     return $sentencia->fetchColumn() !== false;
 }
- 
-//reactiva la suscripcion Premium existente (vencida/cancelada) o crea una nueva
-function activarSuscripcion($idUsuario)
+
+//fecha (Y-m-d H:i:s) en que vence la suscripcion activa, o null
+function vencimientoSuscripcion($idUsuario)
 {
     $conexion = conexionBD();
-    $dias = (int) DIAS_VIGENCIA_SUSCRIPCION;
- 
+
+    $sentencia = $conexion->prepare(
+        'SELECT fecha_vencimiento FROM suscripciones
+         WHERE id_usuario = :id AND id_plan = :plan AND estado = :estado
+         ORDER BY id_suscripcion DESC LIMIT 1'
+    );
+    $sentencia->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM, ':estado' => SUSCRIPCION_ACTIVA]);
+    $fecha = $sentencia->fetchColumn();
+
+    return $fecha === false ? null : $fecha;
+}
+
+//reactiva la suscripcion Premium existente (vencida/cancelada) o crea una nueva.
+//$periodo = 'mensual' (30 dias) o 'anual' (365 dias). Devuelve la fecha de vencimiento.
+function activarSuscripcion($idUsuario, $periodo = 'mensual')
+{
+    $conexion = conexionBD();
+    $dias = (int) periodosSuscripcion()[periodoSuscripcionValido($periodo)]['dias'];
+
     $existe = $conexion->prepare(
         'SELECT id_suscripcion FROM suscripciones
          WHERE id_usuario = :id AND id_plan = :plan
@@ -392,7 +434,7 @@ function activarSuscripcion($idUsuario)
     );
     $existe->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM]);
     $fila = $existe->fetch();
- 
+
     if ($fila !== false)
     {
         $sentencia = $conexion->prepare(
@@ -410,13 +452,15 @@ function activarSuscripcion($idUsuario)
         );
         $sentencia->execute([':id' => $idUsuario, ':plan' => PLAN_PREMIUM, ':estado' => SUSCRIPCION_ACTIVA]);
     }
+
+    return vencimientoSuscripcion($idUsuario);
 }
- 
+
 //cancela la suscripcion Premium activa (el usuario vuelve a "No suscrito")
 function cancelarSuscripcion($idUsuario)
 {
     $conexion = conexionBD();
- 
+
     $sentencia = $conexion->prepare(
         'UPDATE suscripciones
          SET estado = :cancelada

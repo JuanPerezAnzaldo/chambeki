@@ -222,3 +222,31 @@
     min-height: 0;
   }
 }
+
+/* ---------- Promo anual ---------- */
+
+.promo-plan {
+  margin: -0.4rem 0 1.2rem;
+  font-size: 0.92rem;
+  color: var(--color-texto-cuerpo);
+}
+
+.promo-plan strong {
+  color: var(--color-texto-principal);
+}
+
+.promo-plan span {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 9px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  background: var(--color-boton-principal);
+  border-radius: 999px;
+}
+
+a.boton-plan {
+  text-align: center;
+  text-decoration: none;
+}

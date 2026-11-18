@@ -25,7 +25,8 @@
                                                                                             <?php if (isset($accion) && $accion === 'perfil'): ?>
                                                                                                 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
                                                                                                 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>perfil.css?v=3">
-                                                                                                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>tarjetas.css?v=1">
+                                                                                                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>tarjetas.css?v=2">
+       <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>suscripcion.css?v=1">
                                                                                             <?php endif; ?>
 
                                                                                             <!-- catalogo de servicios del freelancer -->
@@ -50,7 +51,7 @@
 
                                                                                             <!-- pantalla de planes (Basico y Premium) -->
                                                                                             <?php if (isset($accion) && $accion === 'planes'): ?>
-                                                                                                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>planes.css?v=1">
+                                                                                                <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>planes.css?v=2">
                                                                                             <?php endif; ?>
                                                                                         </head>
 

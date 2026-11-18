@@ -6,6 +6,7 @@
 
 require_once DOCROOT . 'user/includes/funcionesPerfil.php';
 require_once DOCROOT . 'user/includes/funcionesTarjetas.php';
+require_once MAILER;
 
 if (!hayUsuarioEnSesion())
 {
@@ -43,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         redirigir(in_array($operacion, ['suscribirse', 'cancelar_suscripcion'], true) ? $urlPerfil : $urlTarjetas);
     }
 
-    //Suscripcion: no depende de los pagos con tarjeta
+    //Suscripcion: no depende de los pagos con tarjeta.
+    //MODO PRUEBA: el clic en "Pagar" activa la suscripcion sin cobrar (ver funcionesPerfil.php).
     if ($operacion === 'suscribirse')
     {
         try
@@ -54,8 +56,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             }
             else
             {
-                activarSuscripcion($idUsuario);
-                guardarMensaje('exito', '¡Listo! Ahora eres suscriptor.');
+                $periodo = periodoSuscripcionValido($_POST['periodo'] ?? '');
+                $datosPeriodo = periodosSuscripcion()[$periodo];
+
+                $vencimiento = activarSuscripcion($idUsuario, $periodo);
+
+                //correo de bienvenida: si el servidor de correo falla, la suscripcion queda activa igual
+                $correoEnviado = false;
+                try
+                {
+                    $resultadoCorreo = enviarCorreo('suscripcion', $usuario['correo'], $usuario['nombre'], [
+                        'periodo'     => $datosPeriodo['etiqueta'],
+                        'monto'       => $datosPeriodo['precio'],
+                        'vencimiento' => $vencimiento !== null ? date('d/m/Y', strtotime($vencimiento)) : '',
+                        'prueba'      => PAGOS_EN_MODO_PRUEBA
+                    ]);
+                    $correoEnviado = !empty($resultadoCorreo['exito']);
+                }
+                catch (\Throwable $excepcionCorreo)
+                {
+                    error_log('Correo de suscripcion fallido: ' . $excepcionCorreo->getMessage());
+                }
+
+                guardarMensaje('exito', '¡Listo! Ahora eres suscriptor (plan ' . strtolower($datosPeriodo['etiqueta']) . ').'
+                    . ($correoEnviado ? ' Te enviamos un correo de bienvenida.' : ''));
             }
         }
         catch (\Throwable $excepcion)
@@ -150,6 +174,8 @@ $limiteTarjetas = count($tarjetas) >= MAXIMO_TARJETAS_USUARIO;
 $anioActual = (int) date('Y');
 $cuentaActiva = (int) $usuario['estatus'] === ESTATUS_ACTIVO;
 $estaSuscrito = usuarioEstaSuscrito($idUsuario);
+$vencimientoSuscripcion = $estaSuscrito ? vencimientoSuscripcion($idUsuario) : null;
+$periodosSuscripcion = periodosSuscripcion();
 $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 ?>
 
@@ -406,26 +432,82 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
     </div>
 </section>
 
-<!-- ============ Dialog: Beneficios de Suscriptor ============ -->
-<dialog class="dialogo-tarjeta" id="dlgSuscripcion" aria-labelledby="tituloSuscripcion">
-    <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" novalidate>
+<!-- ============ Dialog: Suscripcion y pago (MODO PRUEBA: no se cobra) ============ -->
+<dialog class="dialogo-tarjeta dialogo-suscripcion" id="dlgSuscripcion" aria-labelledby="tituloSuscripcion">
+    <form action="<?php echo escaparSalida($urlPerfil); ?>" method="POST" id="formSuscripcion" novalidate>
         <input type="hidden" name="operacion" value="suscribirse">
         <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($token); ?>">
 
         <header class="dialogo-cabecera">
-            <h3 id="tituloSuscripcion">Beneficios de Suscriptor</h3>
+            <h3 id="tituloSuscripcion">Hazte Suscriptor</h3>
             <button type="button" class="dialogo-cerrar" data-cerrar-dialogo aria-label="Cerrar">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
             </button>
         </header>
 
         <div class="dialogo-cuerpo">
-            <p class="texto-dialogo">Beneficios de suscriptor</p>
+            <ul class="beneficios-suscripcion">
+                <li><strong>Mayor prioridad en las búsquedas.</strong> Tus servicios aparecen antes cuando un cliente busca tu oficio.</li>
+                <li><strong>Perfil personalizado.</strong> Elige tu color y sube tu banner de portada.</li>
+            </ul>
+
+            <fieldset class="periodos-suscripcion">
+                <legend class="sr-solo">Elige tu plan</legend>
+
+                <label class="opcion-periodo">
+                    <input type="radio" name="periodo" value="mensual" data-precio="<?php echo (int) $periodosSuscripcion['mensual']['precio']; ?>" checked>
+                    <span class="opcion-periodo-caja">
+                        <span class="opcion-periodo-nombre">Mensual</span>
+                        <span class="opcion-periodo-precio">$<?php echo (int) $periodosSuscripcion['mensual']['precio']; ?> <small>MXN al mes</small></span>
+                    </span>
+                </label>
+
+                <label class="opcion-periodo">
+                    <input type="radio" name="periodo" value="anual" data-precio="<?php echo (int) $periodosSuscripcion['anual']['precio']; ?>">
+                    <span class="opcion-periodo-caja">
+                        <span class="opcion-periodo-promo">Promo · ahorras $<?php echo ahorroPlanAnual(); ?></span>
+                        <span class="opcion-periodo-nombre">Anual</span>
+                        <span class="opcion-periodo-precio">$<?php echo (int) $periodosSuscripcion['anual']['precio']; ?> <small>MXN al año</small></span>
+                    </span>
+                </label>
+            </fieldset>
+
+            <section class="pago-suscripcion" aria-labelledby="tituloPagoSuscripcion">
+                <h4 id="tituloPagoSuscripcion">Método de pago</h4>
+
+                <?php if (PAGOS_EN_MODO_PRUEBA): ?>
+                    <p class="aviso-prueba-pago">Modo de prueba: no se realiza ningún cargo. Pulsa <strong>Pagar</strong> para activar tu suscripción.</p>
+                <?php endif; ?>
+
+                <!-- Campos demostrativos: sin atributo name, nunca se envian al servidor -->
+                <div class="campo-pago-demo">
+                    <label for="demoTitular">Titular de la tarjeta</label>
+                    <input type="text" id="demoTitular" value="<?php echo escaparSalida($usuario['nombre']); ?>" autocomplete="off">
+                </div>
+                <div class="campo-pago-demo">
+                    <label for="demoNumero">Número de tarjeta</label>
+                    <input type="text" id="demoNumero" value="4242 4242 4242 4242" inputmode="numeric" autocomplete="off">
+                </div>
+                <div class="fila-pago-demo">
+                    <div class="campo-pago-demo">
+                        <label for="demoVence">Vencimiento</label>
+                        <input type="text" id="demoVence" value="12/30" autocomplete="off">
+                    </div>
+                    <div class="campo-pago-demo">
+                        <label for="demoCvc">CVC</label>
+                        <input type="text" id="demoCvc" value="123" inputmode="numeric" autocomplete="off">
+                    </div>
+                </div>
+            </section>
+
+            <p class="total-suscripcion">Total a pagar <strong id="totalSuscripcion">$<?php echo (int) $periodosSuscripcion['mensual']['precio']; ?>.00 MXN</strong></p>
         </div>
 
         <footer class="dialogo-pie">
-            <button type="button" class="boton-pago boton-pago-secundario" data-cerrar-dialogo>No gracias</button>
-            <button type="submit" class="boton-pago boton-pago-principal">Suscribirse</button>
+            <button type="button" class="boton-pago boton-pago-secundario" data-cerrar-dialogo>Cancelar</button>
+            <button type="submit" class="boton-pago boton-pago-principal" id="botonPagarSuscripcion">
+                <span data-texto-pagar>Pagar $<?php echo (int) $periodosSuscripcion['mensual']['precio']; ?>.00 MXN</span>
+            </button>
         </footer>
     </form>
 </dialog>
@@ -445,6 +527,7 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 
         <div class="dialogo-cuerpo">
             <p class="texto-dialogo">¿Quieres cancelar tu suscripción? Tu perfil volverá a mostrarse como <strong>No suscrito</strong>.</p>
+            <?php if ($vencimientoSuscripcion !== null): ?><p class="texto-dialogo">Tu suscripción está vigente hasta el <strong><?php echo escaparSalida(date('d/m/Y', strtotime($vencimientoSuscripcion))); ?></strong>.</p><?php endif; ?>
         </div>
 
         <footer class="dialogo-pie">
@@ -606,3 +689,4 @@ $inicialNombre = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1));
 <?php endif; ?>
 
 <script src="<?php echo JS_RUTA; ?>tarjetas.js?v=1"></script>
+<script src="<?php echo JS_RUTA; ?>suscripcion.js?v=1"></script>

@@ -14,6 +14,7 @@ require_once DOCROOT . 'shared/libs/PHPMailer/src/SMTP.php';
       'registro'            -> bienvenida despues de crear la cuenta
       'codigo'              -> codigo temporal de verificacion o recuperacion
       'contrasena_cambiada' -> aviso de que la contrasena fue actualizada
+      'suscripcion'         -> bienvenida al plan Premium (Suscriptor)
       'oficial'             -> comunicado del personal de soporte (admin/correos)
 */
 function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra = [])
@@ -137,6 +138,85 @@ function enviarCorreo($tipoCorreo, $correoDestino, $nombreUsuario, $datosExtra =
             ";
 
             $cuerpoHtml = $encabezadoHtml . $cuerpoPrincipal . $pieHtml;
+            break;
+        }
+
+        case 'suscripcion':
+        {
+            //bienvenida al plan Premium (Suscriptor)
+            //datosExtra: periodo ('Mensual'|'Anual'), monto (numero), vencimiento (texto), prueba (bool)
+            $asunto = "¡Bienvenido al plan Suscriptor de CHAMBEKI!";
+
+            $periodoTexto = htmlspecialchars((string) ($datosExtra['periodo'] ?? 'Mensual'), ENT_QUOTES, 'UTF-8');
+            $montoTexto   = number_format((float) ($datosExtra['monto'] ?? 0), 2);
+            $vencimiento  = htmlspecialchars((string) ($datosExtra['vencimiento'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $nombreSeguro = htmlspecialchars((string) $nombreUsuario, ENT_QUOTES, 'UTF-8');
+            $enlacePerfil = "https://chambeki.com" . URL_BASE . "?accion=configuracion";
+            $enlaceCuenta = "https://chambeki.com" . URL_BASE . "?accion=perfil";
+
+            $avisoPrueba = '';
+            if (!empty($datosExtra['prueba']))
+            {
+                $avisoPrueba = "
+                <p style='margin: 18px 0 0; padding: 10px 14px; background-color: #FFF4E5; border-radius: 8px; font-size: 13px; color: #8a5a00;'>
+                    Modo de prueba: no se realizó ningún cargo a tu tarjeta.
+                </p>";
+            }
+
+            $encabezadoSuscripcion = str_replace(
+                "<p>Hola <strong>{$nombreUsuario}</strong>,</p>",
+                "<p>Hola <strong>{$nombreSeguro}</strong>,</p>",
+                $encabezadoHtml
+            );
+
+            $cuerpoPrincipal = "
+                <h2 style='margin: 0 0 8px; font-size: 22px; color: #2B2320;'>¡Ya eres Suscriptor!</h2>
+                <p style='margin: 0 0 22px;'>Gracias por unirte al plan <strong>Premium</strong>. Tu perfil ya cuenta con las herramientas para destacar y conseguir más clientes.</p>
+
+                <table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='border-collapse: collapse; background-color: {$colorFondo}; border-radius: 8px;'>
+                    <tr>
+                        <td style='padding: 12px 18px; color: #8a7a73; font-size: 14px;'>Plan</td>
+                        <td style='padding: 12px 18px; text-align: right; font-weight: bold;'>Premium</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 12px 18px; color: #8a7a73; font-size: 14px; border-top: 1px solid #f0d7cc;'>Periodo</td>
+                        <td style='padding: 12px 18px; text-align: right; font-weight: bold; border-top: 1px solid #f0d7cc;'>{$periodoTexto}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 12px 18px; color: #8a7a73; font-size: 14px; border-top: 1px solid #f0d7cc;'>Importe</td>
+                        <td style='padding: 12px 18px; text-align: right; font-weight: bold; border-top: 1px solid #f0d7cc;'>\${$montoTexto} MXN</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 12px 18px; color: #8a7a73; font-size: 14px; border-top: 1px solid #f0d7cc;'>Vigente hasta</td>
+                        <td style='padding: 12px 18px; text-align: right; font-weight: bold; border-top: 1px solid #f0d7cc;'>{$vencimiento}</td>
+                    </tr>
+                </table>
+                {$avisoPrueba}
+
+                <h3 style='margin: 28px 0 10px; font-size: 17px; color: #2B2320;'>Lo que ya tienes activo</h3>
+                <ul style='margin: 0; padding-left: 20px;'>
+                    <li style='margin-bottom: 8px;'><strong>Mayor prioridad en las búsquedas.</strong> Tus servicios aparecen antes cuando un cliente busca tu oficio.</li>
+                    <li><strong>Perfil personalizado.</strong> Elige el color de tu perfil y sube tu banner de portada.</li>
+                </ul>
+
+                <h3 style='margin: 26px 0 10px; font-size: 17px; color: #2B2320;'>Tus primeros pasos</h3>
+                <ol style='margin: 0; padding-left: 20px;'>
+                    <li style='margin-bottom: 8px;'>Entra a <strong>Configuración</strong> y sube tu banner y tu foto de perfil.</li>
+                    <li style='margin-bottom: 8px;'>Revisa que tus servicios, horario y cobertura estén completos.</li>
+                    <li>Comparte el enlace de tu perfil con tus clientes.</li>
+                </ol>
+
+                <p style='text-align: center; margin: 30px 0 10px;'>
+                    <a href='{$enlacePerfil}' style='background-color: {$colorBoton}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; display: inline-block;'>
+                        Personalizar mi perfil
+                    </a>
+                </p>
+
+                <p style='font-size: 14px; color: #777777;'>Puedes cancelar tu suscripción cuando quieras desde
+                <a href='{$enlaceCuenta}' style='color: {$colorBoton};'>tu perfil</a>. Si tienes dudas, escríbenos a admin@chambeki.com.</p>
+            ";
+
+            $cuerpoHtml = $encabezadoSuscripcion . $cuerpoPrincipal . $pieHtml;
             break;
         }
 

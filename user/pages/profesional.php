@@ -6,6 +6,8 @@
 */
 
 require_once DOCROOT . 'user/includes/funcionesNegocios.php';
+require_once DOCROOT . 'user/includes/funcionesPerfil.php';          //tokenCsrf() / validarCsrf()
+require_once DOCROOT . 'user/includes/funcionesReporteUsuario.php';
 
 $slug = isset($_GET['slug']) && is_string($_GET['slug']) ? preg_replace('/[^a-z0-9-]/', '', strtolower($_GET['slug'])) : '';
 $idSolicitado = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -40,10 +42,55 @@ if ($slug !== '' || $idSolicitado > 0)
 }
 
 $urlListado = URL_BASE . '?accion=servicios';
+
+//-------------------------------------------------------------
+// Reportar a este usuario (POST). Llega al buzon /admin/reportes
+//-------------------------------------------------------------
+$tokenReporte = tokenCsrf();
+$idSesion = hayUsuarioEnSesion() ? (int) $_SESSION['id_usuario'] : 0;
+$puedeReportar = $negocio !== null && $idSesion > 0 && $idSesion !== (int) $negocio['id_usuario'];
+$urlEsteNegocio = $negocio !== null ? URL_BASE . '?accion=profesional&id=' . (int) $negocio['id_usuario'] : $urlListado;
+
+if ($negocio !== null && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['operacion'] ?? '') === 'reportar_usuario')
+{
+    if ($idSesion === 0)
+    {
+        guardarMensaje('error', 'Inicia sesión para reportar a un usuario.');
+        redirigir(URL_BASE . '?accion=login');
+    }
+
+    if (!validarCsrf($_POST['token_csrf'] ?? ''))
+    {
+        guardarMensaje('error', 'La sesión del formulario expiró. Intenta de nuevo.');
+    }
+    else
+    {
+        try
+        {
+            $resultadoReporte = crearReporteUsuario(
+                $idSesion,
+                (int) $negocio['id_usuario'],
+                (string) ($_POST['motivo'] ?? ''),
+                limpiarEntrada($_POST['descripcion'] ?? '')
+            );
+            guardarMensaje($resultadoReporte['exito'] ? 'exito' : 'error', $resultadoReporte['mensaje']);
+        }
+        catch (\Throwable $excepcion)
+        {
+            error_log('Error al crear reporte: ' . $excepcion->getMessage());
+            guardarMensaje('error', 'No pudimos enviar tu reporte. Intenta de nuevo en unos minutos.');
+        }
+    }
+
+    redirigir($urlEsteNegocio);
+}
+
+$mensajeFlash = obtenerMensaje();
 ?>
 
 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>autenticacion.css?v=1">
 <link rel="stylesheet" href="<?php echo CSS_RUTA; ?>negocios.css?v=3">
+<link rel="stylesheet" href="<?php echo CSS_RUTA; ?>reporteUsuario.css?v=1">
 
 <section class="seccion-negocio">
     <div class="contenedor-negocio">
@@ -75,6 +122,10 @@ $urlListado = URL_BASE . '?accion=servicios';
         ?>
 
         <a href="<?php echo escaparSalida($urlListado); ?>" class="enlace-volver">&larr; Volver a los resultados</a>
+
+        <?php if ($mensajeFlash !== null): ?>
+            <p class="aviso-autenticacion aviso-<?php echo escaparSalida($mensajeFlash['tipo']); ?>" role="status"><?php echo escaparSalida($mensajeFlash['texto']); ?></p>
+        <?php endif; ?>
 
         <article class="perfil-negocio"
             <?php if ($horario !== null): ?>data-horario="<?php echo escaparSalida(horarioEnJson($horario)); ?>" data-zona="<?php echo escaparSalida(ZONA_HORARIA_NEGOCIOS); ?>"<?php endif; ?>>
@@ -151,6 +202,17 @@ $urlListado = URL_BASE . '?accion=servicios';
                         <a href="mailto:<?php echo escaparSalida($negocio['correo']); ?>?subject=<?php echo rawurlencode('Consulta desde ' . SITENAME); ?>" class="boton-contacto contacto-correo">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
                             Correo
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($puedeReportar): ?>
+                        <button type="button" class="boton-contacto contacto-reportar" data-abrir-reporte>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5"/></svg>
+                            Reportar
+                        </button>
+                    <?php elseif ($idSesion === 0): ?>
+                        <a href="<?php echo escaparSalida(URL_BASE . '?accion=login'); ?>" class="boton-contacto contacto-reportar" title="Inicia sesión para reportar">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5"/></svg>
+                            Reportar
                         </a>
                     <?php endif; ?>
                 </div>
@@ -335,6 +397,49 @@ $urlListado = URL_BASE . '?accion=servicios';
                 </section>
             </div>
         </article>
+
+        <?php if ($puedeReportar): ?>
+        <!-- ============ Dialog: Reportar usuario ============ -->
+        <dialog class="dialogo-reporte" id="dlgReportar" aria-labelledby="tituloReportar">
+            <form action="<?php echo escaparSalida($urlEsteNegocio); ?>" method="POST" id="formReportar">
+                <input type="hidden" name="operacion" value="reportar_usuario">
+                <input type="hidden" name="token_csrf" value="<?php echo escaparSalida($tokenReporte); ?>">
+
+                <header class="reporte-cabecera">
+                    <h3 id="tituloReportar">Reportar a <?php echo escaparSalida($nombre); ?></h3>
+                    <button type="button" class="reporte-cerrar" data-cerrar-reporte aria-label="Cerrar">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                    </button>
+                </header>
+
+                <div class="reporte-cuerpo">
+                    <p class="reporte-intro">Cuéntanos qué pasó. Nuestro equipo de soporte revisará el caso y te avisará si necesita más información. Tu reporte es confidencial.</p>
+
+                    <div class="reporte-campo">
+                        <label for="motivoReporte">Motivo</label>
+                        <select id="motivoReporte" name="motivo" required>
+                            <option value="">Selecciona un motivo</option>
+                            <?php foreach (motivosReporte() as $clave => $texto): ?>
+                                <option value="<?php echo escaparSalida($clave); ?>"><?php echo escaparSalida($texto); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="reporte-campo">
+                        <label for="descripcionReporte">¿Qué ocurrió?</label>
+                        <textarea id="descripcionReporte" name="descripcion" rows="6" minlength="<?php echo REPORTE_DESCRIPCION_MIN; ?>" maxlength="<?php echo REPORTE_DESCRIPCION_MAX; ?>" placeholder="Describe lo sucedido: fecha, servicio contratado y qué salió mal." required></textarea>
+                        <small class="reporte-contador"><span id="contadorReporte">0</span> / <?php echo REPORTE_DESCRIPCION_MAX; ?> (mínimo <?php echo REPORTE_DESCRIPCION_MIN; ?>)</small>
+                    </div>
+                </div>
+
+                <footer class="reporte-pie">
+                    <button type="button" class="reporte-boton reporte-boton-secundario" data-cerrar-reporte>Cancelar</button>
+                    <button type="submit" class="reporte-boton reporte-boton-principal" id="botonEnviarReporte">Enviar reporte</button>
+                </footer>
+            </form>
+        </dialog>
+        <script src="<?php echo JS_RUTA; ?>reporteUsuario.js?v=1"></script>
+        <?php endif; ?>
 
         <script src="<?php echo JS_RUTA; ?>negocios.js?v=1"></script>
     <?php endif; ?>
