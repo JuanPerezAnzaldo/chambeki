@@ -264,6 +264,13 @@ $mensajeFlash = obtenerMensaje();
                                                 <?php endforeach; ?>
                                             </ul>
                                         <?php endif; ?>
+                                        <?php if (isset($servicio['id_servicio']) && $idSesion !== $idNegocio): ?>
+                                            <?php if ($idSesion > 0): ?>
+                                                <a href="<?php echo escaparSalida(URL_BASE . '?accion=agendar_cita&servicio=' . (int) $servicio['id_servicio']); ?>" class="boton-autenticacion boton-negocio-enlace">Agendar cita</a>
+                                            <?php else: ?>
+                                                <a href="<?php echo escaparSalida(URL_BASE . '?accion=login'); ?>" class="boton-autenticacion boton-negocio-enlace">Inicia sesión para agendar</a>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
                                     </div>
                                     <span class="servicio-precio"><?php echo escaparSalida(textoPrecio($servicio['monto'], $servicio['id_tipo_precio'])); ?></span>
                                 </li>
