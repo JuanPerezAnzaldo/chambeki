@@ -162,6 +162,17 @@
             include(PAGINAS . 'profesional.php');
             break;
         }
+
+        case 'agendar_cita':
+        {
+            include(PAGINAS . 'agendarCita.php');
+            break;
+        }
+        case 'citas':
+        {
+            include(PAGINAS . 'misCitas.php');
+            break;
+        }
     }
 
     include(FOOTER);

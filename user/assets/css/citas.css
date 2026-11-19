@@ -1,0 +1,501 @@
+/* ============================================================
+   CHAMBEKI - Sistema de citas (agendar y panel "Mis citas")
+   Usa las variables de global.css, asi respeta el modo oscuro.
+   ============================================================ */
+
+.seccion-citas {
+  padding: 2.2rem 1.2rem 4rem;
+  background-color: var(--color-fondo-principal);
+}
+
+.contenedor-citas {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.cita-volver {
+  align-self: flex-start;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-boton-principal);
+  text-decoration: none;
+}
+
+.cita-volver:hover {
+  text-decoration: underline;
+}
+
+.cita-titulo-pagina {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--color-texto-principal);
+  overflow-wrap: anywhere;
+}
+
+.cita-subtitulo {
+  margin-top: 0.3rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-texto-cuerpo);
+}
+
+.cita-subtitulo strong {
+  color: var(--color-texto-principal);
+}
+
+/* ---------- Avisos ---------- */
+
+.cita-aviso {
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.cita-aviso-exito {
+  color: #14725C;
+  background: #DFF6EF;
+  border-color: #BCE7DA;
+}
+
+.cita-aviso-error {
+  color: #A02D1F;
+  background: #FBE9E6;
+  border-color: #F2C4BC;
+}
+
+[data-theme="dark"] .cita-aviso-exito {
+  color: #8FE3CB;
+  background: rgba(20, 114, 92, 0.18);
+  border-color: rgba(20, 114, 92, 0.45);
+}
+
+[data-theme="dark"] .cita-aviso-error {
+  color: #FFB3A7;
+  background: rgba(192, 57, 43, 0.18);
+  border-color: rgba(192, 57, 43, 0.45);
+}
+
+/* ---------- Panel y pasos ---------- */
+
+.cita-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-general);
+}
+
+.cita-paso {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-texto-principal);
+}
+
+.cita-vacio {
+  align-items: flex-start;
+  color: var(--color-texto-cuerpo);
+}
+
+.cita-vacio h2,
+.cita-vacio h3 {
+  font-size: 1.05rem;
+  color: var(--color-texto-principal);
+}
+
+.cita-vacio-texto {
+  font-size: 0.9rem;
+  color: var(--color-texto-cuerpo);
+}
+
+/* ---------- Selector de dia ---------- */
+
+.cita-dias {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 6px;
+  overflow-x: auto;
+}
+
+.cita-dia {
+  flex: 0 0 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 8px 4px;
+  font-size: 0.74rem;
+  color: var(--color-texto-cuerpo);
+  text-decoration: none;
+  background: var(--color-fondo-input);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+}
+
+.cita-dia strong {
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--color-texto-principal);
+}
+
+a.cita-dia:hover {
+  border-color: var(--color-boton-principal);
+}
+
+.cita-dia.activo {
+  color: var(--color-boton-principal-texto);
+  background: var(--color-boton-principal);
+  border-color: var(--color-boton-principal);
+}
+
+.cita-dia.activo strong {
+  color: inherit;
+}
+
+.cita-dia.sin-huecos {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cita-dia:focus-visible,
+.boton-cita:focus-visible,
+.cita-hora input:focus-visible + span {
+  outline: 2px solid var(--color-boton-principal);
+  outline-offset: 2px;
+}
+
+/* ---------- Selector de hora ---------- */
+
+.cita-horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+  gap: 8px;
+}
+
+.cita-hora {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.cita-hora input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cita-hora span {
+  display: block;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-texto-principal);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.cita-hora:hover span {
+  border-color: var(--color-boton-principal);
+}
+
+.cita-hora input:checked + span {
+  color: var(--color-boton-principal-texto);
+  background: var(--color-boton-principal);
+  border-color: var(--color-boton-principal);
+}
+
+/* ---------- Campo de mensaje ---------- */
+
+.cita-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cita-campo label,
+.cita-form-motivo label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-texto-principal);
+}
+
+.cita-campo textarea,
+.cita-form-motivo textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  color: var(--color-texto-principal);
+  background-color: var(--color-fondo-input);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+}
+
+.cita-campo textarea:focus,
+.cita-form-motivo textarea:focus {
+  outline: none;
+  border-color: var(--color-boton-principal);
+  box-shadow: 0 0 0 3px rgba(232, 97, 45, 0.22);
+}
+
+.cita-ayuda {
+  font-size: 0.8rem;
+  color: var(--color-marcador-posicion);
+}
+
+/* ---------- Horario semanal ---------- */
+
+.cita-semana {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.cita-semana li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-cuerpo);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.cita-semana li:last-child {
+  border-bottom: none;
+}
+
+.cita-semana li span:first-child {
+  font-weight: 600;
+  color: var(--color-texto-principal);
+}
+
+/* ---------- Botones ---------- */
+
+.boton-cita {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  list-style: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.boton-cita::-webkit-details-marker {
+  display: none;
+}
+
+.boton-cita-ancho {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1rem;
+}
+
+.boton-cita-principal {
+  color: var(--color-boton-principal-texto);
+  background-color: var(--color-boton-principal);
+}
+
+.boton-cita-principal:hover {
+  background-color: var(--color-boton-principal-hover);
+}
+
+.boton-cita-secundario {
+  color: var(--color-texto-principal);
+  background: transparent;
+  border-color: var(--color-borde);
+}
+
+.boton-cita-secundario:hover {
+  color: var(--color-boton-principal);
+  border-color: var(--color-boton-principal);
+}
+
+.boton-cita-peligro {
+  color: #FFFFFF;
+  background-color: #C0392B;
+}
+
+.boton-cita-peligro:hover {
+  background-color: #A02D1F;
+}
+
+/* ---------- Tarjetas de cita ---------- */
+
+.cita-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.cita-subtitulo-bloque {
+  margin-top: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-texto-principal);
+}
+
+.cita-subtitulo-historial {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-texto-cuerpo);
+}
+
+.cita-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 1.1rem 1.2rem;
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-general);
+}
+
+.cita-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cita-titulo {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--color-texto-principal);
+  overflow-wrap: anywhere;
+}
+
+.cita-persona,
+.cita-nota,
+.cita-contacto {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-texto-cuerpo);
+}
+
+.cita-persona strong,
+.cita-contacto strong {
+  color: var(--color-texto-principal);
+}
+
+.cita-fecha {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-texto-principal);
+}
+
+.cita-estado {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.cita-estado-pendiente {
+  color: #8A5A00;
+  background: #FFF3CC;
+}
+
+.cita-estado-confirmada {
+  color: #1B6B4A;
+  background: #DDF4E8;
+}
+
+.cita-estado-cancelada {
+  color: #A02D1F;
+  background: #FBE9E6;
+}
+
+.cita-estado-neutra {
+  color: #5C5149;
+  background: #EEE8E1;
+}
+
+[data-theme="dark"] .cita-estado-pendiente { color: #F5CC66; background: rgba(214, 160, 30, 0.2); }
+[data-theme="dark"] .cita-estado-confirmada { color: #7BE0AE; background: rgba(46, 160, 110, 0.2); }
+[data-theme="dark"] .cita-estado-cancelada { color: #FF9B8F; background: rgba(214, 69, 50, 0.22); }
+[data-theme="dark"] .cita-estado-neutra { color: #CFC6BD; background: rgba(255, 255, 255, 0.1); }
+
+/* ---------- Acciones ---------- */
+
+.cita-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cita-desplegable {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cita-desplegable summary {
+  align-self: flex-start;
+}
+
+.cita-form-motivo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: min(320px, 100%);
+  margin-top: 8px;
+}
+
+.cita-form-motivo .boton-cita {
+  align-self: flex-start;
+}
+
+@media (max-width: 480px) {
+  .cita-cabecera {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cita-panel {
+    padding: 1.2rem;
+  }
+
+  .cita-acciones,
+  .cita-acciones form,
+  .cita-acciones .boton-cita,
+  .cita-desplegable {
+    width: 100%;
+  }
+
+  .cita-acciones .boton-cita {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cita-hora span,
+  .boton-cita {
+    transition: none;
+  }
+}
