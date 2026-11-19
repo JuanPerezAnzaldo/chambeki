@@ -13,7 +13,8 @@
     Depende de functions.php (conexionBD, registrarEnBitacora, etc.).
 */
 
-
+//tokenCsrf(), validarCsrf() y buscarPalabraProhibida() viven aqui
+require_once DOCROOT . 'user/includes/funcionesPerfil.php';
 
 const CITA_PENDIENTE  = 1;
 const CITA_CONFIRMADA = 2;
